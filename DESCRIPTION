@@ -1,0 +1,44 @@
+Package: bluster
+Version: 0.99.0
+Date: 2020-10-18
+Title: Clustering Algorithms for Bioconductor
+Description: 
+    provides common clustering algorithms in an S4 framework that is amenable to extension.
+    Implementations and wrappers are provided for hierarchical, k-means and graph-based clustering.
+    Several utilities are also provided to compare and evaluate clustering results.
+Authors@R: 
+    person("Aaron", "Lun", role = c("aut", "cre"), email = "infinite.monkeys.with.keyboards@gmail.com") 
+Depends:
+    SingleCellExperiment
+Imports: 
+    SummarizedExperiment,
+    S4Vectors, 
+    BiocGenerics, 
+    Rcpp, 
+    stats, 
+    methods, 
+    utils, 
+    BiocNeighbors,
+    BiocSingular,
+    BiocParallel,
+    igraph
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat,
+    BiocStyle,
+    dynamicTreeCut 
+biocViews: 
+    ImmunoOncology, 
+    Software, 
+    GeneExpression,
+    Transcriptomics, 
+    SingleCell, 
+    Clustering
+LinkingTo: 
+    Rcpp 
+License: GPL-3
+NeedsCompilation: yes
+VignetteBuilder: knitr
+SystemRequirements: C++11
+RoxygenNote: 7.1.1
