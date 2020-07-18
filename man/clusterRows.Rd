@@ -4,15 +4,20 @@
 \alias{clusterRows}
 \title{Cluster rows of a matrix}
 \usage{
-clusterRows(x, BLUSPARAM)
+clusterRows(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
 
 \item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
+
+\item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 }
 \value{
-A factor of length equal to \code{nrow(x)} containing cluster assignments for each row of \code{x}.
+By default, a factor of length equal to \code{nrow(x)} containing cluster assignments for each row of \code{x}.
+
+If \code{full=TRUE}, a list is returned containing \code{clusters}, a factor as described above;
+and \code{objects}, an arbitrary object containing algorithm-specific statistics or intermediate objects.
 }
 \description{
 Cluster rows of a matrix-like object with a variety of algorithms.

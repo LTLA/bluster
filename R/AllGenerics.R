@@ -4,9 +4,13 @@
 #'
 #' @param x A numeric matrix-like object where rows represent observations and columns represent variables.
 #' @param BLUSPARAM A \linkS4class{BlusterParam} object specifying the algorithm to use.
+#' @param full Logical scalar indicating whether the full clustering statistics should be returned for each method.
 #'
 #' @return
-#' A factor of length equal to \code{nrow(x)} containing cluster assignments for each row of \code{x}.
+#' By default, a factor of length equal to \code{nrow(x)} containing cluster assignments for each row of \code{x}.
+#'
+#' If \code{full=TRUE}, a list is returned containing \code{clusters}, a factor as described above;
+#' and \code{objects}, an arbitrary object containing algorithm-specific statistics or intermediate objects.
 #'
 #' @details
 #' This generic allows users to write agile code that can use a variety of clustering algorithms.
@@ -23,4 +27,4 @@
 #'
 #' clusterRows(m)
 #' @export
-setGeneric("clusterRows", function(x, BLUSPARAM) standardGeneric("clusterRows"))
+setGeneric("clusterRows", function(x, BLUSPARAM, full=FALSE) standardGeneric("clusterRows"))

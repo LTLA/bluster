@@ -9,7 +9,7 @@
 \usage{
 KmeansParam(centers, ...)
 
-\S4method{clusterRows}{ANY,KmeansParam}(x, BLUSPARAM)
+\S4method{clusterRows}{ANY,KmeansParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
 \item{centers}{Integer scalar specifying the number of centers.}
@@ -19,14 +19,26 @@ KmeansParam(centers, ...)
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
 
 \item{BLUSPARAM}{A \linkS4class{KmeansParam} object.}
+
+\item{full}{Logical scalar indicating whether the full k-means statistics should be returned.}
 }
 \value{
 The \code{KmeansParam} constructor will return a \linkS4class{KmeansParam} object with the specified parameters.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
+If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
+the latter will contain the direct output of \code{\link{kmeans}}.
 }
 \description{
-Run the base \code{\link{kmeans}} function with the specified number of centers.
+Run the base \code{\link{kmeans}} function with the specified number of centers within \code{\link{clusterRows}}.
+}
+\examples{
+clusterRows(iris[,1:4], KmeansParam(centers=4))
+clusterRows(iris[,1:4], KmeansParam(centers=4, algorithm="Lloyd"))
+
+}
+\seealso{
+\code{\link{kmeans}}, which actually does all the heavy lifting.
 }
 \author{
 Aaron Lun

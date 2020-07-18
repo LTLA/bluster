@@ -6,6 +6,7 @@
 #' @param ... Further arguments to pass to \code{\link{kmeans}}.
 #' @inheritParams clusterRows
 #' @param BLUSPARAM A \linkS4class{KmeansParam} object.
+#' @param full Logical scalar indicating whether the full k-means statistics should be returned.
 #'
 #' @author Aaron Lun
 #'
@@ -13,6 +14,8 @@
 #' The \code{KmeansParam} constructor will return a \linkS4class{KmeansParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
+#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
+#' the latter will contain the direct output of \code{\link{kmeans}}.
 #'
 #' @examples
 #' clusterRows(iris[,1:4], KmeansParam(centers=4))
@@ -35,7 +38,15 @@ KmeansParam <- function(centers, ...) {
 
 #' @export
 #' @rdname KmeansParam-class
-setMethod("clusterRows", c("ANY", "KmeansParam"), function(x, BLUSPARAM) {
+#' @importFrom stats kmeans
+setMethod("clusterRows", c("ANY", "KmeansParam"), function(x, BLUSPARAM, full=FALSE) {
     args <- c(list(x=as.matrix(x), centers=BLUSPARAM@centers), BLUSPARAM@extra.args)
-    factor(do.call(kmeans, args)$cluster)
+    stats <- do.call(kmeans, args)
+    clusters <- factor(stats$cluster)
+
+    if (full) {
+        list(clusters=clusters, objects=stats)
+    } else {
+        clusters
+    }
 })
