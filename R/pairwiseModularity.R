@@ -1,8 +1,8 @@
-#' Compute the cluster-wise modularity
+#' Compute pairwise modularity
 #' 
-#' Calculate the modularity of each cluster from a graph, based on a null model of random connections between nodes.
+#' Calculate the modularity of each pair of clusters from a graph, based on a null model of random connections between nodes.
 #' 
-#' @param graph A \link{graph} object from \pkg{igraph}, usually where each node represents a cell.
+#' @param graph A \link{graph} object from \pkg{igraph}, usually where each node represents an observation.
 #' @param clusters Factor specifying the cluster identity for each node.
 #' @param get.weights Logical scalar indicating whether the observed and expected edge weights should be returned, rather than the modularity.
 #' @param as.ratio Logical scalar indicating whether the log-ratio of observed to expected weights should be returned.
@@ -24,14 +24,14 @@
 #' The expected number of edges is defined by a null model where edges are randomly distributed among nodes.
 #' The same logic applies for weighted graphs, replacing the number of edges with the summed weight of edges.
 #' 
-#' Whereas \code{\link{modularity}} returns a modularity score for the entire graph, \code{clusterModularity} provides scores for the individual clusters.
+#' Whereas \code{\link{modularity}} returns a modularity score for the entire graph, \code{pairwiseModularity} provides scores for the individual clusters.
 #' The sum of the diagonal elements of the output matrix should be equal to the output of \code{\link{modularity}} 
 #' (after supplying weights to the latter, if necessary).
 #' A well-separated cluster should have mostly intra-cluster edges and a high modularity score on the corresponding diagonal entry,
 #' while two closely related clusters that are weakly separated will have many inter-cluster edges and a high off-diagonal score.
 #'
 #' In practice, the modularity may not the most effective metric for evaluating cluster separatedness.
-#' This is because the modularity is proportional to the number of cells, so larger clusters will naturally have a large score regardless of separation.
+#' This is because the modularity is proportional to the number of observations, so larger clusters will naturally have a large score regardless of separation.
 #' An alternative approach is to set \code{as.ratio=TRUE}, which returns the ratio of the observed to expected weights for each entry of the matrix.
 #' This adjusts for differences in cluster size and improves resolution of differences between clusters.
 #'
@@ -41,26 +41,25 @@
 #' Aaron Lun
 #' 
 #' @seealso
-#' \code{\link{buildSNNGraph}}, for one method to construct \code{graph}.
+#' \code{\link{makeSNNGraph}}, for one method to construct \code{graph}.
 #'
 #' \code{\link{modularity}}, for the calculation of the entire graph modularity.
 #'
-#' \code{\link{clusterRand}}, which applies a similar breakdown to the Rand index.
+#' \code{\link{pairwiseRand}}, which applies a similar breakdown to the Rand index.
 #' 
 #' @examples
-#' library(scuttle)
-#' sce <- mockSCE()
-#' sce <- logNormCounts(sce)
-#' g <- buildSNNGraph(sce)
-#' clusters <- igraph::cluster_walktrap(g)$membership
+#' m <- matrix(runif(10000), ncol=10)
+#' clust.out <- clusterRows(m, BLUSPARAM=NNGraphParam(), full=TRUE)
+#' clusters <- clust.out$clusters
+#' g <- clust.out$objects$graph
 #' 
 #' # Examining the modularity values directly.
-#' out <- clusterModularity(g, clusters)
+#' out <- pairwiseModularity(g, clusters)
 #' out
 #' 
 #' # Compute the ratio instead, for visualization
 #' # (log-transform to improve range of colors).
-#' out <- clusterModularity(g, clusters, as.ratio=TRUE)
+#' out <- pairwiseModularity(g, clusters, as.ratio=TRUE)
 #' image(log2(out+1))
 #'
 #' # This can also be used to construct a graph of clusters,
@@ -69,16 +68,16 @@
 #' g2 <- igraph::graph_from_adjacency_matrix(out, mode="upper",
 #'     diag=FALSE, weighted=TRUE)
 #' plot(g2, edge.width=igraph::E(g2)$weight*10,
-#'     vertex.size=sqrt(table(clusters))*10)
+#'     vertex.size=sqrt(table(clusters))*2)
 #' 
 #' # Alternatively, get the edge weights directly:
-#' out <- clusterModularity(g, clusters, get.weights=TRUE)
+#' out <- pairwiseModularity(g, clusters, get.weights=TRUE)
 #' out
 #'
 #' @export
 #' @importFrom Matrix diag diag<-
 #' @importFrom igraph is.directed
-clusterModularity <- function(graph, clusters, get.weights=FALSE, as.ratio=FALSE) {
+pairwiseModularity <- function(graph, clusters, get.weights=FALSE, as.ratio=FALSE) {
     by.clust <- split(seq_along(clusters), clusters)
     uclust <- names(by.clust)
     nclust <- length(uclust)

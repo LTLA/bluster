@@ -1,6 +1,7 @@
-#' Compute the cluster-wise Rand indices
+#' Compute pairwise Rand indices
 #'
-#' Breaks down the Rand index calculation to report values for each cluster and pair of clusters.
+#' Breaks down the Rand index calculation to report values for each cluster and pair of clusters
+#' in a reference clustering compared to an alternative clustering.
 #'
 #' @param ref A character vector or factor containing one set of groupings, considered to be the reference.
 #' @param alt A character vector or factor containing another set of groupings, to be compared to \code{alt}.
@@ -54,27 +55,25 @@
 #' 
 #' @author Aaron Lun
 #' @examples
-#' library(scuttle)
-#' sce <- mockSCE(ncells=200)
-#' sce <- logNormCounts(sce)
+#' m <- matrix(runif(10000), ncol=10)
 #' 
-#' clust1 <- kmeans(t(logcounts(sce)),3)$cluster
-#' clust2 <- kmeans(t(logcounts(sce)),5)$cluster
+#' clust1 <- kmeans(m,3)$cluster
+#' clust2 <- kmeans(m,5)$cluster
 #'
-#' ratio <- clusterRand(clust1, clust2)
+#' ratio <- pairwiseRand(clust1, clust2)
 #' ratio
 #'
 #' # Getting the raw counts:
-#' clusterRand(clust1, clust2, mode="pairs")
+#' pairwiseRand(clust1, clust2, mode="pairs")
 #' 
 #' # Computing the original Rand index.
-#' clusterRand(clust1, clust2, mode="index")
+#' pairwiseRand(clust1, clust2, mode="index")
 #'
 #' @seealso
-#' \code{\link{clusterModularity}}, which applies the same breakdown to the cluster modularity.
+#' \code{\link{pairwiseModularity}}, which applies the same breakdown to the cluster modularity.
 #'
 #' @export
-clusterRand <- function(ref, alt, mode=c("ratio", "pairs", "index"), adjusted=TRUE) {
+pairwiseRand <- function(ref, alt, mode=c("ratio", "pairs", "index"), adjusted=TRUE) {
     ref <- as.factor(ref)
     alt <- as.factor(alt)
     all.lev <- levels(ref)
