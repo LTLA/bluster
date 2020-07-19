@@ -56,12 +56,11 @@ out <- approxSilhouette(m, clusters)
 boxplot(split(out$width, clusters))
 
 # Mocking up a stronger example:
-ngenes <- 1000
-centers <- matrix(rnorm(ngenes*3), ncol=3)
-clusters <- sample(1:3, ncol(sce), replace=TRUE)
+centers <- matrix(rnorm(30), nrow=3)
+clusters <- sample(1:3, 1000, replace=TRUE)
 
-y <- centers[,clusters]
-y <- y + rnorm(length(y))
+y <- centers[clusters,]
+y <- y + rnorm(length(y), sd=0.1)
 
 out2 <- approxSilhouette(y, clusters)
 boxplot(split(out2$width, clusters))

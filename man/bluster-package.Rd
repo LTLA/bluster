@@ -6,8 +6,8 @@
 \alias{bluster-package}
 \title{bluster: Clustering Algorithms for Bioconductor}
 \description{
-provides common clustering algorithms in an S4 framework that is amenable to extension.
-    Implementations and wrappers are provided for hierarchical, k-means and graph-based clustering.
+Wraps common clustering algorithms in an easily extended S4 framework.
+    Backends are implemented for hierarchical, k-means and graph-based clustering.
     Several utilities are also provided to compare and evaluate clustering results.
 }
 \author{

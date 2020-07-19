@@ -3,6 +3,7 @@
 \docType{class}
 \name{HclustParam-class}
 \alias{HclustParam-class}
+\alias{show,HclustParam-method}
 \alias{HclustParam}
 \alias{clusterRows,ANY,HclustParam-method}
 \title{Hierarchical clustering}
@@ -11,6 +12,7 @@ HclustParam(
   metric = "euclidean",
   method = "complete",
   cut.fun = NULL,
+  cut.dynamic = FALSE,
   cut.height = NULL,
   cut.number = NULL,
   ...
@@ -26,7 +28,9 @@ HclustParam(
 \item{cut.fun}{Function specifying the method to use to cut the dendrogram.
 The first argument of this function should be the output of \code{\link{hclust}},
 and the return value should be an atomic vector specifying the cluster assignment for each observation.
-Defaults to \code{\link{cutree}}.}
+Defaults to \code{\link{cutree}} if \code{dynamic=FALSE} and \code{\link[dynamicTreeCut]{cutreeDynamic}} otherwise.}
+
+\item{cut.dynamic}{Logical scalar indicating whether a dynamic tree cut should be performed using the \pkg{dynamicTreeCut} package.}
 
 \item{cut.height}{Numeric scalar specifying the cut height to use for the tree cut when \code{cut.fun=NULL}.
 If \code{NULL}, defaults to half the tree height.
@@ -34,7 +38,7 @@ Ignored if \code{cut.number} is set.}
 
 \item{cut.number}{Integer scalar specifying the number of clusters to generate from the tree cut when \code{cut.fun=NULL}.}
 
-\item{...}{Further arguments to pass to a non-\code{NULL} value for \code{cut.fun}.}
+\item{...}{Further arguments to pass to \code{cut.fun}, when \code{dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
 
@@ -46,11 +50,14 @@ Ignored if \code{cut.number} is set.}
 The \code{HclustParam} constructor will return a \linkS4class{HclustParam} object with the specified parameters.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-the latter is a list with the \code{hclust} entry containing the output of \code{\link{hclust}}.
+If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} (the \code{\link{hclust}} output).
 }
 \description{
 Run the base \code{\link{hclust}} function on a distance matrix within \code{\link{clusterRows}}.
+}
+\details{
+To modify an existing HclustParam object \code{x},
+users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 }
 \examples{
 clusterRows(iris[,1:4], HclustParam())
@@ -60,7 +67,7 @@ clusterRows(iris[,1:4], HclustParam(method="ward.D2"))
 \seealso{
 \code{\link{dist}}, \code{\link{hclust}} and \code{\link{cutree}}, which actually do all the heavy lifting.
 
-\code{cutreeDynamic} from the \pkg{dynamicTreeCut} package, for an alternative tree cutting method to use in \code{cut.fun}.
+\code{\link[dynamicTreeCut]{cutreeDynamic}}, for an alternative tree cutting method to use in \code{cut.fun}.
 }
 \author{
 Aaron Lun

@@ -34,10 +34,10 @@ in which case we can save a single round of computation.}
 \item{compare}{A function that accepts the original clustering and the bootstrapped clustering,
 and returns a numeric vector or matrix containing some measure of similarity between them - see Details.}
 
-\item{mode, adjusted}{Further arguments to pass to \code{\link{clusterRand}} when \code{compare=NULL}.}
+\item{mode, adjusted}{Further arguments to pass to \code{\link{pairwiseRand}} when \code{compare=NULL}.}
 }
 \value{
-If \code{compare=NULL} and \code{mode="ratio"}, a numeric matrix is returned with upper triangular entries set to the ratio of the adjusted observation pair counts (see \code{?\link{clusterRand}}) for each pair of clusters in \code{clusters}.
+If \code{compare=NULL} and \code{mode="ratio"}, a numeric matrix is returned with upper triangular entries set to the ratio of the adjusted observation pair counts (see \code{?\link{pairwiseRand}}) for each pair of clusters in \code{clusters}.
 Each ratio is averaged across bootstrap iterations as specified by \code{average}.
 
 If \code{compare=NULL} and \code{mode="index"}, a numeric scalar containing the average ARI between \code{clusters} and the bootstrap replicates across iterations is returned.
@@ -52,7 +52,7 @@ Bootstrapping is conventionally used to evaluate the precision of an estimator b
 We can (ab)use this framework to determine the stability of the clusters given the original dataset.
 We sample observations with replacement from \code{x}, perform clustering with \code{FUN} and compare the new clusters to \code{clusters}.
 
-For comparing clusters, we compute the ratio matrix from \code{\link{clusterRand}} and average its values across bootstrap iterations.
+For comparing clusters, we compute the ratio matrix from \code{\link{pairwiseRand}} and average its values across bootstrap iterations.
 High on-diagonal values indicate that the corresponding cluster remains coherent in the bootstrap replicates,
 while high off-diagonal values indicate that the corresponding pair of clusters are still separated in the replicates.
 If a single value is necessary, we can instead average the adjusted Rand indices across iterations with \code{mode="index"}.
@@ -96,13 +96,13 @@ kFUN <- function(x) kmeans(x, 2)$cluster
 bootstrapStability(m, FUN=kFUN)
 
 # Using an alternative comparison, in this case the Rand index:
-bootstrapStability(m, FUN=kFUN, compare=clusterRand)
+bootstrapStability(m, FUN=kFUN, compare=pairwiseRand)
 
 }
 \seealso{
 \code{\link{clusterRows}}, for the default clustering function.
 
-\code{\link{clusterRand}}, for the calculation of the ARI.
+\code{\link{pairwiseRand}}, for the calculation of the ARI.
 }
 \author{
 Aaron Lun

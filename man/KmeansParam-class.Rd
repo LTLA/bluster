@@ -3,25 +3,18 @@
 \docType{class}
 \name{KmeansParam-class}
 \alias{KmeansParam-class}
-\alias{AutoKmeansParam-class}
+\alias{show,KmeansParam-method}
 \alias{KmeansParam}
-\alias{AutoKmeansParam}
 \alias{clusterRows,ANY,KmeansParam-method}
-\alias{clusterRows,ANY,AutoKmeansParam-method}
 \title{K-means clustering}
 \usage{
 KmeansParam(centers, ...)
 
-AutoKmeansParam(centers, ...)
-
 \S4method{clusterRows}{ANY,KmeansParam}(x, BLUSPARAM, full = FALSE)
-
-\S4method{clusterRows}{ANY,AutoKmeansParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
-\item{centers}{For \code{KmeansParam}, an integer scalar specifying the number of centers.
-
-For \code{AutoKmeansParam}, a function that takes the number of observations and returns the number of centers.}
+\item{centers}{An integer scalar specifying the number of centers.
+Alternatively, a function that takes the number of observations and returns the number of centers.}
 
 \item{...}{Further arguments to pass to \code{\link{kmeans}}.}
 
@@ -34,8 +27,6 @@ For \code{AutoKmeansParam}, a function that takes the number of observations and
 \value{
 The \code{KmeansParam} constructor will return a \linkS4class{KmeansParam} object with the specified parameters.
 
-The \code{AutoKmeansParam} constructor will return a \linkS4class{AutoKmeansParam} object with the specified parameters.
-
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
 the latter will contain the direct output of \code{\link{kmeans}}.
@@ -44,15 +35,17 @@ the latter will contain the direct output of \code{\link{kmeans}}.
 Run the base \code{\link{kmeans}} function with the specified number of centers within \code{\link{clusterRows}}.
 }
 \details{
-The standard \linkS4class{KmeansParam} class requires the user to specify the number of clusters beforehand.
-The \linkS4class{AutoKmeansParam} class allows the number of clusters to vary as a function of the number of observations.
+This class usually requires the user to specify the number of clusters beforehand.
+However, we can also allow the number of clusters to vary as a function of the number of observations.
 The latter is occasionally useful, e.g., to allow the clustering to automatically become more granular for large datasets.
+
+To modify an existing KmeansParam object \code{x},
+users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 }
 \examples{
 clusterRows(iris[,1:4], KmeansParam(centers=4))
 clusterRows(iris[,1:4], KmeansParam(centers=4, algorithm="Lloyd"))
-
-clusterRows(iris[,1:4], AutoKmeansParam(centers=sqrt))
+clusterRows(iris[,1:4], KmeansParam(centers=sqrt))
 }
 \seealso{
 \code{\link{kmeans}}, which actually does all the heavy lifting.

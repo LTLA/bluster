@@ -3,19 +3,25 @@
 \docType{class}
 \name{TwoStepParam-class}
 \alias{TwoStepParam-class}
+\alias{show,TwoStepParam-method}
 \alias{TwoStepParam}
+\alias{clusterRows,ANY,TwoStepParam-method}
 \title{Two step clustering with vector quantization}
 \usage{
-TwoStepParam(first = AutoKmeansParam(centers = sqrt), second = NNGraphParam())
+TwoStepParam(first = KmeansParam(centers = sqrt), second = NNGraphParam())
+
+\S4method{clusterRows}{ANY,TwoStepParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
 \item{first}{A \linkS4class{BlusterParam} object specifying a fast vector quantization technique.}
 
 \item{second}{A \linkS4class{BlusterParam} object specifying the second clustering technique on the centroids.}
 
+\item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
+
 \item{BLUSPARAM}{A \linkS4class{KmeansParam} object.}
 
-\item{full}{Logical scalar indicating whether the full k-means statistics should be returned.}
+\item{full}{Logical scalar indicating whether the clustering statistics from both steps should be returned.}
 }
 \value{
 The \code{TwoStepParam} constructor will return a \linkS4class{TwoStepParam} object with the specified parameters.
@@ -38,11 +44,14 @@ Here, the idea is to use a fast clustering algorithm to perform vector quantizat
 followed by a slower algorithm that aggregates the centroids for easier interpretation.
 The exact choice of the number of clusters is less relevant to the first clustering step
 as long as not too many centroids are generated but the clusters are still sufficiently granular.
-The second step can take more care (and computational time) summarizing the centroids into meaningful meta-clusters.
+The second step can take more care (and computational time) summarizing the centroids into meaningful \dQuote{meta-clusters}.
 
 The default choice is to use k-means for the first step, with number of clusters set to the root of the number of observations;
 and graph-based clustering for the second step, which automatically detects a suitable number of clusters.
 K-means also eliminates density differences in the data that can introduce variable resolution from graph-based methods.
+
+To modify an existing TwoStepParam object \code{x},
+users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 }
 \examples{
 m <- matrix(runif(100000), ncol=10)
