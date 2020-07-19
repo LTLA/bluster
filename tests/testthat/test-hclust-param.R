@@ -16,11 +16,13 @@ test_that("HclustParam constructor and utilities work correctly", {
 
     # other show methods
     expect_output(show(HclustParam(cut.number=2)), "cut.number")
+    expect_output(show(HclustParam(cut.dynamic=TRUE)), "cutreeDynamic")
     expect_output(show(HclustParam(cut.fun=identity)), "custom")
 })
 
 test_that("HclustParam validity works correctly", {
     expect_error(HclustParam(NA_character_), "non-missing")
+    expect_error(HclustParam(cut.dynamic=NA_character_), "non-missing")
     expect_error(HclustParam(cut.height=-1), "positive")
     expect_error(HclustParam(cut.number=-1), "positive")
 })
@@ -47,3 +49,12 @@ test_that("clusterRows works correctly", {
     expect_identical(ref, full$cluster)
     expect_s3_class(full$objects, "hclust")
 })
+
+test_that("clusterRows works with the dynamic tree cut", {
+    m <- matrix(runif(1000), ncol=10)
+    out <- clusterRows(m, HclustParam(cut.dynamic=TRUE))
+    expect_true(is.factor(out))
+    expect_identical(names(out), NULL)
+    expect_identical(length(out), nrow(m))
+})
+
