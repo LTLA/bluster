@@ -64,7 +64,6 @@
 #'
 #' @export
 #' @importFrom S4Vectors DataFrame
-#' @importFrom matrixStats colVars
 approxSilhouette <- function(x, clusters) {
     x <- as.matrix(x)
     uclust <- sort(unique(clusters))
@@ -76,7 +75,7 @@ approxSilhouette <- function(x, clusters) {
         xcurrent <- x[current,,drop=FALSE]
         centroid <- colMeans(xcurrent)
         averaged[[i]] <- centroid
-        clust.var[i] <- sum(colVars(xcurrent, center=centroid))
+        clust.var[i] <- sum(colMeans(sweep(xcurrent, 2, centroid)^2))
     }
 
     self.dist <- other.dist <- rep(Inf, nrow(x))
