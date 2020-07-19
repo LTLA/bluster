@@ -1,57 +1,53 @@
-# Tests the clusterSilhouette() function.
-# library(testthat); library(scran); source('setup.R'); source('test-silhouette.R')
+# Tests the approxSilhouette() function.
+# library(testthat); library(bluster); source('test-silhouette.R')
 
 set.seed(80000)
-test_that('clusterSilhouette yields sensible output for pure clusters', {
+test_that('approxSilhouette yields sensible output for pure clusters', {
     clusters <- rep(seq_len(10), each=100)
-    y <- matrix(clusters, nrow=50, ncol=length(clusters), byrow=TRUE)
+    y <- matrix(clusters, ncol=50, nrow=length(clusters))
 
-    out <- clusterSilhouette(y, clusters)
-    expect_identical(nrow(out), ncol(y))
+    out <- approxSilhouette(y, clusters)
+    expect_identical(nrow(out), nrow(y))
     expect_true(all(out$width == 1))
     expect_true(all(clusters != out$other))
 
     # Throwing in some jitter.
     y <- jitter(y)
-    out <- clusterSilhouette(y, clusters)
+    out <- approxSilhouette(y, clusters)
     expect_true(all(out$width >= 0.5))
     expect_true(all(clusters != out$other))
 })
 
-test_that('clusterSilhouette yields correct output for perfectly randomized clusters', {
+test_that('approxSilhouette yields correct output for perfectly randomized clusters', {
     clusters <- rep(1:5, each=10)
     y0 <- matrix(rnorm(100), ncol=10)
-    y <- cbind(y0, y0, y0, y0, y0)    
+    y <- rbind(y0, y0, y0, y0, y0)    
 
-    out <- clusterSilhouette(y, clusters)
-    expect_identical(nrow(out), ncol(y))
+    out <- approxSilhouette(y, clusters)
+    expect_identical(nrow(out), nrow(y))
     expect_true(all(out$width == 0))
     expect_true(all(clusters != out$other))
 })
 
-set.seed(70002)
-test_that('clusterSilhouette handles SCEs correctly', {
-    library(scuttle)
-    sce <- mockSCE()
-    sce <- logNormCounts(sce)
-    g <- buildSNNGraph(sce)
-    clusters <- igraph::cluster_walktrap(g)$membership
+set.seed(80001)
+test_that('approxSilhouette computes the right approximation', {
+    y <- matrix(rnorm(1000), ncol=1)
+    cout <- clusterRows(y, BLUSPARAM=KmeansParam(4))
 
-    ref <- clusterSilhouette(logcounts(sce), clusters)
-    expect_equal(ref, clusterSilhouette(sce, clusters))
+    tY <- t(y)
+    collated <- numeric(nrow(y))
+    for (i in seq_len(nrow(y))) {
+        d <- colSums((tY - tY[,i])^2)
+        by.clust <- split(d, cout)
+        ave.d <- sqrt(vapply(by.clust, mean, 0))
 
-    # Works with base SE's.
-    expect_equal(ref, clusterSilhouette(as(sce, "SummarizedExperiment"), clusters))
+        m <- match(as.character(cout[i]), names(ave.d))
+        rest <- ave.d[-m]
+        other <- min(rest)
+        collated[i] <- (other - ave.d[m])/max(other, ave.d[m])
+    } 
 
-    # Also deals with reducedDims.
-    reducedDim(sce, "stuff") <- matrix(rnorm(10*ncol(sce)), ncol=10)
-    expect_equal(
-        out <- clusterSilhouette(sce, clusters, use.dimred="stuff"),
-        clusterSilhouette(reducedDim(sce, "stuff"), clusters, transposed=TRUE)
-    )
-    expect_equal(nrow(out), ncol(sce))
-
-    # Works with the supplied clusters.
-    colLabels(sce) <- clusters
-    expect_equal(ref, clusterSilhouette(sce))
+    X <- approxSilhouette(y, cout)
+    expect_equal(X$width, collated)
+    expect_true(all(X$other!=cout))
 })
