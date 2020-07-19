@@ -57,6 +57,7 @@ TwoStepParam <- function(first=KmeansParam(centers=sqrt), second=NNGraphParam())
 }
 
 #' @export
+#' @importFrom utils capture.output
 setMethod("show", "TwoStepParam", function(object) {
     callNextMethod()
     cat("first:\n")

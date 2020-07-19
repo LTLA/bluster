@@ -73,7 +73,7 @@ test_that("makeSNNGraph fails on silly inputs", {
     dummy <- matrix(rnorm(ndim*20), nrow=20)
     expect_warning(out <- makeSNNGraph(dummy, k=50), "capped")
     expect_warning(out2 <- makeSNNGraph(dummy, k=nrow(dummy)-1L), NA)
-    are_graphs_same(out, out2)
+    expect_identical(out[], out2[])
 
     expect_error(makeSNNGraph(dummy[,0]), NA) # shouldn't fail, but shouldn't generate anything particularly useful.
 

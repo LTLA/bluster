@@ -8,7 +8,7 @@
 #' The first argument of this function should be the output of \code{\link{hclust}},
 #' and the return value should be an atomic vector specifying the cluster assignment for each observation.
 #' Defaults to \code{\link{cutree}} if \code{dynamic=FALSE} and \code{\link[dynamicTreeCut]{cutreeDynamic}} otherwise.
-#' @param dynamic Logical scalar indicating whether a dynamic tree cut should be performed using the \pkg{dynamicTreeCut} package.
+#' @param cut.dynamic Logical scalar indicating whether a dynamic tree cut should be performed using the \pkg{dynamicTreeCut} package.
 #' @param cut.height Numeric scalar specifying the cut height to use for the tree cut when \code{cut.fun=NULL}.
 #' If \code{NULL}, defaults to half the tree height.
 #' Ignored if \code{cut.number} is set.

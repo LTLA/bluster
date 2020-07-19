@@ -87,6 +87,7 @@ setMethod("show", "NNGraphParam", function(object) {
 
 #' @export
 #' @rdname NNGraphParam-class
+#' @importFrom utils getFromNamespace
 #' @importFrom igraph membership cluster_walktrap
 setMethod("clusterRows", c("ANY", "NNGraphParam"), function(x, BLUSPARAM, full=FALSE) {
     if (BLUSPARAM@shared) {

@@ -89,7 +89,7 @@ plotUMAP(sce, colour_by=I(kmeans.out))
 
 # Graph-based clustering
 
-We can build shared or direct nearest neighbor graphs and perform community detection with `r Biocpkg("igraph")`.
+We can build shared or direct nearest neighbor graphs and perform community detection with `r CRANpkg("igraph")`.
 Here, the number of neighbors `k` controls the resolution of the clusters.
 
 ```{r}

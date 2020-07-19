@@ -17,7 +17,7 @@
 #' By simply changing \code{BLUSPARAM}, we can tune the clustering procedure in analysis workflows and package functions.
 #'
 #' @seealso
-#' \linkS4class{HclustParam}, \linkS4class{KmeansParam} and \linkS4class{SnnGraphParam} 
+#' \linkS4class{HclustParam}, \linkS4class{KmeansParam} and \linkS4class{NNGraphParam} 
 #' for some examples of values for \code{BLUSPARAM}.
 #' 
 #' @author Aaron Lun
@@ -25,7 +25,9 @@
 #' @examples
 #' m <- matrix(runif(10000), ncol=10)
 #'
-#' clusterRows(m)
+#' clusterRows(m, KmeansParam(10L))
+#' clusterRows(m, HclustParam())
+#' clusterRows(m, NNGraphParam())
 #' @export
 setGeneric("clusterRows", function(x, BLUSPARAM, full=FALSE) standardGeneric("clusterRows"))
 

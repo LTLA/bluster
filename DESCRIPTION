@@ -23,7 +23,13 @@ Suggests:
     rmarkdown,
     testthat,
     BiocStyle,
-    dynamicTreeCut
+    dynamicTreeCut,
+    scRNAseq,
+    scuttle,
+    scater,
+    scran,
+    pheatmap,
+    viridis
 biocViews: 
     ImmunoOncology, 
     Software, 

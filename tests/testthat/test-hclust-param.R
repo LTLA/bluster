@@ -22,7 +22,7 @@ test_that("HclustParam constructor and utilities work correctly", {
 
 test_that("HclustParam validity works correctly", {
     expect_error(HclustParam(NA_character_), "non-missing")
-    expect_error(HclustParam(cut.dynamic=NA_character_), "non-missing")
+    expect_error(HclustParam(cut.dynamic=NA), "non-missing")
     expect_error(HclustParam(cut.height=-1), "positive")
     expect_error(HclustParam(cut.number=-1), "positive")
 })
