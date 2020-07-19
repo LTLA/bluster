@@ -28,3 +28,5 @@
 #' clusterRows(m)
 #' @export
 setGeneric("clusterRows", function(x, BLUSPARAM, full=FALSE) standardGeneric("clusterRows"))
+
+setGeneric(".extras", function(x) standardGeneric(".extras"))

@@ -6,10 +6,10 @@
 #' @param ... Further arguments to pass to \code{\link{makeSNNGraph}} (if \code{shared=TRUE}) or \code{\link{makeKNNGraph}}.
 #' @param cluster.fun Function specifying the method to use to detect communities in the NN graph.
 #' The first argument of this function should be the NN graph and the return value should be a \link{communities} object.
-#' Defaults to \code{\link{cluster_walktrap}}.
 #'
 #' Alternatively, this may be a string containing the suffix of any \pkg{igraph} community detection algorithm.
 #' For example, \code{cluster.fun="louvain"} will instruct \code{\link{clusterRows}} to use \code{\link{cluster_louvain}}.
+#' Defaults to \code{\link{cluster_walktrap}}.
 #' @param cluster.args Further arguments to pass to the chosen \code{cluster.fun}.
 #' @inheritParams clusterRows
 #' @param BLUSPARAM A \linkS4class{NNGraphParam} object.
@@ -34,18 +34,51 @@
 #'
 #' \code{cutreeDynamic} from the \pkg{dynamicTreeCut} package, for an alternative tree cutting method to use in \code{cut.fun}.
 #' @name NNGraphParam-class
+#' @docType class
+#' @aliases
+#' show,NNGraphParam-method
 NULL
 
 #' @export
 #' @rdname NNGraphParam-class
 setClass("NNGraphParam", contains="BlusterParam", 
-    slots=c(shared="logical", graph.args="list", cluster.params="list"))
+    slots=c(shared="logical", graph.args="list", cluster.fun="character_OR_function", cluster.args="list"))
 
 #' @export
 #' @rdname NNGraphParam-class
-NNGraphParam <- function(shared=TRUE, ..., cluster.fun=NULL, cluster.args=list()) {
-    new("NNGraphParam", shared=shared, graph.args=list(...), cluster.params=list(fun=cluster.fun, args=cluster.args))
+NNGraphParam <- function(shared=TRUE, ..., cluster.fun="walktrap", cluster.args=list()) {
+    new("NNGraphParam", shared=shared, graph.args=list(...), 
+        cluster.fun=cluster.fun, cluster.args=cluster.args)
 }
+
+setMethod(".extras", "NNGraphParam", function(x) "graph.args")
+
+#' @importFrom S4Vectors setValidity2
+setValidity2("NNGraphParam", function(object) {
+    msg <- character(0)
+
+    if (!.non_na_scalar(object@shared)) {
+        msg <- c(msg, "'shared' must be a non-missing logical scalar")
+    }
+
+    cluster.fun <- object@cluster.fun
+    if (!is.function(cluster.fun) && !.non_na_scalar(cluster.fun)) {
+        msg <- c(msg, "'cluster.fun' must be a non-missing string")
+    }
+
+    if (length(msg)) return(msg)
+    TRUE
+})
+
+#' @export
+#' @importFrom S4Vectors coolcat
+setMethod("show", "NNGraphParam", function(object) {
+    callNextMethod()
+    cat(sprintf("shared: %s\n", object@shared))
+    coolcat("graph.args(%i): %s", names(object@graph.args))
+    cat(sprintf("cluster.fun: %s\n", if (is.function(object@cluster.fun)) "custom" else object@cluster.fun))
+    coolcat("cluster.args(%i): %s", names(object@cluster.args))
+})
 
 #' @export
 #' @rdname NNGraphParam-class
@@ -58,17 +91,12 @@ setMethod("clusterRows", c("ANY", "NNGraphParam"), function(x, BLUSPARAM, full=F
     }
     g <- do.call(FUN, c(list(x), BLUSPARAM@graph.args))
 
-    cluster.params <- BLUSPARAM@cluster.params
-    cFUN <- cluster.params$fun
-    if (is.null(cFUN)) {
-        cFUN <- cluster_walktrap
-    } else if (is.character(cFUN)) {
+    cFUN <- BLUSPARAM@cluster.fun
+    if (is.character(cFUN)) {
         cFUN <- getFromNamespace(paste0("cluster_", cFUN), ns="igraph")
-    } else if (!is.function(cFUN)) {
-        stop("'cluster.fun' should be 'NULL', a string or a function")
     }
-    comm <- do.call(cFUN, c(list(g), cluster.params$args))
 
+    comm <- do.call(cFUN, c(list(g), BLUSPARAM@cluster.args))
     clusters <- factor(membership(comm))
 
     if (full) {
