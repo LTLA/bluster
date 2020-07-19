@@ -76,7 +76,7 @@
 #' \code{\link{clusterRand}}, for the calculation of the ARI.
 #' 
 #' @export
-#' @importFrom DelayedMatrixStats rowMedians
+#' @importFrom matrixStats rowMedians
 bootstrapStability <- function(x, FUN=clusterRows, clusters=NULL, iterations=20, 
     average=c("median", "mean"), ..., compare=NULL, mode="ratio", adjusted=TRUE)
 {

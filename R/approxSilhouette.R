@@ -64,7 +64,7 @@
 #'
 #' @export
 #' @importFrom S4Vectors DataFrame
-#' @importFrom DelayedMatrixStats colVars
+#' @importFrom matrixStats colVars
 approxSilhouette <- function(x, clusters) {
     x <- as.matrix(x)
     uclust <- sort(unique(clusters))

@@ -8,19 +8,17 @@ Description:
     Several utilities are also provided to compare and evaluate clustering results.
 Authors@R: 
     person("Aaron", "Lun", role = c("aut", "cre"), email = "infinite.monkeys.with.keyboards@gmail.com") 
-Depends:
-    SingleCellExperiment
 Imports: 
-    SummarizedExperiment,
-    S4Vectors, 
-    BiocGenerics, 
-    Rcpp, 
     stats, 
     methods, 
     utils, 
-    BiocNeighbors,
+    Matrix,
+    matrixStats,
+    Rcpp, 
+    igraph,
+    S4Vectors, 
     BiocParallel,
-    igraph
+    BiocNeighbors
 Suggests: 
     knitr,
     rmarkdown,

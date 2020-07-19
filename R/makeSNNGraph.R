@@ -116,7 +116,7 @@ makeKNNGraph <- function(x, k=10, directed=FALSE, BNPARAM=KmknnParam(), BPPARAM=
 
 #' @export
 #' @rdname makeSNNGraph
-#' @importFrom igraph make_graph simplify "E<-"
+#' @importFrom igraph make_graph simplify E "E<-"
 neighborsToSNNGraph <- function(indices, type=c("rank", "number", "jaccard")) {
     type <- match.arg(type)
     if (type=="rank") {
