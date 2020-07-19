@@ -2,7 +2,9 @@
 #'
 #' Run the base \code{\link{kmeans}} function with the specified number of centers within \code{\link{clusterRows}}.
 #'
-#' @param centers Integer scalar specifying the number of centers.
+#' @param centers For \code{KmeansParam}, an integer scalar specifying the number of centers.
+#'
+#' For \code{AutoKmeansParam}, a function that takes the number of observations and returns the number of centers.
 #' @param ... Further arguments to pass to \code{\link{kmeans}}.
 #' @inheritParams clusterRows
 #' @param BLUSPARAM A \linkS4class{KmeansParam} object.
@@ -10,8 +12,15 @@
 #'
 #' @author Aaron Lun
 #'
+#' @details
+#' The standard \linkS4class{KmeansParam} class requires the user to specify the number of clusters beforehand.
+#' The \linkS4class{AutoKmeansParam} class allows the number of clusters to vary as a function of the number of observations.
+#' The latter is occasionally useful, e.g., to allow the clustering to automatically become more granular for large datasets.
+#'
 #' @return 
 #' The \code{KmeansParam} constructor will return a \linkS4class{KmeansParam} object with the specified parameters.
+#'
+#' The \code{AutoKmeansParam} constructor will return a \linkS4class{AutoKmeansParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 #' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
@@ -21,6 +30,7 @@
 #' clusterRows(iris[,1:4], KmeansParam(centers=4))
 #' clusterRows(iris[,1:4], KmeansParam(centers=4, algorithm="Lloyd"))
 #'
+#' clusterRows(iris[,1:4], AutoKmeansParam(centers=sqrt))
 #' @seealso
 #' \code{\link{kmeans}}, which actually does all the heavy lifting.
 #' @name KmeansParam-class
@@ -32,8 +42,18 @@ setClass("KmeansParam", contains="BlusterParam", slots=c(centers="integer", extr
 
 #' @export
 #' @rdname KmeansParam-class
+setClass("AutoKmeansParam", contains="BlusterParam", slots=c(centers="function", extra.args="list"))
+
+#' @export
+#' @rdname KmeansParam-class
 KmeansParam <- function(centers, ...) {
     new("KmeansParam", centers=as.integer(centers), extra.args=list(...))
+}
+
+#' @export
+#' @rdname KmeansParam-class
+AutoKmeansParam <- function(centers, ...) {
+    new("AutoKmeansParam", centers=centers, extra.args=list(...))
 }
 
 #' @export
@@ -49,4 +69,12 @@ setMethod("clusterRows", c("ANY", "KmeansParam"), function(x, BLUSPARAM, full=FA
     } else {
         clusters
     }
+})
+
+#' @export
+#' @rdname KmeansParam-class
+setMethod("clusterRows", c("ANY", "AutoKmeansParam"), function(x, BLUSPARAM, full=FALSE) {
+    k <- BLUSPARAM@centers(nrow(x))
+    BLUSPARAM <- new("KmeansParam", centers=as.integer(round(k)), extra.args=BLUSPARAM@extra.args)
+    clusterRows(x, BLUSPARAM, full=full)
 })
