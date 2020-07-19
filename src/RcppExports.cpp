@@ -25,10 +25,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sum_neighbor_weights
+Rcpp::List sum_neighbor_weights(int nclusters, Rcpp::List neighbors, Rcpp::IntegerVector clusters, Rcpp::NumericVector weights);
+RcppExport SEXP _bluster_sum_neighbor_weights(SEXP nclustersSEXP, SEXP neighborsSEXP, SEXP clustersSEXP, SEXP weightsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< int >::type nclusters(nclustersSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type neighbors(neighborsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type clusters(clustersSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type weights(weightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(sum_neighbor_weights(nclusters, neighbors, clusters, weights));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_bluster_build_snn_rank", (DL_FUNC) &_bluster_build_snn_rank, 1},
     {"_bluster_build_snn_number", (DL_FUNC) &_bluster_build_snn_number, 1},
+    {"_bluster_sum_neighbor_weights", (DL_FUNC) &_bluster_sum_neighbor_weights, 4},
     {NULL, NULL, 0}
 };
 

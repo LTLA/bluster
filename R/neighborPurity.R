@@ -71,9 +71,7 @@
 #' @importFrom BiocNeighbors KmknnParam buildIndex findKNN findNeighbors
 #' @importFrom BiocParallel SerialParam bpstart bpstop bpisup
 #' @importFrom stats median
-#' @importFrom S4Vectors List DataFrame
-#' @importClassesFrom IRanges IntegerList LogicalList
-#' @importMethodsFrom BiocGenerics relist
+#' @importFrom S4Vectors DataFrame
 neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(), BPPARAM=SerialParam()) {
     x <- as.matrix(x)
     idx <- buildIndex(x, BNPARAM=BNPARAM)
@@ -86,36 +84,24 @@ neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(
     dist <- median(findKNN(BNINDEX=idx, k=k, BNPARAM=BNPARAM, BPPARAM=BPPARAM, last=1, get.index=FALSE)$distance)
     nout <- findNeighbors(BNINDEX=idx, threshold=dist, BNPARAM=BNPARAM, get.distance=FALSE)$index
 
-    nout <- List(nout)
-    clust.ids <- clusters[unlist(nout)]
-
     # Constructing weights.
     if (isFALSE(weighted)) {
-        w <- rep(1, length(clust.ids))
+        w <- rep(1, nrow(x))
     } else if (isTRUE(weighted)) {
         w <- 1/table(clusters)
-        w <- as.numeric(w[as.character(clust.ids)])
+        w <- as.numeric(w[as.character(clusters)])
     } else {
-        w <- as.numeric(weighted)[unlist(nout)]
+        w <- as.numeric(weighted)
     }
 
-    weights <- relist(w, nout)
-    total <- sum(weights)
-
-    # Computing the proportions for each cluster.
-    uclust <- sort(unique(clusters))
-    targets <- matrix(0, length(nout), length(uclust))
-
-    for (i in seq_along(uclust)) {
-        current <- clust.ids==uclust[i]
-        targets[,i] <- sum(weights[relist(current, nout)])
-    }
-
-    same.col <- match(clusters, uclust)
+    clusters <- as.factor(clusters)
+    aggregated <- sum_neighbor_weights(nlevels(clusters), nout, as.integer(clusters) - 1L, w)
+    targets <- t(aggregated[[1]])
+    totals <- aggregated[[2]]
 
     DataFrame( 
-        purity=targets[cbind(seq_along(same.col), same.col)]/total,
-        maximum=uclust[max.col(targets, ties.method="first")],
-        row.names=rownames(x) # remember, we transposed this earlier.
+        purity=targets[cbind(seq_along(clusters), as.integer(clusters))]/totals,
+        maximum=levels(clusters)[max.col(targets, ties.method="first")],
+        row.names=rownames(x) 
     )
 }
