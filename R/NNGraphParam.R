@@ -17,6 +17,10 @@
 #'
 #' @author Aaron Lun
 #'
+#' @details
+#' To modify an existing NNGraphParam object \code{x},
+#' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
+#' 
 #' @return 
 #' The \code{NNGraphParam} constructor will return a \linkS4class{NNGraphParam} object with the specified parameters.
 #'
@@ -30,9 +34,10 @@
 #' clusterRows(iris[,1:4], NNGraphParam(cluster.fun="louvain"))
 #'
 #' @seealso
-#' \code{\link{dist}}, \code{\link{hclust}} and \code{\link{cutree}}, which actually do all the heavy lifting.
+#' \code{\link{makeSNNGraph}} and related functions, to build the graph.
 #'
-#' \code{cutreeDynamic} from the \pkg{dynamicTreeCut} package, for an alternative tree cutting method to use in \code{cut.fun}.
+#' \code{\link{cluster_walktrap}} and related functions, to perform community detection.
+#'
 #' @name NNGraphParam-class
 #' @docType class
 #' @aliases

@@ -12,9 +12,12 @@
 #' @author Aaron Lun
 #'
 #' @details
-#' The standard \linkS4class{KmeansParam} class requires the user to specify the number of clusters beforehand.
+#' This class usually requires the user to specify the number of clusters beforehand.
 #' However, we can also allow the number of clusters to vary as a function of the number of observations.
 #' The latter is occasionally useful, e.g., to allow the clustering to automatically become more granular for large datasets.
+#'
+#' To modify an existing KmeansParam object \code{x},
+#' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 #'
 #' @return 
 #' The \code{KmeansParam} constructor will return a \linkS4class{KmeansParam} object with the specified parameters.

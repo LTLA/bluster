@@ -27,8 +27,7 @@
 #' The \code{HclustParam} constructor will return a \linkS4class{HclustParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-#' the latter is a list with the \code{hclust} entry containing the output of \code{\link{hclust}}.
+#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} (the \code{\link{hclust}} output).
 #'
 #' @examples
 #' clusterRows(iris[,1:4], HclustParam())
@@ -144,7 +143,7 @@ setMethod("clusterRows", c("ANY", "HclustParam"), function(x, BLUSPARAM, full=FA
     clusters <- factor(clusters)
 
     if (full) {
-        list(clusters=clusters, objects=list(hclust=hcl))
+        list(clusters=clusters, objects=hcl)
     } else {
         clusters
     }

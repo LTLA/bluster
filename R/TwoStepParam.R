@@ -15,11 +15,14 @@
 #' followed by a slower algorithm that aggregates the centroids for easier interpretation.
 #' The exact choice of the number of clusters is less relevant to the first clustering step
 #' as long as not too many centroids are generated but the clusters are still sufficiently granular.
-#' The second step can take more care (and computational time) summarizing the centroids into meaningful meta-clusters.
+#' The second step can take more care (and computational time) summarizing the centroids into meaningful \dQuote{meta-clusters}.
 #' 
 #' The default choice is to use k-means for the first step, with number of clusters set to the root of the number of observations;
 #' and graph-based clustering for the second step, which automatically detects a suitable number of clusters.
 #' K-means also eliminates density differences in the data that can introduce variable resolution from graph-based methods.
+#'
+#' To modify an existing TwoStepParam object \code{x},
+#' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 #'
 #' @return 
 #' The \code{TwoStepParam} constructor will return a \linkS4class{TwoStepParam} object with the specified parameters.
@@ -39,6 +42,8 @@
 #' table(stuff)
 #'
 #' @name TwoStepParam-class
+#' @aliases
+#' show,TwoStepParam-method
 NULL
 
 #' @export
@@ -47,9 +52,20 @@ setClass("TwoStepParam", contains="BlusterParam", slots=c(first="BlusterParam", 
 
 #' @export
 #' @rdname TwoStepParam-class
-TwoStepParam <- function(first=AutoKmeansParam(centers=sqrt), second=NNGraphParam()) {
+TwoStepParam <- function(first=KmeansParam(centers=sqrt), second=NNGraphParam()) {
     new("TwoStepParam", first=first, second=second)
 }
+
+#' @export
+setMethod("show", "TwoStepParam", function(object) {
+    callNextMethod()
+    cat("first:\n")
+    fout <- capture.output(show(object@first))
+    cat(paste0("  ", paste(fout, collapse="\n  "), "\n"))
+    cat("second:\n")
+    sout <- capture.output(show(object@second))
+    cat(paste0("  ", paste(sout, collapse="\n  "), "\n"))
+})
 
 #' @export
 #' @rdname TwoStepParam-class
