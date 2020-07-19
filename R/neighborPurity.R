@@ -94,14 +94,15 @@ neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(
         w <- as.numeric(weighted)
     }
 
-    clusters <- as.factor(clusters)
-    aggregated <- sum_neighbor_weights(nlevels(clusters), nout, as.integer(clusters) - 1L, w)
+    uclust <- sort(unique(clusters)) # do NOT use as.factor(), we want to preserve type.
+    m <- match(clusters, uclust)
+    aggregated <- sum_neighbor_weights(length(uclust), nout, m - 1L, w)
     targets <- t(aggregated[[1]])
     totals <- aggregated[[2]]
 
     DataFrame( 
-        purity=targets[cbind(seq_along(clusters), as.integer(clusters))]/totals,
-        maximum=levels(clusters)[max.col(targets, ties.method="first")],
+        purity=targets[cbind(seq_along(m), m)]/totals,
+        maximum=uclust[max.col(targets, ties.method="first")],
         row.names=rownames(x) 
     )
 }
