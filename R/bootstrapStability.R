@@ -76,7 +76,7 @@
 #' \code{\link{pairwiseRand}}, for the calculation of the ARI.
 #' 
 #' @export
-#' @importFrom matrixStats rowMedians
+#' @importFrom stats median
 bootstrapStability <- function(x, FUN=clusterRows, clusters=NULL, iterations=20, 
     average=c("median", "mean"), ..., compare=NULL, mode="ratio", adjusted=TRUE)
 {
@@ -112,7 +112,7 @@ bootstrapStability <- function(x, FUN=clusterRows, clusters=NULL, iterations=20,
     if (average=="mean") {
         averaged <- rowMeans(as.mat, na.rm=TRUE)
     } else {
-        averaged <- rowMedians(as.mat, na.rm=TRUE)
+        averaged <- apply(as.mat, 1, median, na.rm=TRUE)
     }
 
     dim(averaged) <- dim(collated[[1]])

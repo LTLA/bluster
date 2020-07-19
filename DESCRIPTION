@@ -13,7 +13,6 @@ Imports:
     methods, 
     utils, 
     Matrix,
-    matrixStats,
     Rcpp, 
     igraph,
     S4Vectors, 
