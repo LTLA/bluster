@@ -13,11 +13,13 @@ bootstrapStability(
   ...,
   compare = NULL,
   mode = "ratio",
-  adjusted = TRUE
+  adjusted = TRUE,
+  transposed = FALSE
 )
 }
 \arguments{
-\item{x}{A numeric matrix-like object containing observations in the rows and variables in the columns.}
+\item{x}{A numeric matrix-like object containing observations in the rows and variables in the columns.
+If \code{transposed=TRUE}, observations are assumed to be in the columns instead.}
 
 \item{FUN}{A function that takes \code{x} as its first argument and returns a vector or factor of cluster identities.}
 
@@ -35,6 +37,8 @@ in which case we can save a single round of computation.}
 and returns a numeric vector or matrix containing some measure of similarity between them - see Details.}
 
 \item{mode, adjusted}{Further arguments to pass to \code{\link{pairwiseRand}} when \code{compare=NULL}.}
+
+\item{transposed}{Logical scalar indicating that resampling should be done on the columns instead.}
 }
 \value{
 If \code{compare=NULL} and \code{mode="ratio"}, a numeric matrix is returned with upper triangular entries set to the ratio of the adjusted observation pair counts (see \code{?\link{pairwiseRand}}) for each pair of clusters in \code{clusters}.

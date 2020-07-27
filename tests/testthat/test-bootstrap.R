@@ -68,18 +68,21 @@ test_that("bootstrapStability works with alternative comparison functions", {
     expect_identical(output, 1)
 })
 
+set.seed(500003)
+test_that("bootstrapStability works with transposition", {
+    dummy <- matrix(rnorm(nobs*20), nrow=nobs, ncol=20)
+
+    set.seed(20)
+    ref <- bootstrapStability(dummy, FUN=function(x) { kmeans(x, 3)$cluster })
+
+    set.seed(20)
+    output <- bootstrapStability(t(dummy), FUN=function(x) { kmeans(t(x), 3)$cluster }, transposed=TRUE)
+
+    expect_identical(ref, output)
+})
+
 set.seed(500004)
 test_that("other miscellaneous tests for bootstrapStability", {
     dummy <- matrix(rnorm(nobs*20), nrow=nobs, ncol=20)
-
-    # Responds correctly to the seed.
-    set.seed(20)
-    ref <- bootstrapStability(dummy, FUN=function(x) { kmeans(x, 3)$cluster })
-    set.seed(20)
-    output <- bootstrapStability(dummy, FUN=function(x) { kmeans(x, 3)$cluster })
-
-    expect_identical(ref, output)
-
-    # Errors out.
     expect_error(bootstrapStability(dummy, FUN=function(x) { seq_len(ncol(x)) }, iterations=0), "positive")
 })

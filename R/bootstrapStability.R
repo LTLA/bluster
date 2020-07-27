@@ -3,6 +3,7 @@
 #' Generate bootstrap replicates and recluster on them to determine the stability of clusters with respect to sampling noise.
 #'
 #' @param x A numeric matrix-like object containing observations in the rows and variables in the columns.
+#' If \code{transposed=TRUE}, observations are assumed to be in the columns instead.
 #' @param FUN A function that takes \code{x} as its first argument and returns a vector or factor of cluster identities.
 #' @param clusters A vector or factor of cluster identities equivalent to that obtained by calling \code{FUN(x, ...)}.
 #' This is provided as an additional argument in the case that the clusters have already been computed,
@@ -12,6 +13,7 @@
 #' @param ... Further arguments to pass to \code{FUN} to control the clustering procedure.
 #' @param compare A function that accepts the original clustering and the bootstrapped clustering,
 #' and returns a numeric vector or matrix containing some measure of similarity between them - see Details.
+#' @param transposed Logical scalar indicating that resampling should be done on the columns instead.
 #' @param mode,adjusted Further arguments to pass to \code{\link{pairwiseRand}} when \code{compare=NULL}.
 #'
 #' @return 
@@ -78,7 +80,7 @@
 #' @export
 #' @importFrom stats median
 bootstrapStability <- function(x, FUN=clusterRows, clusters=NULL, iterations=20, 
-    average=c("median", "mean"), ..., compare=NULL, mode="ratio", adjusted=TRUE)
+    average=c("median", "mean"), ..., compare=NULL, mode="ratio", adjusted=TRUE, transposed=FALSE)
 {
     if (is.null(clusters)) {
         clusters <- FUN(x, ...)
@@ -95,8 +97,13 @@ bootstrapStability <- function(x, FUN=clusterRows, clusters=NULL, iterations=20,
     }
 
     for (i in seq_len(iterations)) {
-        chosen <- sample(nrow(x), nrow(x), replace=TRUE)
-        resampled <- x[chosen,,drop=FALSE]
+        if (!transposed) {
+            chosen <- sample(nrow(x), nrow(x), replace=TRUE)
+            resampled <- x[chosen,,drop=FALSE]
+        } else {
+            chosen <- sample(ncol(x), ncol(x), replace=TRUE)
+            resampled <- x[,chosen,drop=FALSE]
+        }
         reclusters <- FUN(resampled, ...)
         collated[[i]] <- compare(clusters[chosen], reclusters)
     }
