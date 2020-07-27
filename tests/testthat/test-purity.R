@@ -1,5 +1,5 @@
 # Tests the neighborPurity() function.
-# library(testthat); library(bluster); source('test-purity.R')
+library(testthat); library(bluster); #source('test-purity.R')
 
 set.seed(70000)
 test_that('neighborPurity yields correct output for pure clusters', {
@@ -77,7 +77,7 @@ test_that("neighborPurity handles other weighting options", {
     expect_true(all(out2[-(1:20)]==1))
 
     # We can replace it with our own weighting to restore the balance.
-    out3 <- neighborPurity(y[sub,], clusters[sub], weighted=rep(c(2, 1, 1), c(5, ncol(y2), ncol(y0))))$purity
+    out3 <- neighborPurity(y[sub,], clusters[sub], weighted=rep(c(2, 1), c(5, nrow(y2)+nrow(y0))))$purity
     ref <- neighborPurity(y[sub,], clusters[sub])$purity
     expect_equal(out3, ref)
 })

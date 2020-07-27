@@ -81,7 +81,8 @@ neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(
         on.exit(bpstop(BPPARAM))
     }
 
-    dist <- median(findKNN(BNINDEX=idx, k=k, BNPARAM=BNPARAM, BPPARAM=BPPARAM, last=1, get.index=FALSE)$distance)
+    dist <- median(findKNN(BNINDEX=idx, k=k, BNPARAM=BNPARAM, BPPARAM=BPPARAM, 
+        last=1, warn.ties=FALSE, get.index=FALSE)$distance)
     nout <- findNeighbors(BNINDEX=idx, threshold=dist, BNPARAM=BNPARAM, get.distance=FALSE)$index
 
     # Constructing weights.
@@ -92,11 +93,16 @@ neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(
         w <- as.numeric(w[as.character(clusters)])
     } else {
         w <- as.numeric(weighted)
+        if (length(w)!=length(clusters)) {
+            stop("numeric 'weighted' must be of same length as 'clusters'")           
+        }
     }
 
     uclust <- sort(unique(clusters)) # do NOT use as.factor(), we want to preserve type.
     m <- match(clusters, uclust)
+    stopifnot(all(!is.na(m)))
     aggregated <- sum_neighbor_weights(length(uclust), nout, m - 1L, w)
+
     targets <- t(aggregated[[1]])
     totals <- aggregated[[2]]
 
