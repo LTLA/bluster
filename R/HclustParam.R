@@ -7,13 +7,13 @@
 #' @param cut.fun Function specifying the method to use to cut the dendrogram.
 #' The first argument of this function should be the output of \code{\link{hclust}},
 #' and the return value should be an atomic vector specifying the cluster assignment for each observation.
-#' Defaults to \code{\link{cutree}} if \code{dynamic=FALSE} and \code{\link[dynamicTreeCut]{cutreeDynamic}} otherwise.
+#' Defaults to \code{\link{cutree}} if \code{cut.dynamic=FALSE} and \code{\link[dynamicTreeCut]{cutreeDynamic}} otherwise.
 #' @param cut.dynamic Logical scalar indicating whether a dynamic tree cut should be performed using the \pkg{dynamicTreeCut} package.
 #' @param cut.height Numeric scalar specifying the cut height to use for the tree cut when \code{cut.fun=NULL}.
 #' If \code{NULL}, defaults to half the tree height.
 #' Ignored if \code{cut.number} is set.
 #' @param cut.number Integer scalar specifying the number of clusters to generate from the tree cut when \code{cut.fun=NULL}.
-#' @param ... Further arguments to pass to \code{cut.fun}, when \code{dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.
+#' @param ... Further arguments to pass to \code{cut.fun}, when \code{cut.dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.
 #' @inheritParams clusterRows
 #' @param BLUSPARAM A \linkS4class{HclustParam} object.
 #' @param full Logical scalar indicating whether the hierarchical clustering statistics should be returned.

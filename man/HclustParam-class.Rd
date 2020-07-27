@@ -28,7 +28,7 @@ HclustParam(
 \item{cut.fun}{Function specifying the method to use to cut the dendrogram.
 The first argument of this function should be the output of \code{\link{hclust}},
 and the return value should be an atomic vector specifying the cluster assignment for each observation.
-Defaults to \code{\link{cutree}} if \code{dynamic=FALSE} and \code{\link[dynamicTreeCut]{cutreeDynamic}} otherwise.}
+Defaults to \code{\link{cutree}} if \code{cut.dynamic=FALSE} and \code{\link[dynamicTreeCut]{cutreeDynamic}} otherwise.}
 
 \item{cut.dynamic}{Logical scalar indicating whether a dynamic tree cut should be performed using the \pkg{dynamicTreeCut} package.}
 
@@ -38,7 +38,7 @@ Ignored if \code{cut.number} is set.}
 
 \item{cut.number}{Integer scalar specifying the number of clusters to generate from the tree cut when \code{cut.fun=NULL}.}
 
-\item{...}{Further arguments to pass to \code{cut.fun}, when \code{dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.}
+\item{...}{Further arguments to pass to \code{cut.fun}, when \code{cut.dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
 

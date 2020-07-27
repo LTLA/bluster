@@ -34,7 +34,7 @@ A \linkS4class{DataFrame} with one row per observation in \code{x} and the colum
 \item \code{purity}, a numeric field containing the purity value for the current observation.
 \item \code{maximum}, the cluster with the highest proportion of observations neighboring the current observation.
 }
-Row names are defined as the column names of \code{x}.
+Row names are defined as the row names of \code{x}.
 }
 \description{
 Use a hypersphere-based approach to compute the \dQuote{purity} of each cluster based on the number of contaminating observations from different clusters in its neighborhood.

@@ -37,7 +37,7 @@
 #' \item \code{width}, a numeric field containing the approximate silhouette width of the current cell.
 #' \item \code{other}, the closest cluster other than the one to which the current cell is assigned.
 #' }
-#' Row names are defined as the column names of \code{x}.
+#' Row names are defined as the row names of \code{x}.
 #' 
 #' @author Aaron Lun
 #' 

@@ -27,11 +27,13 @@ TwoStepParam(first = KmeansParam(centers = sqrt), second = NNGraphParam())
 The \code{TwoStepParam} constructor will return a \linkS4class{TwoStepParam} object with the specified parameters.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}, a list containing:
+If \code{full=TRUE}, a list is returned with a \code{clusters} factor and an \code{objects} list containing:
 \itemize{
-\item \code{first}, the \code{objects} from calling \code{\link{clusterRows}} with \code{first}.
-\item \code{centroids}, a matrix of centroids generated from the first clustering step.
-\item \code{second}, the \code{objects} from calling \code{\link{clusterRows}} with \code{second}.
+\item \code{first}, a list of objects from the first clustering step.
+This is equal to the \code{objects} list in the output of \code{\link{clusterRows}} with the \code{first} BlusterParam.
+\item \code{centroids}, a numeric matrix of centroids generated from the first clustering step.
+\item \code{second}, a list of objects from the second clustering step on the centroids.
+This is equal to the \code{objects} list in the output of \code{\link{clusterRows}} with the \code{second} BlusterParam.
 }
 }
 \description{
