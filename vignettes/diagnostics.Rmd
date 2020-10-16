@@ -115,6 +115,15 @@ plot(cluster.gr, edge.width=igraph::E(cluster.gr)$weight*5,
     layout=igraph::layout_with_lgl)
 ```
 
+We can also tune the resolution of the clustering _post hoc_ with the `mergeCommunities()` function.
+This will iteratively merge the most closely related pair of clusters together until the desired number of clusters is reached.
+For example, if we wanted to whittle down the number of clusters to 10, we could do:
+
+```{r}
+merged <- mergeCommunities(g, clusters, number=10)
+table(merged)
+```
+
 # Comparing two clusterings
 
 To compare two clusterings, the `pairwiseRand()` function computes the adjusted Rand index (ARI).
