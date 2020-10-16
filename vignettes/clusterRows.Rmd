@@ -37,6 +37,7 @@ dec <- modelGeneVar(sce)
 hvgs <- getTopHVGs(dec, n=1000)
 
 # Dimensionality reduction for work (PCA) and pleasure (t-SNE).
+set.seed(1000)
 library(scater)
 sce <- runPCA(sce, ncomponents=20, subset_row=hvgs)
 sce <- runUMAP(sce, dimred="PCA")
@@ -157,7 +158,7 @@ However, the true power of this framework lies in its extensibility.
 Anyone can write a `clusterRows()` method for a new clustering algorithm with an associated `BlusterParam` subclass,
 and that procedure is immediately compatible with any workflow or function that was already using `clusterRows()`.
 
-# Session information
+# Session information {-}
 
 ```{r}
 sessionInfo()

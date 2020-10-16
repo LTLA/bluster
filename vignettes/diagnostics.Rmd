@@ -42,6 +42,7 @@ dec <- modelGeneVar(sce)
 hvgs <- getTopHVGs(dec, n=1000)
 
 # Dimensionality reduction.
+set.seed(1000)
 library(scater)
 sce <- runPCA(sce, ncomponents=20, subset_row=hvgs)
 
@@ -176,8 +177,7 @@ pheatmap(ratio, cluster_cols=FALSE, cluster_rows=FALSE,
     col=viridis::viridis(100), breaks=seq(-1, 1, length=101))
 ```
 
-
-# Session information
+# Session information {-}
 
 ```{r}
 sessionInfo()
