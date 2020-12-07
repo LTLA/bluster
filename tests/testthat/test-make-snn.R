@@ -21,11 +21,11 @@ check <- function(vals, k=10, type="rank") {
             }
             if (type=="rank") {
                 s <- k + 1 - 0.5*(match(shared, inn) + match(shared, jnn))
-                collected[j] <- max(s)
+                collected[j] <- max(c(s, 1e-6))
             } else if (type=="number") {
-                collected[j] <- length(shared)
+                collected[j] <- max(length(shared), 1e-6)
             } else {
-                collected[j] <- length(shared) / length(union(inn, jnn))
+                collected[j] <- max(length(shared), 1e-6) / length(union(inn, jnn))
             }
         }
         collected[i] <- 0

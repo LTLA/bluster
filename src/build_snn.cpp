@@ -1,5 +1,6 @@
 #include "Rcpp.h"
 #include <deque>
+#include <algorithm>
 
 /* The 'rank' version performs the original SNN clustering described by Xu and Su (2015, Bioinformatics).
  * This defines the weight between two nodes as (k - 0.5 * r), where r is the smallest sum of ranks for any node in both NN-sets.
@@ -65,12 +66,14 @@ Rcpp::List build_snn_rank(Rcpp::IntegerMatrix neighbors) {
         }
        
         for (auto othernode : current_added) {
-            size_t& otherscore=current_score[othernode];
-
             // Converting to edges.
             output_pairs.push_back(j + 1);
             output_pairs.push_back(othernode + 1);
-            output_weights.push_back(static_cast<double>(k) - 0.5 * static_cast<double>(otherscore));
+
+            // Ensuring that an edge with a positive weight is always reported.
+            size_t& otherscore=current_score[othernode];
+            double finalscore = static_cast<double>(k) - 0.5 * static_cast<double>(otherscore);
+            output_weights.push_back(std::max(finalscore, 1e-6));
 
             // Resetting all those added to zero.
             otherscore=0;
@@ -140,12 +143,13 @@ Rcpp::List build_snn_number(Rcpp::IntegerMatrix neighbors) {
         }
        
         for (auto othernode : current_added) {
-            size_t& otherscore=current_score[othernode];
-
             // Converting to edges.
             output_pairs.push_back(j + 1);
             output_pairs.push_back(othernode + 1);
-            output_weights.push_back(otherscore);
+
+            // Ensuring that an edge with a positive weight is always reported.
+            size_t& otherscore=current_score[othernode];
+            output_weights.push_back(std::max(static_cast<double>(otherscore), 1e-6));
 
             // Resetting all those added to zero.
             otherscore=0;
