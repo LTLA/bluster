@@ -115,9 +115,9 @@ pairwiseRand <- function(ref, alt, mode=c("ratio", "pairs", "index"), adjusted=T
 
         # The LHS of the ARI's denominator is an average of the maximum number
         # of same-cluster pairs in 'ref' and 'alt'. We distribute this number
-        # to each cluster in 'ref' according to its number of same-cluster cell
-        # pairs. We generalize this for cluster pairs, even though this is not
-        # technically used for the calculation of the ARI. 
+        # to each cluster in 'ref' according to its maximum number of
+        # same-cluster cell pairs. We generalize this for cluster pairs, even
+        # though this is not technically used for the calculation of the ARI. 
         same.ref.n <- sum(choose(refn, 2))
         same.alt.mult <- same.alt.n/same.ref.n
         diff.alt.mult <- (total.n - same.alt.n)/(total.n - same.ref.n)

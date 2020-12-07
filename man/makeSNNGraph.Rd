@@ -52,24 +52,11 @@ For \code{buildKNNGraph}, edges are not weighted but may be directed if \code{di
 Build a shared or k-nearest-neighbors graph of observations for downstream community detection.
 }
 \details{
-The \code{makeSNNGraph} method builds a shared nearest-neighbour graph using observations as nodes.
+The \code{makeSNNGraph} function builds a shared nearest-neighbour graph using observations as nodes.
 For each observation, its \code{k} nearest neighbours are identified using the \code{\link{findKNN}} function,
 based on distances between their expression profiles (Euclidean by default).
 An edge is drawn between all pairs of observations that share at least one neighbour,
-weighted by the characteristics of the shared nearest neighbors:
-\itemize{
-\item If \code{type="rank"}, the weighting scheme defined by Xu and Su (2015) is used.
-The weight between two nodes is \eqn{k - r/2} where \eqn{r} is the smallest sum of ranks for any shared neighboring node.
-For example, if one node was the closest neighbor of each of two nodes, the weight between the two latter nodes would be \eqn{k - 1}.
-For the purposes of this ranking, each node has a rank of zero in its own nearest-neighbor set. 
-More shared neighbors, or shared neighbors that are close to both observations, will generally yield larger weights.
-\item If \code{type="number"}, the weight between two nodes is simply the number of shared nearest neighbors between them.
-The weight can range from zero to \eqn{k + 1}, as the node itself is included in its own nearest-neighbor set.
-This is a simpler scheme that is also slightly faster but does not account for the ranking of neighbors within each set.
-\item If \code{type="jaccard"}, the weight between two nodes is the Jaccard similarity between the two sets of neighbors for those nodes.
-This weight can range from zero to 1, and is a monotonic transformation of the weight used by \code{type="number"}.
-It is provided for consistency with other clustering algorithms such as those in \pkg{seurat}.
-}
+weighted by the characteristics of the shared nearest neighbors - see \dQuote{Weighting Schemes} below.
 
 The aim is to use the SNN graph to perform clustering of observations via community detection algorithms in the \pkg{igraph} package.
 This is faster and more memory efficient than hierarchical clustering for large numbers of observations.
@@ -82,10 +69,6 @@ The value of \code{k} can be roughly interpreted as the anticipated size of the 
 If a subpopulation in the data has fewer than \code{k+1} observations, \code{buildSNNGraph} and \code{buildKNNGraph} will forcibly construct edges between observations in that subpopulation and observations in other subpopulations. 
 This increases the risk that the subpopulation will not form its own cluster as it is more interconnected with the rest of the observations in the dataset.
 
-Note that the setting of \code{k} here is slightly different from that used in SNN-Cliq.
-The original implementation considers each observation to be its first nearest neighbor that contributes to \code{k}.
-In \code{buildSNNGraph}, the \code{k} nearest neighbours refers to the number of \emph{other} observations.
-
 The \code{makeKNNGraph} method builds a simpler k-nearest neighbour graph.
 Observations are again nodes, and edges are drawn between each observation and its k-nearest neighbours.
 No weighting of the edges is performed.
@@ -95,8 +78,33 @@ However, by default, \code{directed=FALSE} such that an undirected graph is retu
 The \code{neighborsToSNNGraph} and \code{neighborsToKNNGraph} functions operate directly on a matrix of nearest neighbor indices,
 obtained using functions like \code{\link{findKNN}}.
 This may be useful for constructing a graph from precomputed nearest-neighbor search results.
-Note that the user is responsible for ensuring that the indices are valid (i.e., \code{range(indices)} is positive and no greater than \code{max(indices)}).
+Note that the user is responsible for ensuring that the indices are valid, i.e., \code{range(indices)} is positive and no greater than \code{max(indices)}.
 }
+\section{Shared neighbor weighting schemes}{
+
+If \code{type="rank"}, the weighting scheme defined by Xu and Su (2015) is used.
+The weight between two nodes is \eqn{k - r/2} where \eqn{r} is the smallest sum of ranks for any shared neighboring node.
+For example, if one node was the closest neighbor of each of two nodes, the weight between the two latter nodes would be \eqn{k - 1}.
+For the purposes of this ranking, each node has a rank of zero in its own nearest-neighbor set. 
+More shared neighbors, or shared neighbors that are close to both observations, will generally yield larger weights.
+
+If \code{type="number"}, the weight between two nodes is simply the number of shared nearest neighbors between them.
+The weight can range from zero to \eqn{k + 1}, as the node itself is included in its own nearest-neighbor set.
+This is a simpler scheme that is also slightly faster but does not account for the ranking of neighbors within each set.
+
+If \code{type="jaccard"}, the weight between two nodes is the Jaccard similarity between the two sets of neighbors for those nodes.
+This weight can range from zero to 1, and is a monotonic transformation of the weight used by \code{type="number"}.
+It is provided for consistency with other clustering algorithms such as those in \pkg{seurat}.
+
+Tehcnically, edges with zero weights are assigned a nominal small positive weight of the order of \code{1e-6}.
+This is done only to satisfy the requirements for positive weights in many \pkg{igraph} clustering algorithms.
+We do not just remove these edges as that might lead to the situation where some observations have no edges at all and thus form single-observation clusters.
+
+Note that the behavior of \code{k} for \code{type="rank"} is slightly different from that used in the original SNN-Cliq implementation by Xu and Su.
+The original implementation considers each observation to be its first nearest neighbor that contributes to \code{k}.
+Here, the \code{k} nearest neighbours refers to the number of \emph{other} observations.
+}
+
 \examples{
 m <- matrix(rnorm(10000), ncol=10)
 
