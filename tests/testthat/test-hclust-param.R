@@ -9,10 +9,10 @@ test_that("HclustParam constructor and utilities work correctly", {
     X[["method"]] <- "average"
     expect_identical(X[["method"]], "average")
 
-    X <- HclustParam(BLAH=2)
-    expect_identical(X[["BLAH"]], 2)
-    X[["BLAH"]] <- "average"
-    expect_identical(X[["BLAH"]], "average")
+    X <- HclustParam(cut.params=list(method="average"))
+    expect_identical(X[["cut.params"]], list(method="average"))
+    X[["cut.params"]] <- list(whee=2)
+    expect_identical(X[["cut.params"]], list(whee=2))
 
     # other show methods
     expect_output(show(HclustParam(cut.number=2)), "cut.number")

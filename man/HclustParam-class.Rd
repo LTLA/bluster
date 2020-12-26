@@ -15,6 +15,7 @@ HclustParam(
   cut.dynamic = FALSE,
   cut.height = NULL,
   cut.number = NULL,
+  cut.params = list(),
   ...
 )
 
@@ -38,7 +39,9 @@ Ignored if \code{cut.number} is set.}
 
 \item{cut.number}{Integer scalar specifying the number of clusters to generate from the tree cut when \code{cut.fun=NULL}.}
 
-\item{...}{Further arguments to pass to \code{cut.fun}, when \code{cut.dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.}
+\item{cut.params}{Further arguments to pass to \code{cut.fun}, when \code{cut.dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.}
+
+\item{...}{Deprecated, more arguments to add to \code{cut.params}.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
 

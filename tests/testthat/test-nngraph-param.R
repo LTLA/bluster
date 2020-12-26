@@ -3,24 +3,25 @@
 
 test_that("NNGraphParam constructor and utilities work correctly", {
     X <- NNGraphParam()
-    expect_output(show(X), "NNGraphParam")
+    expect_output(show(X), "SNNGraphParam")
 
-    expect_identical(X[["shared"]], TRUE)
-    X[["shared"]] <- FALSE
-    expect_identical(X[["shared"]], FALSE)
+    X <- NNGraphParam(shared=FALSE)
+    expect_output(show(X), "KNNGraphParam")
 
     expect_identical(X[["cluster.fun"]], "walktrap")
     X <- NNGraphParam(cluster.fun=igraph::cluster_louvain)
     expect_true(is.function(X[["cluster.fun"]]))
 
     X <- NNGraphParam(k=20)
-    expect_identical(X[["k"]], 20)
-    X[["k"]] <- 30
-    expect_identical(X[["k"]], 30)
+    expect_identical(X[["k"]], 20L)
+    X[["k"]] <- 30L
+    expect_identical(X[["k"]], 30L)
 })
 
 test_that("NNGraphParam validity works correctly", {
-    expect_error(NNGraphParam(NA), "logical scalar")
+    expect_error(NNGraphParam(k=NA), "integer scalar")
+    expect_error(NNGraphParam(type=letters), "string")
+    expect_error(NNGraphParam(shared=FALSE, directed=NA), "logical scalar")
     expect_error(NNGraphParam(cluster.fun=LETTERS), "non-missing string")
 })
 

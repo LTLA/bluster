@@ -1,22 +1,11 @@
 #' @export
 setMethod("[[", "BlusterParam", function(x, i) {
-    if (i %in% slotNames(x)) {
-        slot(x, i)
-    } else {
-        slot(x, .extras(x))[[i]]
-    }
+    slot(x, i)
 })
 
 #' @export
 setReplaceMethod("[[", "BlusterParam", function(x, i, j, ..., value) {
-    if (i %in% slotNames(x)) {
-        slot(x, i) <- value
-    } else {
-        ex.name <- .extras(x)
-        extras <- slot(x, ex.name)
-        extras[[i]] <- value
-        slot(x, ex.name) <- extras
-    }
+    slot(x, i) <- value
     x
 })
 

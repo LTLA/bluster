@@ -1,5 +1,5 @@
 # Tests the KmeansParam class.
-# library(bluster); library(testthat); source('test-hclust-param.R')
+# library(bluster); library(testthat); source('test-kmeans-param.R')
 
 test_that("KmeansParam constructor and utilities work correctly", {
     X <- KmeansParam(centers=10)
@@ -15,8 +15,8 @@ test_that("KmeansParam constructor and utilities work correctly", {
 
     X <- KmeansParam(centers=10, algorithm="Lloyd")
     expect_identical(X[["algorithm"]], "Lloyd")
-    X[["algorithm"]] <- NULL
-    expect_identical(X[["algorithm"]], NULL)
+    X[["algorithm"]] <- "Hartigan"
+    expect_identical(X[["algorithm"]], "Hartigan")
 })
 
 test_that("KmeansParam validity works correctly", {
@@ -39,4 +39,11 @@ test_that("clusterRows works correctly", {
     full <- clusterRows(m, KmeansParam(sqrt), full=TRUE)
     expect_identical(out, full$cluster)
     expect_s3_class(full$objects, "kmeans")
+
+    # Responds to the options.
+    set.seed(100000)
+    suppressWarnings(ref <- kmeans(m, centers=20, nstart=5, iter.max=3, algorithm="Lloyd")$cluster)
+    set.seed(100000)
+    suppressWarnings(out <- clusterRows(m, KmeansParam(centers=20, nstart=5, iter.max=3, algorithm="Lloyd")))
+    expect_identical(factor(ref), out)
 })

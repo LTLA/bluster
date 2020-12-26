@@ -13,7 +13,8 @@
 #' If \code{NULL}, defaults to half the tree height.
 #' Ignored if \code{cut.number} is set.
 #' @param cut.number Integer scalar specifying the number of clusters to generate from the tree cut when \code{cut.fun=NULL}.
-#' @param ... Further arguments to pass to \code{cut.fun}, when \code{cut.dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.
+#' @param cut.params Further arguments to pass to \code{cut.fun}, when \code{cut.dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.
+#' @param ... Deprecated, more arguments to add to \code{cut.params}.
 #' @inheritParams clusterRows
 #' @param BLUSPARAM A \linkS4class{HclustParam} object.
 #' @param full Logical scalar indicating whether the hierarchical clustering statistics should be returned.
@@ -53,14 +54,21 @@ setClass("HclustParam", contains="BlusterParam",
 #' @export
 #' @rdname HclustParam-class
 HclustParam <- function(metric="euclidean", method="complete", 
-    cut.fun=NULL, cut.dynamic=FALSE, cut.height=NULL, cut.number=NULL, ...)
+    cut.fun=NULL, cut.dynamic=FALSE, cut.height=NULL, cut.number=NULL, 
+    cut.params=list(), ...)
 {
     if (!is.null(cut.number)) {
         cut.number <- as.integer(cut.number)
     }
-    new("HclustParam", metric=metric, method=method, 
-        cut.fun=cut.fun, cut.dynamic=cut.dynamic,
-        cut.height=cut.height, cut.number=cut.number, cut.params=list(...))
+
+    extra.args <- list(...)
+    if (length(extra.args)) {
+        .Deprecated(old="...", new="cut.params=")
+        cut.params <- c(cut.params, extra.args)
+    }
+
+    new("HclustParam", metric=metric, method=method, cut.fun=cut.fun, cut.dynamic=cut.dynamic,
+        cut.height=cut.height, cut.number=cut.number, cut.params=cut.params)
 }
 
 #' @importFrom S4Vectors setValidity2
@@ -90,8 +98,6 @@ setValidity2("HclustParam", function(object) {
     if (length(msg)) return(msg)
     TRUE
 })
-
-setMethod(".extras", "HclustParam", function(x) "cut.params")
 
 #' @export
 #' @importFrom S4Vectors coolcat

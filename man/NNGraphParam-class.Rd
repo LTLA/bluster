@@ -4,23 +4,57 @@
 \name{NNGraphParam-class}
 \alias{NNGraphParam-class}
 \alias{show,NNGraphParam-method}
+\alias{SNNGraphParam-class}
+\alias{KNNGraphParam-class}
 \alias{NNGraphParam}
-\alias{clusterRows,ANY,NNGraphParam-method}
+\alias{SNNGraphParam}
+\alias{KNNGraphParam}
+\alias{clusterRows,ANY,SNNGraphParam-method}
+\alias{clusterRows,ANY,KNNGraphParam-method}
 \title{Graph-based clustering}
 \usage{
 NNGraphParam(
   shared = TRUE,
+  k = 10,
   ...,
+  BNPARAM = KmknnParam(),
+  BPPARAM = SerialParam(),
   cluster.fun = "walktrap",
   cluster.args = list()
 )
 
-\S4method{clusterRows}{ANY,NNGraphParam}(x, BLUSPARAM, full = FALSE)
+SNNGraphParam(
+  k = 10,
+  type = "rank",
+  BNPARAM = KmknnParam(),
+  BPPARAM = SerialParam(),
+  cluster.fun = "walktrap",
+  cluster.args = list()
+)
+
+KNNGraphParam(
+  k = 10,
+  directed = FALSE,
+  BNPARAM = KmknnParam(),
+  BPPARAM = SerialParam(),
+  cluster.fun = "walktrap",
+  cluster.args = list()
+)
+
+\S4method{clusterRows}{ANY,SNNGraphParam}(x, BLUSPARAM, full = FALSE)
+
+\S4method{clusterRows}{ANY,KNNGraphParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
 \item{shared}{Logical scalar indicating whether a shared NN graph should be constructed.}
 
-\item{...}{Further arguments to pass to \code{\link{makeSNNGraph}} (if \code{shared=TRUE}) or \code{\link{makeKNNGraph}}.}
+\item{k}{An integer scalar specifying the number of nearest neighbors to consider during graph construction.}
+
+\item{...}{Further arguments to pass to \code{\link{SNNGraphParam}} (if \code{shared=TRUE}) or \code{\link{KNNGraphParam}}.}
+
+\item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.}
+
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object to use for parallel processing.}
 
 \item{cluster.fun}{Function specifying the method to use to detect communities in the NN graph.
 The first argument of this function should be the NN graph and the return value should be a \link{communities} object.
@@ -31,14 +65,19 @@ Defaults to \code{\link{cluster_walktrap}}.}
 
 \item{cluster.args}{Further arguments to pass to the chosen \code{cluster.fun}.}
 
-\item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
+\item{type}{A string specifying the type of weighting scheme to use for shared neighbors.}
+
+\item{directed}{A logical scalar indicating whether the output of \code{buildKNNGraph} should be a directed graph.}
+
+\item{x}{A matrix-like object containing expression values for each observation (row) and dimension (column).}
 
 \item{BLUSPARAM}{A \linkS4class{NNGraphParam} object.}
 
 \item{full}{Logical scalar indicating whether the graph-based clustering objects should be returned.}
 }
 \value{
-The \code{NNGraphParam} constructor will return a \linkS4class{NNGraphParam} object with the specified parameters.
+The constructors will return a \linkS4class{NNGraphParam} object with the specified parameters.
+If \code{shared=TRUE}, this is a SNNGraphParam object; otherwise it is a KNNGraphParam object.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
@@ -48,6 +87,10 @@ the latter is a list with \code{graph} (the graph) and \code{communities} (the o
 Run community detection algorithms on a nearest-neighbor (NN) graph within \code{\link{clusterRows}}.
 }
 \details{
+The SNNGraphParam and KNNGraphParam classes are both derived from the NNGraphParam virtual class.
+This former will perform clustering with a shared nearest-neighbor (SNN) graph 
+while the latter will use a simpler k-nearest neighbor (KNN) graph - see \code{?\link{makeSNNGraph}} for details.
+
 To modify an existing NNGraphParam object \code{x},
 users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 }

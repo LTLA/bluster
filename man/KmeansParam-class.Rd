@@ -4,11 +4,12 @@
 \name{KmeansParam-class}
 \alias{KmeansParam-class}
 \alias{show,KmeansParam-method}
+\alias{updateObject,KmeansParam-method}
 \alias{KmeansParam}
 \alias{clusterRows,ANY,KmeansParam-method}
 \title{K-means clustering}
 \usage{
-KmeansParam(centers, ...)
+KmeansParam(centers, iter.max = NULL, nstart = NULL, algorithm = NULL)
 
 \S4method{clusterRows}{ANY,KmeansParam}(x, BLUSPARAM, full = FALSE)
 }
@@ -16,7 +17,8 @@ KmeansParam(centers, ...)
 \item{centers}{An integer scalar specifying the number of centers.
 Alternatively, a function that takes the number of observations and returns the number of centers.}
 
-\item{...}{Further arguments to pass to \code{\link{kmeans}}.}
+\item{iter.max, nstart, algorithm}{Further arguments to pass to \code{\link{kmeans}}.
+Set to the \code{\link{kmeans}} defaults if not supplied.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
 
