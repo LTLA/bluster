@@ -40,7 +40,7 @@ NULL
 
 #' @export
 #' @rdname KmeansParam-class
-setClass("KmeansParam", contains="BlusterParam", slots=c(centers="integer_OR_function", extra.args="list"))
+setClass("KmeansParam", contains="FixedNumberParam", slots=c(extra.args="list"))
 
 #' @export
 #' @rdname KmeansParam-class
@@ -56,18 +56,12 @@ setMethod(".extras", "KmeansParam", function(x) "extra.args")
 #' @export
 setMethod("show", "KmeansParam", function(object) {
     callNextMethod()
-    cat(sprintf("centers: %s\n", if (is.function(object@centers)) "variable" else object@centers))
     coolcat("extra.args(%i): %s", names(object@extra.args))
 })
 
 #' @importFrom S4Vectors setValidity2
 setValidity2("KmeansParam", function(object) {
     msg <- character(0)
-
-    val <- object@centers
-    if (!is.function(val) && !.positive_number(val)) {
-        msg <- c(msg, "'centers' must be a positive number")
-    }
 
     if (length(msg)) return(msg)
     TRUE
@@ -77,12 +71,12 @@ setValidity2("KmeansParam", function(object) {
 #' @rdname KmeansParam-class
 #' @importFrom stats kmeans
 setMethod("clusterRows", c("ANY", "KmeansParam"), function(x, BLUSPARAM, full=FALSE) {
-    centers <- BLUSPARAM@centers
-    if (is.function(centers)) {
-        centers <- centers(nrow(x))
+    centerx <- centers(BLUSPARAM)
+    if (is.function(centerx)) {
+        centerx <- centerx(nrow(x))
     }
 
-    args <- c(list(x=as.matrix(x), centers=centers), BLUSPARAM@extra.args)
+    args <- c(list(x=as.matrix(x), centers=centerx), BLUSPARAM@extra.args)
     stats <- do.call(kmeans, args)
     clusters <- factor(stats$cluster)
 

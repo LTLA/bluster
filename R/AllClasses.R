@@ -35,3 +35,32 @@ setClassUnion("integer_OR_NULL", c("integer", "NULL"))
 setClassUnion("integer_OR_function", c("function", "integer"))
 
 setClassUnion("character_OR_function", c("function", "character"))
+
+#' The FixedNumberParam class
+#'
+#' The FixedNumberParam is a virtual subclass of the \linkS4class{BlusterParam} class.
+#' It causes \code{\link{clusterRows}} to dispatch to clustering algorithms that rely on a pre-specified number of clusters, e.g., \linkS4class{KmeansParam}.
+#' 
+#' @section Available methods:
+#' \code{centers(x, n=NULL)} will return the specified number of centers in a FixedNumberParam \code{x}.
+#' This can be an positive integer; or, a function that accepts the number of observations and returns an integer.
+#' If a function and \code{n} is supplied, the function is called on \code{n} to return an integer.
+#'
+#' \code{centers(x) <- value} will replace the specified number of centers in \code{x} with an integer scalar or function \code{value}.
+#' The function should accept a single argument and return a positive integer.
+#' 
+#' @author Aaron Lun
+#'
+#' @seealso
+#' \linkS4class{KmeansParam}, for the archetypal example of a concrete subclass.
+#'
+#' @aliases
+#' centers
+#' centers,FixedNumberParam-method
+#' centers<-
+#' centers<-,FixedNumberParam-method
+#' show,FixedNumberParam-method
+#' 
+#' @docType class
+#' @export
+setClass("FixedNumberParam", contains=c("BlusterParam", "VIRTUAL"), slots=c(centers="integer_OR_function"))

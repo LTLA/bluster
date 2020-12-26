@@ -31,4 +31,10 @@
 #' @export
 setGeneric("clusterRows", function(x, BLUSPARAM, full=FALSE) standardGeneric("clusterRows"))
 
+#' @export
+setGeneric("centers", function(x, n=NULL) standardGeneric("centers"))
+
+#' @export
+setGeneric("centers<-", function(x, value) standardGeneric("centers<-"))
+
 setGeneric(".extras", function(x) standardGeneric(".extras"))
