@@ -20,7 +20,7 @@ setMethod("centers", "FixedNumberParam", function(x, n=NULL) {
     if (is.integer(xcenters) || is.null(n)) {
         xcenters
     } else {
-        xcenters(n)
+        as.integer(round(xcenters(n)))
     }
 })
 

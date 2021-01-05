@@ -43,8 +43,8 @@ setClassUnion("character_OR_function", c("function", "character"))
 #' 
 #' @section Available methods:
 #' \code{centers(x, n=NULL)} will return the specified number of centers in a FixedNumberParam \code{x}.
-#' This can be an positive integer; or, a function that accepts the number of observations and returns an integer.
-#' If a function and \code{n} is supplied, the function is called on \code{n} to return an integer.
+#' This can be an positive integer, or a function that accepts the number of observations and returns a positive number.
+#' If a function and \code{n} is supplied, the function is called on \code{n} and the result is rounded to obtain an integer.
 #'
 #' \code{centers(x) <- value} will replace the specified number of centers in \code{x} with an integer scalar or function \code{value}.
 #' The function should accept a single argument and return a positive integer.

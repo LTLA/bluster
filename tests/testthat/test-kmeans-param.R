@@ -12,6 +12,7 @@ test_that("KmeansParam constructor and utilities work correctly", {
 
     X <- KmeansParam(centers=log)
     expect_true(is.function(X[["centers"]]))
+    expect_identical(centers(X, 20), as.integer(round(log(20))))
 
     X <- KmeansParam(centers=10, algorithm="Lloyd")
     expect_identical(X[["algorithm"]], "Lloyd")
