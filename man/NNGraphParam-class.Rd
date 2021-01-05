@@ -93,6 +93,7 @@ while the latter will use a simpler k-nearest neighbor (KNN) graph - see \code{?
 
 To modify an existing NNGraphParam object \code{x},
 users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
+The exception is that of \code{shared}, which is not a valid \code{i} as it is implicit in the identity of the class.
 }
 \examples{
 clusterRows(iris[,1:4], NNGraphParam())
