@@ -29,7 +29,8 @@ Suggests:
     scater,
     scran,
     pheatmap,
-    viridis
+    viridis,
+    mbkmeans
 biocViews: 
     ImmunoOncology, 
     Software, 

@@ -33,6 +33,8 @@
 #' clusterRows(iris[,1:4], KmeansParam(centers=sqrt))
 #' @seealso
 #' \code{\link{kmeans}}, which actually does all the heavy lifting.
+#'
+#' \linkS4class{MbkmeansParam}, for a faster but more approximate version of the k-means algorithm.
 #' @name KmeansParam-class
 #' @docType class
 #' @aliases 
