@@ -9,6 +9,10 @@ build_snn_number <- function(neighbors) {
     .Call('_bluster_build_snn_number', PACKAGE = 'bluster', neighbors)
 }
 
+flow_som <- function(data, original_codes, nhbrdist, alphas, radii, rlen, dist) {
+    .Call('_bluster_flow_som', PACKAGE = 'bluster', data, original_codes, nhbrdist, alphas, radii, rlen, dist)
+}
+
 sum_neighbor_weights <- function(nclusters, neighbors, clusters, weights) {
     .Call('_bluster_sum_neighbor_weights', PACKAGE = 'bluster', nclusters, neighbors, clusters, weights)
 }

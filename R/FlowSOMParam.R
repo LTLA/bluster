@@ -121,22 +121,21 @@ setMethod("clusterRows", c("ANY", "FlowSOMParam"), function(x, BLUSPARAM, full=F
         mst = BLUSPARAM[["mst"]],
         alpha = BLUSPARAM[["alpha"]],
         init = BLUSPARAM[["init"]],
+        initf = BLUSPARAM[["initf"]],
+        radius = BLUSPARAM[["radius"]],
         distf = BLUSPARAM[["distf"]],
-        silent = TRUE
+        codes = NULL
     )
 
-    if (!is.null(BLUSPARAM[["initf"]])) {
-        args$initf <- BLUSPARAM[["initf"]]
-    }
-    if (!is.null(BLUSPARAM[["radius"]])) {
-        args$radius <- BLUSPARAM[["radius"]]
-    }
+#    if (!is.null(BLUSPARAM[["initf"]])) {
+#        args$initf <- BLUSPARAM[["initf"]]
+#    }
+#    if (!is.null(BLUSPARAM[["radius"]])) {
+#        args$radius <- BLUSPARAM[["radius"]]
+#    }
 
-    # SOM is not safe against unnamed dims.
-    colnames(args$data) <- seq_len(ncol(args$data))
-
-    stats <- do.call(FlowSOM::SOM, args)
-    clusters <- factor(stats$mapping[,1])
+    stats <- do.call(.SOM, args)
+    clusters <- factor(stats$mapping)
 
     if (full) {
         list(clusters=clusters, objects=stats)
@@ -144,3 +143,69 @@ setMethod("clusterRows", c("ANY", "FlowSOMParam"), function(x, BLUSPARAM, full=F
         clusters 
     }
 })
+
+#' @importFrom stats quantile dist
+.SOM <- function(data, xdim, ydim, rlen, mst, alpha, radius, codes, init, initf, distf) {
+    # Initialize the grid
+    grid <- expand.grid(seq_len(xdim),seq_len(ydim))
+    nCodes <- nrow(grid)
+    if (is.null(codes)){
+        if (init) {
+            stopifnot(is.function(initf))
+            codes <- initf(data, xdim, ydim)
+        } else {
+            codes <- data[sample(nrow(data), nCodes),, drop = FALSE]
+        }
+    }
+
+    # Initialize the neighbourhood
+    nhbrdist <- dist(grid, method = "maximum")
+
+    if (is.null(radius)) {
+        radius <- c(quantile(nhbrdist, 0.67), 0)
+    }
+
+    # Initialize the radius
+    if (mst==1) {
+        radius <- list(radius)
+        alpha <- list(alpha)
+    } else {
+        radius <- seq(radius[1], radius[2], length.out = mst+1)
+        radius <- lapply(seq_len(mst), function(i) c(radius[i], radius[i+1]))
+        alpha <- seq(alpha[1], alpha[2], length.out = mst+1)
+        alpha <- lapply(seq_len(mst), function(i) c(alpha[i], alpha[i+1]))
+    }
+
+    # Compute the SOM
+    data <- t(as.matrix(data))
+    codes <- t(as.matrix(codes))
+
+    for (i in seq_len(mst)) {
+        res <- flow_som(data = data,
+            original_codes = codes,
+            nhbrdist = as.matrix(nhbrdist),
+            alpha = alpha[[i]],
+            radii = radius[[i]],
+            rlen = rlen,
+            dist = distf)
+
+        codes <- res[[1]]
+        nhbrdist <- distance.along.mst(codes)
+    }
+
+    names(res) <- c("codes", "mapping")
+    rownames(res$codes) <- rownames(data)
+    res$codes <- t(res$codes)
+    res$mapping <- res$mapping + 1L
+
+    res
+}
+
+#' @importFrom stats dist
+#' @importFrom igraph graph.adjacency minimum.spanning.tree shortest.paths V
+distance.along.mst <- function(X) {
+    adjacency <- dist(X, method = "euclidean")
+    fullGraph <- graph.adjacency(as.matrix(adjacency), mode = "undirected", weighted = TRUE)
+    mst <- minimum.spanning.tree(fullGraph)
+    shortest.paths(mst, v=V(mst), to=V(mst), weights=NA)
+}
