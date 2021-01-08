@@ -78,14 +78,14 @@ Rcpp::List flow_som(Rcpp::NumericMatrix data,
         distf = &eucl2;
     }
 
-    double change=0;
-    const int niter = std::round(rlen * n);
+    double change=1;
+    const int niter = rlen * n; 
     double threshold = radii[0];
     double thresholdStep = (radii[0] - radii[1]) / static_cast<double>(niter);
 
     for (int k = 0; k < niter; ++k) {
-        if(k%n == 0){
-            if(change < 1){
+        if (k%n == 0){
+            if (change < 1) {
                 k = niter;
             }
             change = 0.0;
@@ -114,7 +114,7 @@ Rcpp::List flow_som(Rcpp::NumericMatrix data,
         double alpha = alphas[0] - (alphas[0] - alphas[1]) * static_cast<double>(k)/static_cast<double>(niter);
 
         for (int cd = 0; cd < ncodes; ++cd) {
-            if (nhbrdist.column(cd)[nearest] > threshold) {
+            if (nhbrdist(cd, nearest) > threshold) {
                 continue;
             }
 
@@ -125,7 +125,7 @@ Rcpp::List flow_som(Rcpp::NumericMatrix data,
             for(int j = 0; j < px; ++j, ++coIt, ++ccIt) {
                 double tmp = *coIt - *ccIt;
                 change += std::abs(tmp);
-                codes[cd + j*ncodes] += tmp * alpha; 
+                *ccIt += tmp * alpha; 
             }
         }
     
@@ -137,7 +137,7 @@ Rcpp::List flow_som(Rcpp::NumericMatrix data,
     auto aIt = assigned.begin();
 
     for (int i = 0; i < n; ++i, ++aIt) {
-        int nearest = 0;
+        int& nearest = *aIt;
         double neardist = R_PosInf;
         auto curobs = data.column(i);
 
@@ -149,8 +149,6 @@ Rcpp::List flow_som(Rcpp::NumericMatrix data,
                 nearest = cd;
             }
         }
-
-        *aIt = nearest;
     }
 
     return Rcpp::List::create(codes, assigned); 

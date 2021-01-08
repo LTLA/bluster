@@ -204,7 +204,7 @@ setMethod("clusterRows", c("ANY", "FlowSOMParam"), function(x, BLUSPARAM, full=F
 #' @importFrom stats dist
 #' @importFrom igraph graph.adjacency minimum.spanning.tree shortest.paths V
 distance.along.mst <- function(X) {
-    adjacency <- dist(X, method = "euclidean")
+    adjacency <- dist(t(X), method = "euclidean")
     fullGraph <- graph.adjacency(as.matrix(adjacency), mode = "undirected", weighted = TRUE)
     mst <- minimum.spanning.tree(fullGraph)
     shortest.paths(mst, v=V(mst), to=V(mst), weights=NA)
