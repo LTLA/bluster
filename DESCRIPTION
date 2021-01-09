@@ -1,6 +1,6 @@
 Package: bluster
-Version: 1.1.2
-Date: 2020-12-26
+Version: 1.1.3
+Date: 2021-01-08
 Title: Clustering Algorithms for Bioconductor
 Description: 
     Wraps common clustering algorithms in an easily extended S4 framework.
@@ -34,7 +34,7 @@ Suggests:
     pheatmap,
     viridis,
     mbkmeans,
-    FlowSOM
+    kohonen
 biocViews: 
     ImmunoOncology, 
     Software, 

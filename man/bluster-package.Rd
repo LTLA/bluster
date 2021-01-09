@@ -13,5 +13,10 @@ Wraps common clustering algorithms in an easily extended S4 framework.
 \author{
 \strong{Maintainer}: Aaron Lun \email{infinite.monkeys.with.keyboards@gmail.com}
 
+Other contributors:
+\itemize{
+  \item Stephanie Hicks [contributor]
+}
+
 }
 \keyword{internal}
