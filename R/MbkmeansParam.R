@@ -60,6 +60,25 @@ setClass("MbkmeansParam", contains="FixedNumberParam",
         tol="numeric", 
         BPPARAM="BiocParallelParam"))
 
+setValidity2("MbkmeansParam", function(object) {
+    msg <- character(0)
+
+    msg <- c(msg, .check_positive_slots(object, c("batch_size", "max_iters", "init_fraction", "num_init", "early_stop_iter", "tol")))
+
+    if (!is.null(val <- object@init_fraction)) {
+        if (val > 1) {
+            msg <- c(msg, "'init_fraction' cannot be greater than 1")
+        }
+    }
+
+    msg <- c(msg, .check_nonna_slots(object, c("initializer", "calc_wcss")))
+
+    if (length(msg)) {
+        return(msg)
+    }
+    TRUE
+})
+
 #' @export
 setMethod("show", "MbkmeansParam", function(object) {
     callNextMethod()
