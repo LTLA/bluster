@@ -7,7 +7,10 @@ Description:
     Backends are implemented for hierarchical, k-means and graph-based clustering.
     Several utilities are also provided to compare and evaluate clustering results.
 Authors@R: 
-    person("Aaron", "Lun", role = c("aut", "cre"), email = "infinite.monkeys.with.keyboards@gmail.com") 
+    c(
+        person("Aaron", "Lun", role = c("aut", "cre"), email = "infinite.monkeys.with.keyboards@gmail.com"),
+        person("Stephanie", "Hicks", role="ctb")
+    )
 Imports: 
     stats, 
     methods, 
@@ -30,7 +33,8 @@ Suggests:
     scran,
     pheatmap,
     viridis,
-    mbkmeans
+    mbkmeans,
+    FlowSOM
 biocViews: 
     ImmunoOncology, 
     Software, 
