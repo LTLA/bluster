@@ -50,6 +50,7 @@ Collate:
     AllGenerics.R
     approxSilhouette.R
     bluster-package.R
+    DbscanParam.R
     AffinityParam.R
     BlusterParam.R
     bootstrapStability.R
