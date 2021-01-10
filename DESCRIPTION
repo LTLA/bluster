@@ -34,7 +34,8 @@ Suggests:
     pheatmap,
     viridis,
     mbkmeans,
-    kohonen
+    kohonen,
+    apcluster
 biocViews: 
     ImmunoOncology, 
     Software, 
@@ -44,6 +45,29 @@ biocViews:
     Clustering
 LinkingTo: 
     Rcpp 
+Collate:
+    AllClasses.R
+    AllGenerics.R
+    approxSilhouette.R
+    bluster-package.R
+    AffinityParam.R
+    BlusterParam.R
+    bootstrapStability.R
+    clusterSweep.R
+    FixedNumberParam.R
+    HclustParam.R
+    KmeansParam.R
+    makeSNNGraph.R
+    MbkmeansParam.R
+    mergeCommunities.R
+    neighborPurity.R
+    NNGraphParam.R
+    pairwiseModularity.R
+    pairwiseRand.R
+    RcppExports.R
+    SOMParam.R
+    TwoStepParam.R
+    utils.R
 License: GPL-3
 NeedsCompilation: yes
 VignetteBuilder: knitr
