@@ -38,7 +38,7 @@ Values above 1 will distribute more nodes to \code{x} while values below 1 will 
 
 \item{BLUSPARAM}{A \linkS4class{SOMParam} object.}
 
-\item{full}{Logical scalar indicating whether the full mini-batch k-means statistics should be returned.}
+\item{full}{Logical scalar indicating whether the full SOM statistics should be returned.}
 }
 \value{
 The \code{SOMParam} constructor will return a \linkS4class{SOMParam} object with the specified parameters.

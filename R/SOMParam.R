@@ -14,7 +14,7 @@
 #' @param rlen,alpha,radius,dist.fct
 #' Further arguments to pass to the \code{\link[kohonen]{som}} function in the \pkg{kohonen} package.
 #' @param BLUSPARAM A \linkS4class{SOMParam} object.
-#' @param full Logical scalar indicating whether the full mini-batch k-means statistics should be returned.
+#' @param full Logical scalar indicating whether the full SOM statistics should be returned.
 #' 
 #' @details
 #' This class usually requires the user to specify the number of clusters beforehand.
