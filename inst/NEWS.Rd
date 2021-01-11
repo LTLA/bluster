@@ -13,6 +13,12 @@ Added \code{MbkmeansParam()} to wrap mini-batch k-means from \pkg{mbkmeans}.
 Added \code{SOMParam()} to wrap self-organizing map implementation from \pkg{kohonen}.
 
 \item 
+Added \code{AffinityParam()} to wrap the affinity propagation code from \pkg{apcluster}.
+
+\item
+Added \code{DbscanParam()} to provide a custom DBSCAN implementation with automatic \code{eps} choice.
+
+\item 
 Added \code{clusterSweeps()} to easily perform parameter sweeps via \code{clusterRows()}.
 }}
 
