@@ -58,6 +58,7 @@ Collate:
     FixedNumberParam.R
     HclustParam.R
     KmeansParam.R
+    linkClusters.R
     makeSNNGraph.R
     MbkmeansParam.R
     mergeCommunities.R
