@@ -46,7 +46,9 @@ mat <- reducedDim(sce, "PCA")
 dim(mat)
 ```
 
-# Hierarchical clustering
+# Based on distance matrices
+
+## Hierarchical clustering
 
 Our first algorithm is good old hierarchical clustering, as implemented using `hclust()` from the _stats_ package.
 This automatically sets the cut height to half the dendrogram height.
@@ -67,9 +69,35 @@ hclust.out <- clusterRows(mat, hp2)
 plotUMAP(sce, colour_by=I(hclust.out))
 ```
 
-# $k$-means clustering
+## Affinity propagation
 
-Our next algorithm is $k$-means clustering, as implemented using the `kmeans()` function.
+Another option is to use affinity propagation, as implemented using the `r CRANpkg("apcluster")` package.
+Here, messages are passed between observations to decide on a set of exemplars, each of which form the center of a cluster.
+
+This is not particularly fast as it involves the calculation of a square similarity matrix between all pairs of observations.
+So, we'll speed it up by taking analyzing a subset of the data:
+
+```{r}
+set.seed(1000)
+sub <- sce[,sample(ncol(sce), 200)]
+ap.out <- clusterRows(reducedDim(sub), AffinityParam())
+plotUMAP(sub, colour_by=I(ap.out))
+```
+
+The `q` parameter is probably the most important and determines the resolution of the clustering.
+This can be set to any value below 1, with smaller (possibly negative) values corresponding to coarser clusters.
+
+```{r}
+set.seed(1000)
+ap.out <- clusterRows(reducedDim(sub), AffinityParam(q=-2))
+plotUMAP(sub, colour_by=I(ap.out))
+```
+
+# With a fixed number of clusters
+
+## $k$-means clustering
+
+A classic algorithm is $k$-means clustering, as implemented using the `kmeans()` function.
 This requires us to pass in the number of clusters, either as a number: 
 
 ```{r}
@@ -86,6 +114,39 @@ kp
 set.seed(100)
 kmeans.out <- clusterRows(mat, kp)
 plotUMAP(sce, colour_by=I(kmeans.out))
+```
+
+A variant of this approach is mini-batch $k$-means, as implemented in the `r Biocpkg("mbkmeans")` package.
+This uses mini-batching to approximate the full $k$-means algorithm for greater speed.
+
+```{r}
+set.seed(100)
+mbkmeans.out <- clusterRows(mat, MbkmeansParam(20))
+plotUMAP(sce, colour_by=I(mbkmeans.out))
+```
+
+## Self-organizing maps
+
+We can also use self-organizing maps (SOMs) from the `r CRANpkg("kohonen")` package.
+This allocates observations to nodes of a simple neural network; each node is then treated as a cluster.
+
+```{r}
+set.seed(1000)
+som.out <- clusterRows(mat, SOMParam(20))
+plotUMAP(sce, colour_by=I(som.out))
+```
+
+The key feature of SOMs is that they apply additional topological constraints on the relative positions of the nodes.
+This allows us to naturally determine the relationships between clusters based on the proximity of the nodes.
+
+```{r, fig.wide=TRUE}
+set.seed(1000)
+som.out <- clusterRows(mat, SOMParam(100), full=TRUE)
+
+par(mfrow=c(1,2))
+plot(som.out$objects, "counts")
+grid <- som.out$objects$grid$pts
+text(grid[,1], grid[,2], seq_len(nrow(grid)))
 ```
 
 # Graph-based clustering
@@ -107,6 +168,30 @@ np <- NNGraphParam(k=20, cluster.fun="louvain")
 np
 graph.out <- clusterRows(mat, np)
 plotUMAP(sce, colour_by=I(graph.out))
+```
+
+# Density-based clustering
+
+We also implement a version of the DBSCAN algorithm for density-based clustering.
+This focuses on identifying masses of continuous density.
+
+```{r}
+dbscan.out <- clusterRows(mat, DbscanParam())
+plotUMAP(sce, colour_by=I(dbscan.out))
+```
+
+Unlike the other methods, it will consider certain points to be noise and discard them from the output.
+
+```{r}
+summary(is.na(dbscan.out))
+```
+
+The resolution of the clustering can be modified by tinkering with the `core.prop`.
+Smaller values will generally result in smaller clusters as well as more noise points.
+
+```{r}
+dbscan.out <- clusterRows(mat, DbscanParam(core.prop=0.1))
+summary(is.na(dbscan.out))
 ```
 
 # Two-phase clustering
