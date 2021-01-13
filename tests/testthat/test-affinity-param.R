@@ -49,6 +49,7 @@ test_that("clusterRows responds to full=TRUE", {
     expect_s4_class(full$objects, "APResult")
 })
 
+set.seed(1010001)
 test_that("clusterRows responds to the options", {
     m <- matrix(runif(1000), ncol=10)
 
@@ -57,5 +58,23 @@ test_that("clusterRows responds to the options", {
 
     set.seed(1000)
     ref <- apcluster::apcluster(apcluster::expSimMat(m), q=0.8, lam=0.7)
+    expect_identical(out, factor(apcluster::labels(ref, type="enum")))
+
+    # Responds to the negative q.
+    set.seed(2000)
+    out <- clusterRows(m, AffinityParam(q=-1, s=apcluster::expSimMat()))
+
+    set.seed(2000)
+    mat <- apcluster::expSimMat(m)
+    ref <- apcluster::apcluster(mat, p=0)
+    expect_identical(out, factor(apcluster::labels(ref, type="enum")))
+
+    # Also works for negative distances.
+    set.seed(300)
+    out <- clusterRows(m, AffinityParam(q=-2, s=apcluster::negDistMat()))
+
+    set.seed(300)
+    mat <- apcluster::negDistMat(m)
+    ref <- apcluster::apcluster(mat, p=min(mat) * 3)
     expect_identical(out, factor(apcluster::labels(ref, type="enum")))
 })

@@ -51,8 +51,15 @@ To modify an existing AffinityParam object \code{x},
 users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 
 Setting \code{q} (and less typically, \code{p}) allows us to tune the resolution of the clustering.
+In particular, when \code{p=NA}, it is computed based on the setting of \code{q}:
+\itemize{
+\item If the specified \code{q} lies in [0, 1], \code{p} is defined as the \code{q}-quantile of the finite similarities across all pairs of observations.
+When \code{q=NA}, it defaults to 0.5.
+\item If \code{q} is negative, \code{p} is defined as the \code{M + abs(M) * q} where \code{M} is the smallest finite similarity across all pairs.
+This yields smaller \code{p} values while still responding to the scale of the similarities. 
+}
+The resulting value is used as the self-preference, i.e., the diagonal of the availability matrix.
 Larger values yield more clusters as each data point is more inclined to form its own cluster.
-Any choice for \code{q} should lie in [0, 1] (the default is 0.5 when \code{q=NA}).
 }
 \examples{
 clusterRows(iris[,1:4], AffinityParam())

@@ -18,8 +18,15 @@
 #' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 #'
 #' Setting \code{q} (and less typically, \code{p}) allows us to tune the resolution of the clustering.
+#' In particular, when \code{p=NA}, it is computed based on the setting of \code{q}:
+#' \itemize{
+#' \item If the specified \code{q} lies in [0, 1], \code{p} is defined as the \code{q}-quantile of the finite similarities across all pairs of observations.
+#' When \code{q=NA}, it defaults to 0.5.
+#' \item If \code{q} is negative, \code{p} is defined as the \code{M + abs(M) * q} where \code{M} is the smallest finite similarity across all pairs.
+#' This yields smaller \code{p} values while still responding to the scale of the similarities. 
+#' }
+#' The resulting value is used as the self-preference, i.e., the diagonal of the availability matrix.
 #' Larger values yield more clusters as each data point is more inclined to form its own cluster.
-#' Any choice for \code{q} should lie in [0, 1] (the default is 0.5 when \code{q=NA}).
 #' 
 #' @return
 #' The \code{AffinityParam} constructor will return a \linkS4class{AffinityParam} object with the specified parameters.
@@ -82,8 +89,8 @@ setValidity2("AffinityParam", function(object) {
     if (length(q)!=1) {
         msg <- c(msg, "'q' should be of length 1")
     } else {
-        if (!is.na(q) && (q < 0 || q > 1)) {
-            msg <- c("'q' should lie in [0, 1]")
+        if (!is.na(q) && q > 1) {
+            msg <- c("'q' should lie in (-Inf, 1]")
         }
     }
 
@@ -104,11 +111,23 @@ setMethod("clusterRows", c("ANY", "AffinityParam"), function(x, BLUSPARAM, full=
     if (is.null(s)) {
         s <- apcluster::negDistMat(r=2)
     }
+    mat <- s(as.matrix(x))
 
-    res <- apcluster::apcluster(s=s, 
-        x=as.matrix(x), 
-        p=BLUSPARAM[["p"]],
-        q=BLUSPARAM[["q"]],
+    p <- BLUSPARAM[["p"]]
+    q <- BLUSPARAM[["q"]]
+    if (is.na(p)) {
+        if (!is.na(q) && q < 0) {
+            keep <- mat > -Inf
+            diag(keep) <- FALSE
+            p <- min(mat[keep])
+            p <- p + abs(p) * q
+            q <- NA
+        }
+    }
+
+    res <- apcluster::apcluster(s=mat, 
+        p=p,
+        q=q,
         maxits=BLUSPARAM[["maxits"]],
         convits=BLUSPARAM[["convits"]],
         lam=BLUSPARAM[["lam"]],
