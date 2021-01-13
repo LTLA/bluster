@@ -59,12 +59,11 @@
 #' @export
 #' @importFrom igraph graph.adjacency
 linkClusters <- function(clusters, prefix=TRUE, denominator=c("min", "union", "max")) {
-    totals <- vector("list", length(clusters))
-    for (i in seq_along(clusters)) {
-        totals[[i]] <- table(clusters[[i]])
+    if (!length(unique(lengths(clusters)))) {
+        stop("'clusters' must have elements of the same length")
     }
 
-    denominator <- match.arg(denominator)
+    totals <- lapply(clusters, table)
     N <- sum(lengths(totals))
     output <- matrix(0, N, N)
 
@@ -78,7 +77,9 @@ linkClusters <- function(clusters, prefix=TRUE, denominator=c("min", "union", "m
     }
     dimnames(output) <- list(newnames, newnames)
 
+    denominator <- match.arg(denominator)
     lastx <- 0L
+
     for (x in seq_along(clusters)) {
         nx <- as.integer(totals[[x]])
         lasty <- 0L
@@ -104,5 +105,5 @@ linkClusters <- function(clusters, prefix=TRUE, denominator=c("min", "union", "m
         lastx <- lastx + length(nx)
     }
 
-    graph.adjacency(output, mode="lower")
+    graph.adjacency(output, mode="lower", weighted=TRUE)
 }
