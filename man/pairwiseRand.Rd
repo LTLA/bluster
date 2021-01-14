@@ -82,6 +82,8 @@ pairwiseRand(clust1, clust2, mode="index")
 }
 \seealso{
 \code{\link{pairwiseModularity}}, which applies the same breakdown to the cluster modularity.
+
+\code{\link{compareClusterings}}, which does this for multiple clusterings.
 }
 \author{
 Aaron Lun

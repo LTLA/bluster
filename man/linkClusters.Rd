@@ -64,6 +64,8 @@ igraph::cluster_walktrap(g)
 }
 \seealso{
 The \pkg{clustree} package, which provides another method for visualizing relationships between clusterings.
+
+\code{\link{compareClusterings}}, which computes similarities between the clusterings themselves.
 }
 \author{
 Aaron Lun

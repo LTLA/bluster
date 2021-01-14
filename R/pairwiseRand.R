@@ -72,6 +72,8 @@
 #' @seealso
 #' \code{\link{pairwiseModularity}}, which applies the same breakdown to the cluster modularity.
 #'
+#' \code{\link{compareClusterings}}, which does this for multiple clusterings.
+#'
 #' @export
 pairwiseRand <- function(ref, alt, mode=c("ratio", "pairs", "index"), adjusted=TRUE) {
     ref <- as.factor(ref)

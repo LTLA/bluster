@@ -224,6 +224,21 @@ By default, the edge weights are computed by dividing the number of shared cells
 This favors strong edges between a large cluster in one clustering and smaller subcluster in another (finer) clustering.
 Alternative weighting schemes will favour a 1:1 mapping between clusterings, which can be easier to interpret.
 
+# Comparing multiple clusterings
+
+The `compareClusterings()` function will return a symmetric matrix of the ARIs between pairs of different clusterings.
+This is helpful for visualizing the relationships between different clusterings, e.g., to see which parameters most contribute to differences between clusterings.
+
+```{r}
+aris <- compareClusterings(combinations$clusters)
+g <- igraph::graph.adjacency(aris, mode="undirected", weighted=TRUE)
+meta2 <- igraph::cluster_walktrap(g)
+plot(g, mark.groups=meta2)
+```
+
+We can also identify groups of clusterings, typically corresponding to parameter combinations that yield more-or-less similar results.
+This allows us to prune out combinations that are largely redundant prior to downstream analyses.
+
 # Session information {-}
 
 ```{r}

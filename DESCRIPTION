@@ -55,6 +55,7 @@ Collate:
     BlusterParam.R
     bootstrapStability.R
     clusterSweep.R
+    compareClusterings.R
     FixedNumberParam.R
     HclustParam.R
     KmeansParam.R
