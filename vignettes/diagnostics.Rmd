@@ -177,6 +177,53 @@ pheatmap(ratio, cluster_cols=FALSE, cluster_rows=FALSE,
     col=viridis::viridis(100), breaks=seq(-1, 1, length=101))
 ```
 
+# Clustering parameter sweeps
+
+The `clusterSweep()` function provides a convenient way to test multiple combinations of parameter settings.
+Given a `BlusterParam` object and a set of values for each parameter, the function will repeat the clustering ith each combination of parameters.
+The example below uses graph-based clustering with a variety of `k` as well as different community detection algorithms.
+
+```{r}
+combinations <- clusterSweep(mat, BLUSPARAM=SNNGraphParam(),
+    k=c(5L, 10L, 15L, 20L), cluster.fun=c("walktrap", "louvain", "infomap"))
+```
+
+This yields a list containing all clusterings and the corresponding parameter combinations used to generate them.
+The function will attempt to generate some sensible name for each combination, though this may require some manual curation for large numbers of parameters.
+
+```{r}
+colnames(combinations$clusters)
+combinations$parameters
+```
+
+# Linking clusters 
+
+If we have many clusterings, we can identify corresponding clusters with the `linkClusters()` function.
+This constructs a graph where edges are formed between pairs of clusters from different clusterings, based on the number of cells assigned to both clusters.
+Re-using some of the clusterings from our previous sweep, we might do:
+
+```{r}
+linked <- linkClusters(
+    list(
+        walktrap=combinations$clusters$k.10_cluster.fun.walktrap,
+        louvain=combinations$clusters$k.10_cluster.fun.louvain,
+        infomap=combinations$clusters$k.10_cluster.fun.infomap
+    )
+)
+linked
+```
+
+This can be used to visualize the relationships between clusters, or to identify metaclusters across clusterings with community detection algorithms:
+
+```{r}
+meta <- igraph::cluster_walktrap(linked)
+plot(linked, mark.groups=meta)
+```
+
+By default, the edge weights are computed by dividing the number of shared cells with the smaller of the total number of cells in either cluster.
+This favors strong edges between a large cluster in one clustering and smaller subcluster in another (finer) clustering.
+Alternative weighting schemes will favour a 1:1 mapping between clusterings, which can be easier to interpret.
+
 # Session information {-}
 
 ```{r}
