@@ -19,7 +19,13 @@ Added \code{AffinityParam()} to wrap the affinity propagation code from \pkg{apc
 Added \code{DbscanParam()} to provide a custom DBSCAN implementation with automatic \code{eps} choice.
 
 \item 
-Added \code{clusterSweeps()} to easily perform parameter sweeps via \code{clusterRows()}.
+Added \code{clusterSweep()} to easily perform parameter sweeps via \code{clusterRows()}.
+
+\item 
+Added \code{linkClusters()} to find relationships between clusters in different clusterings.
+
+\item 
+Added \code{compareClusterings()} to compute similarities between multiple clusterings.
 }}
 
 \section{Version 1.0.0}{\itemize{
