@@ -142,6 +142,8 @@ Specifically, for each cluster or cluster pair in a "reference" clustering (here
 we see whether it is preserved in the "alternative" clustering (here, `hclusters`).
 Large values on the diagonal indicate that the reference cluster is recapitulated;
 large values off the diagonal indicate that the separation between the corresponding pair of clusters is also maintained.
+Conversely, low diagonal values indicate that the corresponding cluster is fragmented in the alternative,
+and low off-diagonal values can be used as a diagnostic for loss of separation.
 
 ```{r}
 ratio <- pairwiseRand(clusters, hclusters, mode="ratio")
@@ -150,6 +152,10 @@ library(pheatmap)
 pheatmap(ratio, cluster_cols=FALSE, cluster_rows=FALSE,
     col=viridis::viridis(100), breaks=seq(-1, 1, length=101))
 ```
+
+Explicit mappings between two clusterings can be performed using `linkClusters()` (see Section \@ref(linking-clusters)).
+Alternatively, we can quantify the degree of "nesting" of one clustering within another with `nestedClusters()`;
+this can be useful for verifying that the higher-resolution clustering is indeed nested within its coarser counterpart.
 
 # Bootstrapping cluster stability
 

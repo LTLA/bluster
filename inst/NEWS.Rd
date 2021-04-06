@@ -26,6 +26,9 @@ Added \code{linkClusters()} to find relationships between clusters in different 
 
 \item 
 Added \code{compareClusterings()} to compute similarities between multiple clusterings.
+
+\item
+Added \code{nestedClusters()} to quantify the degree of nesting across two clusterings.
 }}
 
 \section{Version 1.0.0}{\itemize{
