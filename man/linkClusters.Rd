@@ -79,8 +79,6 @@ linkClustersMatrix(clusters[[1]], clusters[[2]], denominator="union")
 The \pkg{clustree} package, which provides another method for visualizing relationships between clusterings.
 
 \code{\link{compareClusterings}}, which computes similarities between the clusterings themselves.
-
-\code{\link{mapClusters}}, which presents the correspondence strengths as a matrix for two clusterings.
 }
 \author{
 Aaron Lun
