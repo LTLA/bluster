@@ -64,6 +64,7 @@ Collate:
     MbkmeansParam.R
     mergeCommunities.R
     neighborPurity.R
+    nestedClusters.R
     NNGraphParam.R
     pairwiseModularity.R
     pairwiseRand.R
