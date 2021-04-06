@@ -31,3 +31,9 @@
     }
     msg
 }
+
+.untable <- function(tab) {
+    tab <- unclass(tab)
+    dimnames(tab) <- unname(dimnames(tab))
+    tab
+}

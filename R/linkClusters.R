@@ -10,12 +10,13 @@
 #' The list itself should usually be named with a suitable label for each clustering.
 #' @param prefix Logical scalar indicating whether the cluster levels should be prefixed with its clustering.
 #' If \code{clusters} is not named, numeric prefixes are used instead.
-#' @param denominator String specifying how the links between clusters should be computed.
+#' @param denominator String specifying how the strength of the correspondence between clusters should be computed.
+#' @param x,y Factor or vector specifying a clustering of the same cells.
 #'
 #' @details
-#' Links are only formed between clusters from different clusterings.
-#' The strength of the link between clusters \eqn{X} in clustering 1 and \eqn{Y} in clustering 2
-#' is defined from the number of cells with those two labels in their respective clusterings.
+#' Links are only formed between clusters from different clusterings, e.g., between clusters \eqn{X} in clustering 1 and \eqn{Y} in clustering 2.
+#' The edge weight of each link is set to the strength of the correspondence between the two clusters;
+#' this is defined from the number of cells with those two labels in their respective clusterings.
 #' A larger number of cells indicates that \eqn{X} and \eqn{Y} are corresponding clusters.
 #'
 #' Of course, the number of cells also depends on the total number of cells in each cluster.
@@ -24,21 +25,26 @@
 #' \itemize{
 #' \item For \code{"min"}, the number of shared cells is divided by the smaller of the totals between the two clusters.
 #' \item For \code{"max"}, the number of shared cells is divided by the larger of the totals.
-#' \item For \code{"union"}, the number of shared cells is divided by the size of the union.
+#' \item For \code{"union"}, the number of shared cells is divided by the size of the union of cells in the two clusters.
 #' The result is equivalent to the Jaccard index.
 #' }
 #'
 #' In situations where \eqn{X} splits into multiple smaller clusters \eqn{Y1}, \eqn{Y2}, etc. in another clustering,
-#' \code{denominator="min"} will report strong links between \eqn{X} and its constituent subclusters.
-#' \code{denominator="max"} will report weak links and \code{denominator="union"} will be somewhere in between.
-#' Conversely, \code{denominator="max"} forms the strongest links when there is a 1:1 mapping between clusters in different clusterings.
+#' \code{denominator="min"} will report strong links between \eqn{X} and its constituent subclusters while \code{"max"} and \code{"union"} will report weak links.
+#' Conversely, \code{denominator="max"} and \code{"union"} can only form strong links when there is a 1:1 mapping between clusters in different clusterings.
 #' This usually yields simpler correspondences between clusterings at the cost of orphaning some of the smaller subclusters.
+#' \code{denominator="union"} is most stringent as it will penalize the presence of non-shared cells in both clusters, whereas \code{"max"} only does so for the larger cluster.
 #'
 #' The general idea is to use the graph returned by this function in visualization routines or for community-based clustering,
 #' to identify \dQuote{clusters of clusters} that can inform about the relationships between clusterings.
 #'
 #' @return 
-#' A \link{graph} object where each node is a cluster level in one of the clusterings in \code{clusters}.
+#' For \code{linkClusters}, a \link{graph} object where each node is a cluster level in one of the clusterings in \code{clusters}.
+#' Edges are weighted by the strength of the correspondence between two clusters in different clusterings.
+#'
+#' For \code{linkClustersMatrix}, a matrix is returned where each row and column corresponds to a cluster in \code{x} and \code{y}, respectively.
+#' Entries represent the strength of the correspondence between the associated clusters;
+#' this is equivalent to a submatrix of the adjacency matrix from the graph returned by \code{linkClusters}. 
 #'
 #' @author Aaron Lun
 #'
@@ -53,11 +59,15 @@
 #' plot(g)
 #'
 #' igraph::cluster_walktrap(g)
+#'
+#' # Results as a matrix, for two clusterings:
+#' linkClustersMatrix(clusters[[1]], clusters[[2]], denominator="union")
 #' @seealso
 #' The \pkg{clustree} package, which provides another method for visualizing relationships between clusterings.
 #'
 #' \code{\link{compareClusterings}}, which computes similarities between the clusterings themselves.
-#' 
+#'
+#' \code{\link{mapClusters}}, which presents the correspondence strengths as a matrix for two clusterings.
 #' @export
 #' @importFrom igraph graph.adjacency
 linkClusters <- function(clusters, prefix=TRUE, denominator=c("min", "union", "max")) {
@@ -87,19 +97,8 @@ linkClusters <- function(clusters, prefix=TRUE, denominator=c("min", "union", "m
         lasty <- 0L
 
         for (y in seq_len(x - 1L)) {
-            tab <- table(clusters[[x]], clusters[[y]])
             ny <- as.integer(totals[[y]])
-
-            if (denominator=="min") {
-                denom <- outer(nx, ny, pmin)
-            } else if (denominator=="union") {
-                denom <- outer(nx, ny, `+`)
-                denom <- denom - tab
-            } else {
-                denom <- outer(nx, ny, pmax)
-            }
-
-            ratio <- tab/denom
+            ratio <- .compute_correspondence(clusters[[x]], clusters[[y]], denominator, nX=nx, nY=ny)
             output[lastx + seq_along(nx), lasty + seq_along(ny)] <- ratio
             lasty <- lasty + length(ny)
         }
@@ -108,4 +107,26 @@ linkClusters <- function(clusters, prefix=TRUE, denominator=c("min", "union", "m
     }
 
     graph.adjacency(output, mode="lower", weighted=TRUE)
+}
+
+#' @export
+#' @rdname linkClusters
+linkClustersMatrix <- function(x, y, denominator=c("min", "union", "max")) {
+    out <- .compute_correspondence(x, y, denominator=match.arg(denominator))
+    .untable(out)
+}
+
+.compute_correspondence <- function(X, Y, denominator, nX=as.integer(table(X)), nY=as.integer(table(Y))) {
+    tab <- table(X, Y)
+
+    if (denominator=="min") {
+        denom <- outer(nX, nY, pmin)
+    } else if (denominator=="union") {
+        denom <- outer(nX, nY, `+`)
+        denom <- denom - tab
+    } else {
+        denom <- outer(nX, nY, pmax)
+    }
+
+    tab/denom
 }
