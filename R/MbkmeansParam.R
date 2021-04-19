@@ -142,6 +142,11 @@ setMethod("clusterRows", c("ANY", "MbkmeansParam"), function(x, BLUSPARAM, full=
         init_fraction <- batch_size/nrow(x)
     }
 
+    if (is.object(x)) {
+        # their C++ code can't handle S3 classes that inherit from base matrix objects.
+        x <- unclass(x)
+    }
+
     stats <- mbkmeans::mbkmeans(t(x), clusters=centerx,
         batch_size=batch_size,
         max_iters=BLUSPARAM[["max_iters"]], 

@@ -1,6 +1,6 @@
 Package: bluster
-Version: 1.1.6
-Date: 2021-04-06
+Version: 1.1.7
+Date: 2021-04-18
 Title: Clustering Algorithms for Bioconductor
 Description: 
     Wraps common clustering algorithms in an easily extended S4 framework.
