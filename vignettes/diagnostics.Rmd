@@ -70,22 +70,35 @@ sil
 boxplot(split(sil$width, clusters))
 ```
 
+The function also returns the identity of the closest "other" cluster for each cell.
+This can be helpful to identify which clusters are easily confused to each other, based on how many of one cluster's cells are closer to the other cluster.
+
+```{r}
+best.choice <- ifelse(sil$width > 0, clusters, sil$other)
+table(Assigned=clusters, Closest=best.choice)
+```
+
 # Computing the neighborhood purity
 
 Another diagnostic uses the percentage of neighbors for each cell that belong to the same cluster.
 Well-separated clusters should exhibit high percentages (i.e., "purities") as cells from different clusters do not mix.
 Low purities are symptomatic of overclustering where cluster boundaries become more ambiguous.
 
-`r Biocpkg("bluster")` computes purities through the `neighborPurity()` function.
-This returns the purity of the neighborhood for each cell and the identity of the cluster with the strongest presence.
-The choice of `k` determines the scope of the neighborhood; 
-lower values will yield higher purities, so this may require some fiddling to find a value that distinguishes between clusters.
+The `neighborPurity()` function computes the purity of the neighborhood for each cell.
+Clusters with systematically low purities may warrant some more care during interpretation.
+By default, we perform some weighting so that large clusters do not have large purities simply because there are few cells assigned to other clusters in the dataset.
 
 ```{r}
 pure <- neighborPurity(mat, clusters)
 pure
-table(Max=pure$maximum, Assigned=clusters)
 boxplot(split(pure$purity, clusters))
+```
+
+The function also returns the identity of the other cluster with the highest percentage. 
+This can again be useful to identify the relationships between clusters based on which pairs have the greatest intermingling in their neighborhoods.
+
+```{r}
+table(Assigned=clusters, Max=pure$maximum)
 ```
 
 # Computing graph modularity
@@ -200,6 +213,23 @@ The function will attempt to generate some sensible name for each combination, t
 ```{r}
 colnames(combinations$clusters)
 combinations$parameters
+```
+
+We can combine this with some of the metrics defined above to quantify cluster separation as a function of the clustering parameters.
+This allows us to quickly determine which parameters have a noticeable impact on the results. 
+In principle, we could choose the clustering with the greatest separation for further analysis;
+however, this tends to be disappointing as it often favors overly broad clusters.
+
+```{r}
+set.seed(10)
+nclusters <- 3:25
+kcombos <- clusterSweep(mat, BLUSPARAM=KmeansParam(centers=5), centers=nclusters)
+
+sil <- vapply(as.list(kcombos$clusters), function(x) mean(approxSilhouette(mat, x)$width), 0)
+plot(nclusters, sil, xlab="Number of clusters", ylab="Average silhouette width")
+
+imp <- vapply(as.list(kcombos$clusters), function(x) mean(neighborPurity(mat, x)$purity), 0)
+plot(nclusters, imp, xlab="Number of clusters", ylab="Average purity")
 ```
 
 # Linking clusters 
