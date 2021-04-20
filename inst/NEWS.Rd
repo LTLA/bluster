@@ -29,6 +29,10 @@ Added \code{compareClusterings()} to compute similarities between multiple clust
 
 \item
 Added \code{nestedClusters()} to quantify the degree of nesting across two clusterings.
+
+\item Moved \code{objects} into \code{objects$kmeans} for \code{KmeansParam()} when \code{full=TRUE}. 
+
+\item Moved \code{objects} into \code{objects$hclust} for \code{HclustParam()} when \code{full=TRUE}. 
 }}
 
 \section{Version 1.0.0}{\itemize{

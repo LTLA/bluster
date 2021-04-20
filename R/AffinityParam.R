@@ -32,8 +32,8 @@
 #' The \code{AffinityParam} constructor will return a \linkS4class{AffinityParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-#' the latter will contain the direct output of \code{\link[apcluster]{apcluster}}.
+#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
+#' (a list containing \code{similarity}, the similarity matrix; and \code{apcluster}, the direct output of \code{\link[apcluster]{apcluster}}).
 #'
 #' @author Aaron Lun
 #' @examples
@@ -138,7 +138,7 @@ setMethod("clusterRows", c("ANY", "AffinityParam"), function(x, BLUSPARAM, full=
     out <- factor(out)
 
     if (full) {
-        list(clusters=out, objects=res)
+        list(clusters=out, objects=list(similarity=mat, apcluster=res))
     } else {
         out
     }

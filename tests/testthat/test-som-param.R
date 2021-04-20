@@ -77,6 +77,7 @@ test_that("clusterRows responds to the functions and full=TRUE", {
     full <- clusterRows(m, SOMParam(sqrt), full=TRUE)
     expect_identical(out, full$cluster)
     expect_true(is.list(full$objects))
+    expect_identical(names(full$objects), "som")
 })
 
 test_that("clusterRows responds to the options", {

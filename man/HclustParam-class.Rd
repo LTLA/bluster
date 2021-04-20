@@ -53,7 +53,8 @@ Ignored if \code{cut.number} is set.}
 The \code{HclustParam} constructor will return a \linkS4class{HclustParam} object with the specified parameters.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} (the \code{\link{hclust}} output).
+If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} 
+(a list containing \code{dist}, the distance matrix; and \code{hclust}, the output of \code{\link{hclust}}).
 }
 \description{
 Run the base \code{\link{hclust}} function on a distance matrix within \code{\link{clusterRows}}.

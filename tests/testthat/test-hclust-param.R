@@ -47,7 +47,7 @@ test_that("clusterRows works correctly", {
 
     full <- clusterRows(m, HclustParam(cut.number=3), full=TRUE)
     expect_identical(ref, full$cluster)
-    expect_s3_class(full$objects, "hclust")
+    expect_s3_class(full$objects$hclust, "hclust")
 })
 
 test_that("clusterRows works with the dynamic tree cut", {

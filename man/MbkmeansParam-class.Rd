@@ -39,8 +39,8 @@ Alternatively, a function that takes the number of observations and returns the 
 The \code{MbkmeansParam} constructor will return a \linkS4class{MbkmeansParam} object with the specified parameters.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-the latter will contain the direct output of \code{\link[mbkmeans]{mbkmeans}}.
+If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
+(a list containing \code{mbkmeans}, the direct output of \code{\link[mbkmeans]{mbkmeans}}).
 }
 \description{
 Run the mini-batch k-means \code{\link[mbkmeans]{mbkmeans}} function with the specified number of centers within \code{\link{clusterRows}}.

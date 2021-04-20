@@ -29,8 +29,8 @@
 #' The \code{MbkmeansParam} constructor will return a \linkS4class{MbkmeansParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-#' the latter will contain the direct output of \code{\link[mbkmeans]{mbkmeans}}.
+#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
+#' (a list containing \code{mbkmeans}, the direct output of \code{\link[mbkmeans]{mbkmeans}}).
 #'
 #' @examples
 #' clusterRows(iris[,1:4], MbkmeansParam(centers=3))
@@ -160,7 +160,7 @@ setMethod("clusterRows", c("ANY", "MbkmeansParam"), function(x, BLUSPARAM, full=
 
     vec_clusters <- factor(stats$Clusters)
     if (full) {
-        list(clusters=vec_clusters, objects=stats)
+        list(clusters=vec_clusters, objects=list(mbkmeans=stats))
     } else {
         vec_clusters
     }

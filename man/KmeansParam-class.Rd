@@ -30,8 +30,8 @@ Set to the \code{\link{kmeans}} defaults if not supplied.}
 The \code{KmeansParam} constructor will return a \linkS4class{KmeansParam} object with the specified parameters.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-the latter will contain the direct output of \code{\link{kmeans}}.
+If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
+(a list containing \code{kmeans}, the direct output of \code{\link{kmeans}}).
 }
 \description{
 Run the base \code{\link{kmeans}} function with the specified number of centers within \code{\link{clusterRows}}.

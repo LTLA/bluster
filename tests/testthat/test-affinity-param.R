@@ -46,7 +46,7 @@ test_that("clusterRows responds to full=TRUE", {
 
     full <- clusterRows(m, AffinityParam(), full=TRUE)
     expect_identical(out, full$cluster)
-    expect_s4_class(full$objects, "APResult")
+    expect_s4_class(full$objects$apcluster, "APResult")
 })
 
 set.seed(1010001)

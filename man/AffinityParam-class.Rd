@@ -39,8 +39,8 @@ These are passed to the \code{\link[apcluster]{apcluster}} function, where value
 The \code{AffinityParam} constructor will return a \linkS4class{AffinityParam} object with the specified parameters.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-the latter will contain the direct output of \code{\link[apcluster]{apcluster}}.
+If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
+(a list containing \code{similarity}, the similarity matrix; and \code{apcluster}, the direct output of \code{\link[apcluster]{apcluster}}).
 }
 \description{
 Use affinity propagation from the \pkg{apcluster} package to cluster observations.

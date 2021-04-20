@@ -144,8 +144,8 @@ set.seed(1000)
 som.out <- clusterRows(mat, SOMParam(100), full=TRUE)
 
 par(mfrow=c(1,2))
-plot(som.out$objects, "counts")
-grid <- som.out$objects$grid$pts
+plot(som.out$objects$som, "counts")
+grid <- som.out$objects$som$grid$pts
 text(grid[,1], grid[,2], seq_len(nrow(grid)))
 ```
 

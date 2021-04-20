@@ -44,8 +44,8 @@ Values above 1 will distribute more nodes to \code{x} while values below 1 will 
 The \code{SOMParam} constructor will return a \linkS4class{SOMParam} object with the specified parameters.
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-the latter will contain the direct output of \code{\link[kohonen]{som}}.
+If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
+(a list containing \code{som}, the direct output of \code{\link[kohonen]{som}}).
 }
 \description{
 Use the self-organizing map implementation in the \pkg{kohonen} package to cluster observations into the specified number of nodes.

@@ -39,7 +39,7 @@ test_that("clusterRows works correctly", {
     set.seed(9999)
     full <- clusterRows(m, KmeansParam(sqrt), full=TRUE)
     expect_identical(out, full$cluster)
-    expect_s3_class(full$objects, "kmeans")
+    expect_s3_class(full$objects$kmeans, "kmeans")
 
     # Responds to the options.
     set.seed(100000)

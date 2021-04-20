@@ -39,7 +39,7 @@
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 #' Note that this may contain \code{NA} values corresponding to noise points.
 #' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} 
-#' (a list containing the cluster identities and, additionally, the \code{eps} and \code{min.pts} used in the analysis).
+#' (a list containing the \code{eps} and \code{min.pts} used in the analysis).
 #' 
 #' @examples
 #' clusterRows(iris[,1:4], DbscanParam())
@@ -117,6 +117,7 @@ setMethod("clusterRows", c("ANY", "DbscanParam"), function(x, BLUSPARAM, full=FA
     clusters <- factor(clusters)
 
     if (full) {
+        out$clusters <- NULL
         list(clusters=clusters, objects=out)
     } else {
         clusters

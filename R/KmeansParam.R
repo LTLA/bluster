@@ -24,8 +24,8 @@
 #' The \code{KmeansParam} constructor will return a \linkS4class{KmeansParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-#' the latter will contain the direct output of \code{\link{kmeans}}.
+#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
+#' (a list containing \code{kmeans}, the direct output of \code{\link{kmeans}}).
 #'
 #' @examples
 #' clusterRows(iris[,1:4], KmeansParam(centers=4))
@@ -109,7 +109,7 @@ setMethod("clusterRows", c("ANY", "KmeansParam"), function(x, BLUSPARAM, full=FA
     clusters <- factor(stats$cluster)
 
     if (full) {
-        list(clusters=clusters, objects=stats)
+        list(clusters=clusters, objects=list(kmeans=stats))
     } else {
         clusters
     }

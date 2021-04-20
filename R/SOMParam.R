@@ -37,8 +37,8 @@
 #' The \code{SOMParam} constructor will return a \linkS4class{SOMParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
-#' the latter will contain the direct output of \code{\link[kohonen]{som}}.
+#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
+#' (a list containing \code{som}, the direct output of \code{\link[kohonen]{som}}).
 #'
 #' @author Aaron Lun
 #' @examples
@@ -164,7 +164,7 @@ setMethod("clusterRows", c("ANY", "SOMParam"), function(x, BLUSPARAM, full=FALSE
     clusters <- factor(stats$unit.classif)
 
     if (full) {
-        list(clusters=clusters, objects=stats)
+        list(clusters=clusters, objects=list(som=stats))
     } else {
         clusters 
     }

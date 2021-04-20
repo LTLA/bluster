@@ -47,7 +47,7 @@ The \code{DbscanParam} constructor will return a \linkS4class{DbscanParam} objec
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 Note that this may contain \code{NA} values corresponding to noise points.
 If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} 
-(a list containing the cluster identities and, additionally, the \code{eps} and \code{min.pts} used in the analysis).
+(a list containing the \code{eps} and \code{min.pts} used in the analysis).
 }
 \description{
 Perform density-based clustering with a fast re-implementation of the DBSCAN algorithm.
