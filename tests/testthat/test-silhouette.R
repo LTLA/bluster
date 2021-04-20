@@ -29,6 +29,24 @@ test_that('approxSilhouette yields correct output for perfectly randomized clust
     expect_true(all(clusters != out$other))
 })
 
+test_that("approxSilhouette preserves type", {
+    y <- matrix(rnorm(1000), ncol=10)
+    kclust <- kmeans(y, 5)$cluster
+    ref <- approxSilhouette(y, kclust)
+
+    f <- LETTERS[kclust]
+    out2 <- approxSilhouette(y, f)
+    expect_identical(out2$cluster, f)
+    expect_identical(out2$other, LETTERS[ref$other])
+    expect_identical(out2$width, ref$width)
+
+    f <- factor(f)
+    out2 <- approxSilhouette(y, f)
+    expect_identical(out2$cluster, f)
+    expect_identical(out2$other, factor(LETTERS[1:5])[ref$other])
+    expect_identical(out2$width, ref$width)
+})
+
 set.seed(80001)
 test_that('approxSilhouette computes the right approximation', {
     y <- matrix(rnorm(1000), ncol=1)

@@ -12,42 +12,32 @@ approxSilhouette(x, clusters)
 \item{clusters}{Vector of length equal to \code{ncol(x)}, specifying the cluster assigned to each observation.}
 }
 \value{
-A \linkS4class{DataFrame} with one row per cell in \code{x} and the columns:
+A \linkS4class{DataFrame} with one row per observation in \code{x} and the columns:
 \itemize{
+\item \code{cluster}, the assigned cluster for each observation in \code{x}.
+\item \code{other}, the closest cluster other than the one to which the current observation is assigned.
 \item \code{width}, a numeric field containing the approximate silhouette width of the current cell.
-\item \code{other}, the closest cluster other than the one to which the current cell is assigned.
 }
 Row names are defined as the row names of \code{x}.
 }
 \description{
-Given a clustering, compute a fast approximate silhouette width for each cell.
+Given a clustering, quickly compute an approximate silhouette width for each observation.
 }
 \details{
 The silhouette width is a general-purpose method for evaluating the separation between clusters 
 but requires calculating the average distance between pairs of observations within or between clusters.
-This function instead approximates the average distances for faster computation in large datasets.
-
-For a given observation, let \eqn{\tilde D} be the approximate average distance to all cells in cluster \eqn{X}.
-This is defined as the square root of the sum of:
-\itemize{
-\item The squared distance from the current observation to the centroid of cluster \eqn{X}.
-This is most accurate when the observation is distant to \eqn{X} relative to the latter's variation.
-\item The summed variance of all variables across observations in cluster \eqn{X}.
-This is most accurate when the observation lies close to the close to the centroid of \eqn{X}.
-}
-This is also equivalent to the root-square-mean distance from the current observation to all cells in \eqn{X}.
+This function instead approximates the average distance with the root-mean-squared-distance, which can be computed very efficiently for large datasets.
+The approximated averages are then used to compute the silhouette width using the usual definition.
 
 % In case you're wondering, here it is. Let O be the current observation.
-% - The squared distance to the centroid is (O - Y)^2 where Y = E(X).
-% - The variance within X is E[(X - Y)^2].
+% - The squared distance to the centroid is (O - Y)^2 where Y = mean(X) for the vector of observations X.
+% - The mean of squares within X is mean[(X - Y)^2].
 % - Their sum is:
-%   (O - Y)^2 + E[(X - Y)^2] = O^2 - 2OY + Y^2 + E(X^2) - 2E(X)Y + Y^2
-%                            = O^2 - 2OY + E(X^2)
-%                            = O^2 - 2OE(X) + E(X^2)
-%                            = E[(O - X)^2]
-
-The approximate silhouette width for each cell can then be calculated with the relevant two values of \eqn{\tilde D},
-computed by setting \eqn{X} to the cluster of the current cell or the closest other cluster.
+%   (O - Y)^2 + mean[(X - Y)^2] = O^2 - 2OY + Y^2 + mean(X^2) - 2 mean(X) Y + Y^2
+%                               = O^2 - 2OY + mean(X^2)
+%                               = O^2 - 2OE(X) + mean(X^2)
+%                               = mean[(O - X)^2]
+%   After which we can just take the square root.
 }
 \examples{
 m <- matrix(rnorm(10000), ncol=10)
