@@ -142,7 +142,7 @@ setMethod("clusterRows", c("ANY", "MbkmeansParam"), function(x, BLUSPARAM, full=
         init_fraction <- batch_size/nrow(x)
     }
 
-    if (is.object(x)) {
+    if (is.matrix(x) && is.object(x)) {
         # their C++ code can't handle S3 classes that inherit from base matrix objects.
         x <- unclass(x)
     }
