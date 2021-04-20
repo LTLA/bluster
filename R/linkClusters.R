@@ -68,7 +68,7 @@
 #' \code{\link{compareClusterings}}, which computes similarities between the clusterings themselves.
 #' @export
 #' @importFrom igraph graph.adjacency
-linkClusters <- function(clusters, prefix=TRUE, denominator=c("min", "union", "max")) {
+linkClusters <- function(clusters, prefix=TRUE, denominator=c("union", "min", "max")) {
     if (!length(unique(lengths(clusters)))) {
         stop("'clusters' must have elements of the same length")
     }
@@ -109,7 +109,7 @@ linkClusters <- function(clusters, prefix=TRUE, denominator=c("min", "union", "m
 
 #' @export
 #' @rdname linkClusters
-linkClustersMatrix <- function(x, y, denominator=c("min", "union", "max")) {
+linkClustersMatrix <- function(x, y, denominator=c("union", "min", "max")) {
     out <- .compute_correspondence(x, y, denominator=match.arg(denominator))
     .untable(out)
 }

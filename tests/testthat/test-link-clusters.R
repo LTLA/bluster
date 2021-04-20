@@ -9,7 +9,7 @@ together <- list(first=x1, second=x2, third=x3)
 
 set.seed(99999999)
 test_that("linkClusters works correctly", {
-    linked <- linkClusters(together)
+    linked <- linkClusters(together, denominator="min")
     ulinked <- linkClusters(together, denominator="union")
     xlinked <- linkClusters(together, denominator="max")
 

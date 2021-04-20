@@ -5,9 +5,9 @@
 \alias{linkClustersMatrix}
 \title{Create a graph between different clusterings}
 \usage{
-linkClusters(clusters, prefix = TRUE, denominator = c("min", "union", "max"))
+linkClusters(clusters, prefix = TRUE, denominator = c("union", "min", "max"))
 
-linkClustersMatrix(x, y, denominator = c("min", "union", "max"))
+linkClustersMatrix(x, y, denominator = c("union", "min", "max"))
 }
 \arguments{
 \item{clusters}{A list of factors or vectors where each entry corresponds to a clustering.
