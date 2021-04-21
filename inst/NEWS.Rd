@@ -33,6 +33,8 @@ Added \code{nestedClusters()} to quantify the degree of nesting across two clust
 \item Moved \code{objects} into \code{objects$kmeans} for \code{KmeansParam()} when \code{full=TRUE}. 
 
 \item Moved \code{objects} into \code{objects$hclust} for \code{HclustParam()} when \code{full=TRUE}. 
+
+\item Added \code{clusterRMSD()} to compute the root-mean-squared-deviation for each cluster.
 }}
 
 \section{Version 1.0.0}{\itemize{

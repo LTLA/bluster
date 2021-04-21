@@ -1,5 +1,5 @@
 Package: bluster
-Version: 1.1.8
+Version: 1.1.9
 Date: 2021-04-20
 Title: Clustering Algorithms for Bioconductor
 Description: 
@@ -54,6 +54,7 @@ Collate:
     AffinityParam.R
     BlusterParam.R
     bootstrapStability.R
+    clusterRMSD.R
     clusterSweep.R
     compareClusterings.R
     FixedNumberParam.R

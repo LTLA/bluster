@@ -101,6 +101,25 @@ This can again be useful to identify the relationships between clusters based on
 table(Assigned=clusters, Max=pure$maximum)
 ```
 
+# Computing per-cluster RMSD
+
+The root-mean-squared deviation (RMSD) for each cluster represents the dispersion of cells within each cluster.
+A large RMSD value indicates that a cluster has high internal heterogeneity,
+making it a good candidate for further subclustering.
+
+```{r}
+rmsd <- clusterRMSD(mat, clusters)
+barplot(rmsd)
+```
+
+Alternatively, we can compute the within-cluster sum of squares (WCSS), a metric commonly seen in $k$-means clustering.
+One could pick a "sensible" choice for $k$ by computing the WCSS for a range of values and picking the value the WCSS begins to plateau -
+see Section \@ref(clustering-parameter-sweeps) for more details.
+
+```{r}
+clusterRMSD(mat, clusters, sum=TRUE)
+```
+
 # Computing graph modularity
 
 For graph-based methods, we can compute the cluster modularity within clusters and between pairs of clusters.
@@ -228,8 +247,11 @@ kcombos <- clusterSweep(mat, BLUSPARAM=KmeansParam(centers=5), centers=nclusters
 sil <- vapply(as.list(kcombos$clusters), function(x) mean(approxSilhouette(mat, x)$width), 0)
 plot(nclusters, sil, xlab="Number of clusters", ylab="Average silhouette width")
 
-imp <- vapply(as.list(kcombos$clusters), function(x) mean(neighborPurity(mat, x)$purity), 0)
-plot(nclusters, imp, xlab="Number of clusters", ylab="Average purity")
+pur <- vapply(as.list(kcombos$clusters), function(x) mean(neighborPurity(mat, x)$purity), 0)
+plot(nclusters, pur, xlab="Number of clusters", ylab="Average purity")
+
+wcss <- vapply(as.list(kcombos$clusters), function(x) sum(clusterRMSD(mat, x, sum=TRUE)), 0)
+plot(nclusters, wcss, xlab="Number of clusters", ylab="Within-cluster sum of squares")
 ```
 
 # Linking clusters 
