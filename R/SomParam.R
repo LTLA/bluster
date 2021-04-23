@@ -1,4 +1,4 @@
-#' SOM-based clustering
+#' Clustering with self-organizing maps
 #'
 #' Use the self-organizing map implementation in the \pkg{kohonen} package to cluster observations into the specified number of nodes.
 #' Note that this requires the installation of the \pkg{kohonen} package.
@@ -13,7 +13,7 @@
 #' Further arguments to pass to the \code{\link[kohonen]{somgrid}} function in the \pkg{kohonen} package.
 #' @param rlen,alpha,radius,dist.fct
 #' Further arguments to pass to the \code{\link[kohonen]{som}} function in the \pkg{kohonen} package.
-#' @param BLUSPARAM A \linkS4class{SOMParam} object.
+#' @param BLUSPARAM A \linkS4class{SomParam} object.
 #' @param full Logical scalar indicating whether the full SOM statistics should be returned.
 #' 
 #' @details
@@ -24,17 +24,17 @@
 #' Note that the final number of clusters may not be exactly equal to \code{centers}, depending on how \code{dim.ratio} is specified.
 #' For example, if \code{centers} is a perfect square and \code{dim.ratio=1}, we will get exactly the requested number of points.
 #'
-#' To modify an existing SOMParam object \code{x},
+#' To modify an existing SomParam object \code{x},
 #' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 #'
 #' For \code{radius}, a value of \code{NULL} means that the default argument in the \code{\link[kohonen]{som}} function signature is used.
-#' This is are data-dependent and so cannot be specified during construction of the SOMParam object.
+#' This is are data-dependent and so cannot be specified during construction of the SomParam object.
 #'
 #' For \code{dist.fct}, users can specify any string that can be used in the \code{dist.fcts} arguments in \code{\link[kohonen]{som}}.
 #' In practice, the only real alternative is \code{"manhattan"}.
 #'
 #' @return
-#' The \code{SOMParam} constructor will return a \linkS4class{SOMParam} object with the specified parameters.
+#' The \code{SomParam} constructor will return a \linkS4class{SomParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 #' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
@@ -42,22 +42,22 @@
 #'
 #' @author Aaron Lun
 #' @examples
-#' clusterRows(iris[,1:4], SOMParam(centers=16))
-#' clusterRows(iris[,1:4], SOMParam(centers=12, dim.ratio=3/4))
+#' clusterRows(iris[,1:4], SomParam(centers=16))
+#' clusterRows(iris[,1:4], SomParam(centers=12, dim.ratio=3/4))
 #'
 #' @seealso
 #' \code{\link[kohonen]{som}} from the \pkg{kohonen} package, which does all of the heavy lifting.
 #'
-#' \linkS4class{FixedNumberParam}, the parent of the SOMParam class.
-#' @name SOMParam-class
+#' \linkS4class{FixedNumberParam}, the parent of the SomParam class.
+#' @name SomParam-class
 #' @docType class
 #' @aliases 
-#' show,SOMParam-method
+#' show,SomParam-method
 NULL
 
 #' @export
-#' @rdname SOMParam-class
-setClass("SOMParam", contains="FixedNumberParam", slots=c(
+#' @rdname SomParam-class
+setClass("SomParam", contains="FixedNumberParam", slots=c(
     dim.ratio="numeric", 
     topo="character",
     neighbourhood.fct="character",
@@ -68,7 +68,7 @@ setClass("SOMParam", contains="FixedNumberParam", slots=c(
     dist.fct="character"
 ))
 
-setValidity2("SOMParam", function(object) {
+setValidity2("SomParam", function(object) {
     msg <- character(0)
 
     msg <- c(msg, .check_positive_slots(object, c("dim.ratio", "rlen"))) 
@@ -94,7 +94,7 @@ setValidity2("SOMParam", function(object) {
 })
 
 #' @export
-setMethod("show", "SOMParam", function(object) {
+setMethod("show", "SomParam", function(object) {
     callNextMethod()
 
     for (i in c("dim.ratio", "topo", "neighbourhood.fct", "toroidal", "rlen")) {
@@ -107,8 +107,8 @@ setMethod("show", "SOMParam", function(object) {
 })
 
 #' @export
-#' @rdname SOMParam-class
-SOMParam <- function(centers, 
+#' @rdname SomParam-class
+SomParam <- function(centers, 
     dim.ratio = 1,
     topo = "rectangular",
     neighbourhood.fct = "bubble",
@@ -121,7 +121,7 @@ SOMParam <- function(centers,
     if (!is.function(centers)) {
         centers <- as.integer(centers)
     }
-    new("SOMParam", 
+    new("SomParam", 
         centers=centers, 
         dim.ratio=dim.ratio,
         topo=topo,
@@ -135,8 +135,8 @@ SOMParam <- function(centers,
 }
 
 #' @export
-#' @rdname SOMParam-class
-setMethod("clusterRows", c("ANY", "SOMParam"), function(x, BLUSPARAM, full=FALSE) {
+#' @rdname SomParam-class
+setMethod("clusterRows", c("ANY", "SomParam"), function(x, BLUSPARAM, full=FALSE) {
     centerx <- centers(BLUSPARAM, n=nrow(x))
     dim.ratio <- BLUSPARAM[["dim.ratio"]]
     xdim <- max(1, round(sqrt(centerx * dim.ratio)))

@@ -132,7 +132,7 @@ This allocates observations to nodes of a simple neural network; each node is th
 
 ```{r}
 set.seed(1000)
-som.out <- clusterRows(mat, SOMParam(20))
+som.out <- clusterRows(mat, SomParam(20))
 plotUMAP(sce, colour_by=I(som.out))
 ```
 
@@ -141,7 +141,7 @@ This allows us to naturally determine the relationships between clusters based o
 
 ```{r, fig.wide=TRUE}
 set.seed(1000)
-som.out <- clusterRows(mat, SOMParam(100), full=TRUE)
+som.out <- clusterRows(mat, SomParam(100), full=TRUE)
 
 par(mfrow=c(1,2))
 plot(som.out$objects$som, "counts")
