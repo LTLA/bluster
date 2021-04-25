@@ -33,6 +33,7 @@ Suggests:
     scran,
     pheatmap,
     viridis,
+    cluster,
     mbkmeans,
     kohonen,
     apcluster
@@ -69,6 +70,7 @@ Collate:
     NNGraphParam.R
     pairwiseModularity.R
     pairwiseRand.R
+    PamParam.R
     RcppExports.R
     SomParam.R
     TwoStepParam.R

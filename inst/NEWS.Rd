@@ -19,6 +19,9 @@ Added \code{AffinityParam()} to wrap the affinity propagation code from \pkg{apc
 Added \code{DbscanParam()} to provide a custom DBSCAN implementation with automatic \code{eps} choice.
 
 \item 
+Added \code{PamParam()} to wrap the PAM implementation from \pkg{cluster}.
+
+\item 
 Added \code{clusterSweep()} to easily perform parameter sweeps via \code{clusterRows()}.
 
 \item 
