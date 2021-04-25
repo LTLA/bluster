@@ -14,7 +14,7 @@
 .extractScalarArguments(x)
 }
 \arguments{
-\item{x}{A \linkS4class{BlusterParam} object.}
+\item{x, object}{A \linkS4class{BlusterParam} object.}
 }
 \value{
 For \code{.defaultScalarArguments}, a named character vector is returned.

@@ -1,6 +1,6 @@
 Package: bluster
-Version: 1.1.10
-Date: 2021-04-22
+Version: 1.1.11
+Date: 2021-04-25
 Title: Clustering Algorithms for Bioconductor
 Description: 
     Wraps common clustering algorithms in an easily extended S4 framework.
@@ -15,6 +15,7 @@ Imports:
     stats, 
     methods, 
     utils, 
+    cluster,
     Matrix,
     Rcpp, 
     igraph,
@@ -33,7 +34,6 @@ Suggests:
     scran,
     pheatmap,
     viridis,
-    cluster,
     mbkmeans,
     kohonen,
     apcluster
@@ -55,6 +55,7 @@ Collate:
     AffinityParam.R
     BlusterParam.R
     bootstrapStability.R
+    ClaraParam.R
     clusterRMSD.R
     clusterSweep.R
     compareClusterings.R

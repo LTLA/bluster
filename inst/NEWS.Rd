@@ -22,6 +22,9 @@ Added \code{DbscanParam()} to provide a custom DBSCAN implementation with automa
 Added \code{PamParam()} to wrap the PAM implementation from \pkg{cluster}.
 
 \item 
+Added \code{ClaraParam()} to wrap the CLARA implementation from \pkg{cluster}.
+
+\item 
 Added \code{clusterSweep()} to easily perform parameter sweeps via \code{clusterRows()}.
 
 \item 

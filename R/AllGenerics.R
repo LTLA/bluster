@@ -41,7 +41,7 @@ setGeneric("centers<-", function(x, value) standardGeneric("centers<-"))
 #'
 #' Provide a consistent mechanism to handle specification of default arguments to the underlying clustering functions.
 #'
-#' @param x A \linkS4class{BlusterParam} object.
+#' @param x,object A \linkS4class{BlusterParam} object.
 #'
 #' @return
 #' For \code{.defaultScalarArguments}, a named character vector is returned.

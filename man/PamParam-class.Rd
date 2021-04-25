@@ -25,7 +25,7 @@ PamParam(
 \item{centers}{An integer scalar specifying the number of centers.
 Alternatively, a function that takes the number of observations and returns the number of centers.}
 
-\item{metric, medoids, nstart, stand, do.swap, variant}{Further arguments to pass to \code{\link[cluster]{pam}}.
+\item{metric, medoids, nstart, stand, do.swap, variant}{Further arguments to pass to \code{\link{pam}}.
 Set to the function defaults if not supplied.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
@@ -39,7 +39,7 @@ The \code{PamParam} constructor will return a \linkS4class{PamParam} object with
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
-(a list containing \code{pam}, the direct output of \code{\link[cluster]{pam}}).
+(a list containing \code{pam}, the direct output of \code{\link{pam}}).
 }
 \description{
 Partition observations into k-medoids as a more robust version of k-means.
@@ -58,9 +58,11 @@ clusterRows(iris[,1:4], PamParam(centers=4, variant="faster", do.swap=FALSE))
 clusterRows(iris[,1:4], PamParam(centers=sqrt))
 }
 \seealso{
-\code{\link[cluster]{pam}}, which actually does all the heavy lifting.
+\code{\link{pam}}, which actually does all the heavy lifting.
 
 \linkS4class{KmeansParam}, for the more commonly used k-means algorithm.
+
+\linkS4class{ClaraParam}, for a scalable extension to the PAM approach.
 }
 \author{
 Aaron Lun
