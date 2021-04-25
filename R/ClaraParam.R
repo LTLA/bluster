@@ -37,7 +37,8 @@
 #' @seealso
 #' \code{\link{clara}}, which actually does all the heavy lifting.
 #'
-#' \linkS4class{ClaraParam}, for the original PAM algorithm.
+#' \linkS4class{PamParam}, for the original PAM algorithm.
+#'
 #' @name ClaraParam-class
 #' @docType class
 #' @aliases
