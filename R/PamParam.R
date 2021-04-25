@@ -32,7 +32,7 @@
 #' clusterRows(iris[,1:4], PamParam(centers=4, variant="faster", do.swap=FALSE))
 #' clusterRows(iris[,1:4], PamParam(centers=sqrt))
 #' @seealso
-#' \code{\link[pam]{pam}}, which actually does all the heavy lifting.
+#' \code{\link[cluster]{pam}}, which actually does all the heavy lifting.
 #'
 #' \linkS4class{KmeansParam}, for the more commonly used k-means algorithm.
 #' @name PamParam-class
