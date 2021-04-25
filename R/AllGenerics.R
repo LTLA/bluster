@@ -36,3 +36,39 @@ setGeneric("centers", function(x, n=NULL) standardGeneric("centers"))
 
 #' @export
 setGeneric("centers<-", function(x, value) standardGeneric("centers<-"))
+
+#' Define the default arguments
+#'
+#' Provide a consistent mechanism to handle specification of default arguments to the underlying clustering functions.
+#'
+#' @param x A \linkS4class{BlusterParam} object.
+#'
+#' @return
+#' For \code{.defaultScalarArguments}, a named character vector is returned.
+#' Each entry corresponds to an argument to the clustering function - the name is the argument name, and the value is the argument type.
+#'
+#' For \code{.extractScalarArguments}, a named list of non-default scalar arguments is returned.
+#' Any arguments set to their default values are omitted from the list.
+#'
+#' For \code{.showScalarArguments}, the values of the arguments are printed to screen.
+#' Default values are marked with \code{[default]}.
+#'
+#' @details
+#' The idea is to simplify the derivation of new \linkS4class{BlusterParam} objects,
+#' by allowing developers to indicate that the underlying function default should be used for particular arguments.
+#' This avoids duplication of the default arguments in the object constructor;
+#' instead, default arguments can be indicated as such by setting them to \code{NULL},
+#' in which case they will not be explicitly passed to the underlying clustering function.
+#'
+#' @author Aaron Lun
+#' @examples
+#' .defaultScalarArguments(PamParam(10))
+#' .extractScalarArguments(PamParam(10))
+#' .extractScalarArguments(PamParam(10, variant="faster"))
+#'
+#' @export
+#' @aliases
+#' .defaultScalarArguments,BlusterParam-method
+#'
+#' @rdname defaultArguments
+setGeneric(".defaultScalarArguments", function(x) standardGeneric(".defaultScalarArguments"))

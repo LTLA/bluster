@@ -4,6 +4,7 @@
 \name{PamParam-class}
 \alias{PamParam-class}
 \alias{show,PamParam-method}
+\alias{.defaultScalarArguments,PamParam-method}
 \alias{PamParam}
 \alias{clusterRows,ANY,PamParam-method}
 \title{Partitioning around medoids}

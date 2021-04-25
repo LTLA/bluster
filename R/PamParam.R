@@ -39,6 +39,7 @@
 #' @docType class
 #' @aliases
 #' show,PamParam-method
+#' .defaultScalarArguments,PamParam-method
 NULL
 
 #' @export
@@ -54,32 +55,15 @@ PamParam <- function(centers, metric=NULL, medoids=NULL, nstart=NULL, stand=NULL
     new("PamParam", centers=centers, metric=metric, medoids=medoids, nstart=nstart, stand=stand, do.swap=do.swap, variant=variant)
 }
 
-pam.args <- c(metric="character", medoids="character", nstart="numeric", stand="logical", do.swap="logical", variant="character")
-
 #' @export
 setMethod("show", "PamParam", function(object) {
     callNextMethod()
-    for (x in names(pam.args)) {
-        val <- slot(object, x)
-        if (is.null(val)) {
-            val <- "[default]"
-        }
-        cat(sprintf("%s: %s\n", x, val))
-    }
+    .showScalarArguments(object)
 })
 
-#' @importFrom S4Vectors setValidity2
-setValidity2("PamParam", function(object) {
-    for (x in names(pam.args)) {
-        val <- slot(object, x)
-        if (!is.null(val)) {
-            if (length(val)!=1 || !is(val, pam.args[[x]])) {
-                return(sprintf("'%s' should be NULL or a %s scalar", x, pam.args[[x]]))
-            }
-        }
-    }
-    TRUE
-})
+#' @export
+setMethod(".defaultScalarArguments", "PamParam", function(x) 
+    c(metric="character", medoids="character", nstart="numeric", stand="logical", do.swap="logical", variant="character"))
 
 #' @export
 #' @rdname PamParam-class
@@ -87,18 +71,14 @@ setValidity2("PamParam", function(object) {
 setMethod("clusterRows", c("ANY", "PamParam"), function(x, BLUSPARAM, full=FALSE) {
     centerx <- centers(BLUSPARAM, n=nrow(x))
 
-    args <- list(
-        as.matrix(x), 
-        k=centerx,
-        keep.data=FALSE
+    args <- c(
+        list(
+            as.matrix(x), 
+            k=centerx,
+            keep.data=FALSE
+        ),
+        .extractScalarArguments(BLUSPARAM)
     )
-
-    for (i in names(pam.args)) {
-        val <- slot(BLUSPARAM, i)
-        if (!is.null(val)) {
-            args[[i]] <- val
-        }
-    }
 
     stats <- do.call(cluster::pam, args)
     clusters <- factor(stats$clustering)
