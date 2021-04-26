@@ -54,11 +54,11 @@ To modify an existing DianaParam object \code{x},
 users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 
 If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not have \code{h} or \code{k},
-\code{\link{custerRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}.
+\code{\link{clusterRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}.
 }
 \examples{
 clusterRows(iris[,1:4], DianaParam())
-clusterRows(iris[,1:4], DianaParam(method="ward"))
+clusterRows(iris[,1:4], DianaParam(metric="manhattan"))
 
 }
 \seealso{

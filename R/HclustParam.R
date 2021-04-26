@@ -23,7 +23,7 @@
 #' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 #'
 #' If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not have \code{h} or \code{k},
-#' \code{\link{custerRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}. 
+#' \code{\link{clusterRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}. 
 #'
 #' @return 
 #' The \code{HclustParam} constructor will return a \linkS4class{HclustParam} object with the specified parameters.
@@ -43,9 +43,10 @@
 #' @name HclustParam-class
 #' @docType class
 #' @aliases 
-#' show,HclustParam-method
 #' .defaultScalarArguments,HclustParam-method
 #' updateObject,HclustParam-method
+#' show,HclustParam-method
+#' [[,HclustParam-method
 NULL
 
 #' @export
@@ -74,6 +75,18 @@ HclustParam <- function(metric=NULL, method=NULL, cut.fun=NULL, cut.dynamic=FALS
 
     new("HclustParam", metric=metric, method=method, cut.fun=cut.fun, cut.dynamic=cut.dynamic, cut.params=cut.params)
 }
+
+#' @export
+setMethod("[[", "HclustParam", function(x, i) {
+    x <- updateObject(x)
+    callNextMethod()
+})
+
+#' @export
+setMethod("show", "HclustParam", function(object) {
+    object <- updateObject(object)
+    callNextMethod()
+})
 
 #' @export
 #' @rdname HclustParam-class

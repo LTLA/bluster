@@ -12,7 +12,7 @@
 #' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 #'
 #' If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not have \code{h} or \code{k},
-#' \code{\link{custerRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}. 
+#' \code{\link{clusterRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}. 
 #'
 #' @return 
 #' The \code{AgnesParam} constructor will return a \linkS4class{AgnesParam} object with the specified parameters.
@@ -53,6 +53,7 @@ AgnesParam <- function(metric=NULL, stand=NULL, method=NULL, par.method=NULL, cu
 #' @export
 #' @rdname AgnesParam-class
 #' @importFrom cluster agnes
+#' @importFrom stats as.hclust
 setMethod("clusterRows", c("ANY", "AgnesParam"), function(x, BLUSPARAM, full=FALSE) {
     args <- c(
         list(

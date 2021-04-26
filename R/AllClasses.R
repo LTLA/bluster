@@ -78,7 +78,7 @@ setClass("FixedNumberParam", contains=c("BlusterParam", "VIRTUAL"), slots=c(cent
 #' \itemize{
 #' \item \code{cut.fun}, a function that takes a \link{hclust} object as its first argument and returns a vector of cluster assignments.
 #' If \code{NULL}, the choice of function is determined from \code{cut.dynamic}.
-#' \item \code{cut.dynamic}, a logical scalar indicating whether a dynamic tree cut should be performed by \code{\link{cutreeDynamic}}.
+#' \item \code{cut.dynamic}, a logical scalar indicating whether a dynamic tree cut should be performed by \code{\link[dynamicTreeCut]{cutreeDynamic}}.
 #' Otherwise \code{\link{cutree}} is used.
 #' Ignored if \code{cut.fun} is not \code{NULL}.
 #' \item \code{cut.params}, further arguments to pass to the tree cut function specified by the previous arguments.
@@ -96,8 +96,8 @@ setClass("FixedNumberParam", contains=c("BlusterParam", "VIRTUAL"), slots=c(cent
 #'
 #' @docType class
 #' @aliases
-#' .defaultScalarArguments,HierarchicalParam-class
-#' show,HierarchicalParam-class
+#' .defaultScalarArguments,HierarchicalParam-method
+#' show,HierarchicalParam-method
 #' @export
 setClass("HierarchicalParam", contains=c("BlusterParam", "VIRTUAL"), 
     slots=c(

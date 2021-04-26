@@ -3,8 +3,8 @@
 \docType{class}
 \name{HierarchicalParam-class}
 \alias{HierarchicalParam-class}
-\alias{.defaultScalarArguments,HierarchicalParam-class}
-\alias{show,HierarchicalParam-class}
+\alias{.defaultScalarArguments,HierarchicalParam-method}
+\alias{show,HierarchicalParam-method}
 \title{The HierarchicalParam class}
 \description{
 The HierarchicalParam is a virtual subclass of the \linkS4class{BlusterParam} class.
@@ -19,7 +19,7 @@ It also provides a number of slots to manage the final tree cut:
 \itemize{
 \item \code{cut.fun}, a function that takes a \link{hclust} object as its first argument and returns a vector of cluster assignments.
 If \code{NULL}, the choice of function is determined from \code{cut.dynamic}.
-\item \code{cut.dynamic}, a logical scalar indicating whether a dynamic tree cut should be performed by \code{\link{cutreeDynamic}}.
+\item \code{cut.dynamic}, a logical scalar indicating whether a dynamic tree cut should be performed by \code{\link[dynamicTreeCut]{cutreeDynamic}}.
 Otherwise \code{\link{cutree}} is used.
 Ignored if \code{cut.fun} is not \code{NULL}.
 \item \code{cut.params}, further arguments to pass to the tree cut function specified by the previous arguments.

@@ -3,9 +3,10 @@
 \docType{class}
 \name{HclustParam-class}
 \alias{HclustParam-class}
-\alias{show,HclustParam-method}
 \alias{.defaultScalarArguments,HclustParam-method}
 \alias{updateObject,HclustParam-method}
+\alias{show,HclustParam-method}
+\alias{[[,HclustParam-method}
 \alias{HclustParam}
 \alias{clusterRows,ANY,HclustParam-method}
 \title{Hierarchical clustering}
@@ -62,7 +63,7 @@ To modify an existing HclustParam object \code{x},
 users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 
 If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not have \code{h} or \code{k},
-\code{\link{custerRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}.
+\code{\link{clusterRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}.
 }
 \examples{
 clusterRows(iris[,1:4], HclustParam())
