@@ -61,6 +61,7 @@ Collate:
     compareClusterings.R
     FixedNumberParam.R
     HclustParam.R
+    HierarchicalParam.R
     KmeansParam.R
     linkClusters.R
     makeSNNGraph.R

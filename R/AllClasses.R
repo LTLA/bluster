@@ -64,3 +64,46 @@ setClassUnion("character_OR_function", c("function", "character"))
 #' @docType class
 #' @export
 setClass("FixedNumberParam", contains=c("BlusterParam", "VIRTUAL"), slots=c(centers="integer_OR_function"))
+
+#' The HierarchicalParam class
+#'
+#' The HierarchicalParam is a virtual subclass of the \linkS4class{BlusterParam} class.
+#' It causes \code{\link{clusterRows}} to dispatch to clustering algorithms that produce a dissimilarity matrix and a dendrogram.
+#' 
+#' @section Available slots:
+#' The virtual class provides \code{metric}, the choice of distance metric.
+#' This is conventionally passed to \code{\link{dist}} and defaults to a Euclidean distance in most subclasses.
+#'
+#' It also provides a number of slots to manage the final tree cut:
+#' \itemize{
+#' \item \code{cut.fun}, a function that takes a \link{hclust} object as its first argument and returns a vector of cluster assignments.
+#' If \code{NULL}, the choice of function is determined from \code{cut.dynamic}.
+#' \item \code{cut.dynamic}, a logical scalar indicating whether a dynamic tree cut should be performed by \code{\link{cutreeDynamic}}.
+#' Otherwise \code{\link{cutree}} is used.
+#' Ignored if \code{cut.fun} is not \code{NULL}.
+#' \item \code{cut.params}, further arguments to pass to the tree cut function specified by the previous arguments.
+#' }
+#' 
+#' @section Return value:
+#' The contract is that, when \code{full=TRUE}, the \code{objects} field of the \code{\link{clusterRows}} return value will always contain at least the following elements:
+#' \itemize{
+#' \item \code{dist}, a \link{dist} object containing a dissimilarity matrix, usually a distance matrix.
+#' \item \code{hclust}, a \link{hclust} object containing a dendrogram.
+#' }
+#'
+#' @seealso
+#' \linkS4class{HclustParam}, for the archetypal example of a concrete subclass.
+#'
+#' @docType class
+#' @aliases
+#' .defaultScalarArguments,HierarchicalParam-class
+#' show,HierarchicalParam-class
+#' @export
+setClass("HierarchicalParam", contains=c("BlusterParam", "VIRTUAL"), 
+    slots=c(
+        metric="ANY",
+        cut.fun="function_OR_NULL", 
+        cut.dynamic="logical", 
+        cut.params="list"
+    )
+)

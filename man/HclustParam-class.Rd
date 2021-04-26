@@ -4,13 +4,14 @@
 \name{HclustParam-class}
 \alias{HclustParam-class}
 \alias{show,HclustParam-method}
+\alias{.defaultScalarArguments-method}
 \alias{HclustParam}
 \alias{clusterRows,ANY,HclustParam-method}
 \title{Hierarchical clustering}
 \usage{
 HclustParam(
-  metric = "euclidean",
-  method = "complete",
+  metric = NULL,
+  method = NULL,
   cut.fun = NULL,
   cut.dynamic = FALSE,
   cut.height = NULL,
@@ -33,13 +34,9 @@ Defaults to \code{\link{cutree}} if \code{cut.dynamic=FALSE} and \code{\link[dyn
 
 \item{cut.dynamic}{Logical scalar indicating whether a dynamic tree cut should be performed using the \pkg{dynamicTreeCut} package.}
 
-\item{cut.height}{Numeric scalar specifying the cut height to use for the tree cut when \code{cut.fun=NULL}.
-If \code{NULL}, defaults to half the tree height.
-Ignored if \code{cut.number} is set.}
+\item{cut.height, cut.number}{Deprecated, use \code{h} and \code{k} in \code{cut.params} instead.}
 
-\item{cut.number}{Integer scalar specifying the number of clusters to generate from the tree cut when \code{cut.fun=NULL}.}
-
-\item{cut.params}{Further arguments to pass to \code{cut.fun}, when \code{cut.dynamic=TRUE} or \code{cut.fun} is non-\code{NULL}.}
+\item{cut.params}{Further arguments to pass to \code{cut.fun}.}
 
 \item{...}{Deprecated, more arguments to add to \code{cut.params}.}
 
@@ -62,6 +59,9 @@ Run the base \code{\link{hclust}} function on a distance matrix within \code{\li
 \details{
 To modify an existing HclustParam object \code{x},
 users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
+
+If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not have \code{h} or \code{k},
+\code{\link{custerRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}.
 }
 \examples{
 clusterRows(iris[,1:4], HclustParam())

@@ -5,7 +5,7 @@ test_that("HclustParam constructor and utilities work correctly", {
     X <- HclustParam()
     expect_output(show(X), "HclustParam")
 
-    expect_identical(X[["method"]], "complete")
+    expect_identical(X[["method"]], NULL)
     X[["method"]] <- "average"
     expect_identical(X[["method"]], "average")
 
@@ -15,16 +15,14 @@ test_that("HclustParam constructor and utilities work correctly", {
     expect_identical(X[["cut.params"]], list(whee=2))
 
     # other show methods
-    expect_output(show(HclustParam(cut.number=2)), "cut.number")
+    expect_output(show(HclustParam(method="average")), "average")
     expect_output(show(HclustParam(cut.dynamic=TRUE)), "cutreeDynamic")
     expect_output(show(HclustParam(cut.fun=identity)), "custom")
 })
 
 test_that("HclustParam validity works correctly", {
-    expect_error(HclustParam(NA_character_), "non-missing")
     expect_error(HclustParam(cut.dynamic=NA), "non-missing")
-    expect_error(HclustParam(cut.height=-1), "positive")
-    expect_error(HclustParam(cut.number=-1), "positive")
+    expect_error(HclustParam(method=1), "character")
 })
 
 test_that("clusterRows works correctly", {
@@ -33,21 +31,26 @@ test_that("clusterRows works correctly", {
     expect_true(is.factor(out))
     expect_identical(length(out), nrow(m))
 
-    out2 <- clusterRows(m, HclustParam(cut.height=2))
+    out2 <- clusterRows(m, HclustParam(cut.params=list(h=2)))
     expect_identical(length(out2), nrow(m))
     expect_false(identical(out, out2))
 
-    out <- clusterRows(m, HclustParam(cut.number=5))
+    out <- clusterRows(m, HclustParam(cut.params=list(k=5)))
     expect_identical(length(out), nrow(m))
     expect_identical(nlevels(out), 5L)
 
-    ref <- clusterRows(m, HclustParam(cut.number=3))
+    ref <- clusterRows(m, HclustParam(cut.params=list(k=3)))
     out <- clusterRows(m, HclustParam(cut.fun=function(x) cutree(x, k=3)))
     expect_identical(out, ref)
 
-    full <- clusterRows(m, HclustParam(cut.number=3), full=TRUE)
-    expect_identical(ref, full$cluster)
+    full <- clusterRows(m, HclustParam(), full=TRUE)
+    expect_s3_class(full$objects$dist, "dist")
     expect_s3_class(full$objects$hclust, "hclust")
+
+    # Default cut works as expected.
+    maxh <- max(full$objects$hclust$height)
+    check <- clusterRows(m, HclustParam(cut.params=list(h=maxh/2)))
+    expect_identical(full$clusters, check)
 })
 
 test_that("clusterRows works with the dynamic tree cut", {
