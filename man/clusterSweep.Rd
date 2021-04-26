@@ -52,6 +52,16 @@ We attempt to create a unique name for each column based on its parameter combin
 This has the format of \code{<NAME1>.<VALUE1>_<NAME2>.<VALUE2>_...} based on the parameter names and values.
 Note that any non-atomic values are simply represented by the name of their class;
 no attempt is made to convert these into a compact string.
+
+If an entry of \code{...} is a \emph{named} list of vectors, we expand those to generate all possible combinations of values.
+For example, if we passed:
+\preformatted{    blah.args = list(a = 1:5, b = LETTERS[1:3])}
+This would be equivalent to manually specifying:
+\preformatted{    blah.args = list(list(a = 1, b = "A"), list(a = 1, b = "B"), ...)}
+The auto-expansion mechanism allows us to conveniently test parameter combinations when those parameters are stored inside \code{x} as a list.
+The algorithm is recursive so any internal unnamed lists containing vectors are similarly expanded.
+Expansion can be disabled by wrapping vectors in \code{\link{I}}, in which case they are passed verbatim.
+No expansion is performed for non-vector arguments.
 }
 \examples{
 out <- clusterSweep(iris[,1:4], KmeansParam(10), 
@@ -59,8 +69,14 @@ out <- clusterSweep(iris[,1:4], KmeansParam(10),
 out$clusters[,1:5]
 out$parameters
 
-out <- clusterSweep(iris[,1:4], NNGraphParam(), k=5:20, 
+out <- clusterSweep(iris[,1:4], NNGraphParam(), k=c(5L, 10L, 15L, 20L),
     cluster.fun=c("louvain", "walktrap"))
+out$clusters[,1:5]
+out$parameters
+
+# Combinations are automatically expanded inside named lists:
+out <- clusterSweep(iris[,1:4], NNGraphParam(), k=c(5L, 10L, 15L, 20L), 
+    cluster.args=list(steps=3:4))
 out$clusters[,1:5]
 out$parameters
 
