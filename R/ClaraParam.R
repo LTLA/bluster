@@ -77,7 +77,7 @@ setMethod("clusterRows", c("ANY", "ClaraParam"), function(x, BLUSPARAM, full=FAL
 
     args <- c(
         list(
-            as.matrix(x), 
+            quote(as.matrix(x)),
             k=centerx,
             keep.data=FALSE,
             rngR=TRUE,
