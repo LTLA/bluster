@@ -44,7 +44,8 @@
 #' @docType class
 #' @aliases 
 #' show,HclustParam-method
-#' .defaultScalarArguments-method
+#' .defaultScalarArguments,HclustParam-method
+#' updateObject,HclustParam-method
 NULL
 
 #' @export
@@ -74,16 +75,6 @@ HclustParam <- function(metric=NULL, method=NULL, cut.fun=NULL, cut.dynamic=FALS
     new("HclustParam", metric=metric, method=method, cut.fun=cut.fun, cut.dynamic=cut.dynamic, cut.params=cut.params)
 }
 
-#' @importFrom S4Vectors setValidity2
-setValidity2("HclustParam", function(object) {
-    msg <- character(0)
-    if (!.non_na_scalar(slot(object, "cut.dynamic"))) {
-        return(sprintf("'%s' must be a non-missing logical scalar", i))
-    }
-    if (length(msg)) return(msg)
-    TRUE
-})
-
 #' @export
 #' @rdname HclustParam-class
 #' @importFrom stats dist hclust cutree
@@ -100,10 +91,36 @@ setMethod("clusterRows", c("ANY", "HclustParam"), function(x, BLUSPARAM, full=FA
     }
     hcl <- do.call(hclust, hargs)
 
+    # Moving arguments to their new homes.
+    BLUSPARAM <- updateObject(BLUSPARAM)
+
     clusters <- .cut_hierarchical(hcl, dst, BLUSPARAM)
     if (full) {
         list(clusters=clusters, objects=list(dist=dst, hclust=hcl))
     } else {
         clusters
     }
+})
+
+#' @export
+#' @importFrom S4Vectors updateObject
+setMethod("updateObject", "HclustParam", function(object, ..., verbose=FALSE) {
+    has.k <- .hasSlot(object, "cut.number")
+    has.h <- .hasSlot(object, "cut.height")
+    
+    if (has.k || has.h) {
+        if (has.k && !is.null(object@cut.number)) {
+            object@cut.params$k <- object@cut.number
+            if (verbose) {
+                message("[updateObject] moving 'cut.number' to 'cut.params$k'")
+            }
+        } else if (!is.null(object@cut.height)) {
+            object@cut.params$h <- object@cut.height
+            if (verbose) {
+                message("[updateObject] moving 'cut.height' to 'cut.params$h'")
+            }
+        }
+    }
+
+    object
 })

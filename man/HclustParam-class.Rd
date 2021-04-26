@@ -4,7 +4,8 @@
 \name{HclustParam-class}
 \alias{HclustParam-class}
 \alias{show,HclustParam-method}
-\alias{.defaultScalarArguments-method}
+\alias{.defaultScalarArguments,HclustParam-method}
+\alias{updateObject,HclustParam-method}
 \alias{HclustParam}
 \alias{clusterRows,ANY,HclustParam-method}
 \title{Hierarchical clustering}
