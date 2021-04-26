@@ -49,9 +49,11 @@ LinkingTo:
 Collate:
     AllClasses.R
     AllGenerics.R
+    AgnesParam.R
     approxSilhouette.R
     bluster-package.R
     DbscanParam.R
+    DianaParam.R
     AffinityParam.R
     BlusterParam.R
     bootstrapStability.R

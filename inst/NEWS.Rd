@@ -25,6 +25,12 @@ Added \code{PamParam()} to wrap the PAM implementation from \pkg{cluster}.
 Added \code{ClaraParam()} to wrap the CLARA implementation from \pkg{cluster}.
 
 \item 
+Added \code{AgnesParam()} to wrap the agglomerative nesting method from \pkg{cluster}.
+
+\item 
+Added \code{DianaParam()} to wrap the divisive analysis method from \pkg{cluster}.
+
+\item 
 Added \code{clusterSweep()} to easily perform parameter sweeps via \code{clusterRows()}.
 
 \item 
