@@ -59,7 +59,7 @@ For example, if we passed:
 This would be equivalent to manually specifying:
 \preformatted{    blah.args = list(list(a = 1, b = "A"), list(a = 1, b = "B"), ...)}
 The auto-expansion mechanism allows us to conveniently test parameter combinations when those parameters are stored inside \code{x} as a list.
-The algorithm is recursive so any internal unnamed lists containing vectors are similarly expanded.
+The algorithm is recursive so any internal named lists containing vectors are similarly expanded.
 Expansion can be disabled by wrapping vectors in \code{\link{I}}, in which case they are passed verbatim.
 No expansion is performed for non-vector arguments.
 }
