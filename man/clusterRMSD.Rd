@@ -15,6 +15,7 @@ clusterRMSD(x, clusters, sum = FALSE)
 }
 \value{
 Numeric vector of RMSD values per cluster.
+If \code{sum=TRUE}, a numeric vector of the sum of squares per cluster is returned instead.
 }
 \description{
 Compute the root mean-squared deviation (RMSD) for each cluster.

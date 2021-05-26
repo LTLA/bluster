@@ -6,7 +6,9 @@
 #' @param clusters Vector containing the assigned cluster for each observation.
 #' @param sum Logical scalar indicating whether to compute the sum of squares.
 #'
-#' @return Numeric vector of RMSD values per cluster.
+#' @return 
+#' Numeric vector of RMSD values per cluster.
+#' If \code{sum=TRUE}, a numeric vector of the sum of squares per cluster is returned instead.
 #'
 #' @details
 #' The RMSD for each cluster is a measure of its dispersion;
@@ -27,6 +29,8 @@ clusterRMSD <- function(x, clusters, sum=FALSE) {
         by.cluster[[i]] <- sum(apply(chosen, 2, var))
         if (sum) {
             by.cluster[[i]] <- by.cluster[[i]] * (nrow(chosen) - 1)            
+        } else {
+            by.cluster[[i]] <- sqrt(by.cluster[[i]])
         }
     }
 
