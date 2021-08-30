@@ -39,13 +39,15 @@ Rcpp::List build_snn_rank(Rcpp::IntegerMatrix neighbors) {
                 cur_neighbor=*rtIt - 1; 
                 ++rtIt;
 
-                const size_t& currank=i; // +0, as neighbour 'i' is rank 0 with respect to itself.
-                size_t& existing_other=current_score[cur_neighbor];
-                if (existing_other==0) { 
-                    existing_other=currank;
-                    current_added.push_back(cur_neighbor);
-                } else if (existing_other > currank) {
-                    existing_other=currank;
+                if (static_cast<size_t>(cur_neighbor) < j) { // avoid duplicates from symmetry in the SNN calculations.
+                    const size_t& currank=i; // +0, as neighbour 'i' is rank 0 with respect to itself.
+                    size_t& existing_other=current_score[cur_neighbor];
+                    if (existing_other==0) { 
+                        existing_other=currank;
+                        current_added.push_back(cur_neighbor);
+                    } else if (existing_other > currank) {
+                        existing_other=currank;
+                    }
                 }
             }
 
@@ -53,14 +55,16 @@ Rcpp::List build_snn_rank(Rcpp::IntegerMatrix neighbors) {
             const auto& hosted=hosts[cur_neighbor];
             for (auto hIt=hosted.begin(); hIt!=hosted.end(); ++hIt) { 
                 const int& othernode=hIt->second;
-                size_t currank=hIt->first + i;
 
-                size_t& existing_other=current_score[othernode];
-                if (existing_other==0) { 
-                    existing_other=currank;
-                    current_added.push_back(othernode);
-                } else if (existing_other > currank) {
-                    existing_other=currank;
+                if (static_cast<size_t>(othernode) < j) { // avoid duplicates from symmetry in the SNN calculations.
+                    size_t currank=hIt->first + i;
+                    size_t& existing_other=current_score[othernode];
+                    if (existing_other==0) { 
+                        existing_other=currank;
+                        current_added.push_back(othernode);
+                    } else if (existing_other > currank) {
+                        existing_other=currank;
+                    }
                 }
             }
         }
@@ -123,22 +127,27 @@ Rcpp::List build_snn_number(Rcpp::IntegerMatrix neighbors) {
                 cur_neighbor=*rtIt - 1; 
                 ++rtIt;
 
-                size_t& existing_other=current_score[cur_neighbor];
-                if (existing_other==0) { 
-                    current_added.push_back(cur_neighbor);
-                } 
-                ++existing_other;
+                if (static_cast<size_t>(cur_neighbor) < j) { // avoid duplicates from symmetry in the SNN calculations.
+                    size_t& existing_other=current_score[cur_neighbor];
+                    if (existing_other==0) { 
+                        current_added.push_back(cur_neighbor);
+                    } 
+                    ++existing_other;
+                }
             }
 
             // Adding the cells connected by shared nearest neighbors, recording the number.
             const auto& hosted=hosts[cur_neighbor];
             for (auto hIt=hosted.begin(); hIt!=hosted.end(); ++hIt) { 
                 const int& othernode=*hIt;
-                size_t& existing_other=current_score[othernode];
-                if (existing_other==0) { 
-                    current_added.push_back(othernode);
-                } 
-                ++existing_other;
+
+                if (static_cast<size_t>(othernode) < j) { // avoid duplicates from symmetry in the SNN calculations.
+                    size_t& existing_other=current_score[othernode];
+                    if (existing_other==0) { 
+                        current_added.push_back(othernode);
+                    } 
+                    ++existing_other;
+                }
             }
         }
        

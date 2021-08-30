@@ -122,7 +122,7 @@ makeKNNGraph <- function(x, k=10, directed=FALSE, BNPARAM=KmknnParam(), BPPARAM=
 
 #' @export
 #' @rdname makeSNNGraph
-#' @importFrom igraph make_graph simplify E "E<-"
+#' @importFrom igraph make_graph E "E<-"
 neighborsToSNNGraph <- function(indices, type=c("rank", "number", "jaccard")) {
     type <- match.arg(type)
     if (type=="rank") {
@@ -139,9 +139,8 @@ neighborsToSNNGraph <- function(indices, type=c("rank", "number", "jaccard")) {
 
     g <- make_graph(edges, directed=FALSE)
     E(g)$weight <- weights
-    simplify(g, edge.attr.comb="first") # symmetric, so doesn't really matter.
+    g
 }
-
 
 #' @export
 #' @rdname makeSNNGraph
