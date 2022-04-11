@@ -6,9 +6,7 @@
 \alias{bluster-package}
 \title{bluster: Clustering Algorithms for Bioconductor}
 \description{
-Wraps common clustering algorithms in an easily extended S4 framework.
-    Backends are implemented for hierarchical, k-means and graph-based clustering.
-    Several utilities are also provided to compare and evaluate clustering results.
+Wraps common clustering algorithms in an easily extended S4 framework. Backends are implemented for hierarchical, k-means and graph-based clustering. Several utilities are also provided to compare and evaluate clustering results.
 }
 \author{
 \strong{Maintainer}: Aaron Lun \email{infinite.monkeys.with.keyboards@gmail.com}

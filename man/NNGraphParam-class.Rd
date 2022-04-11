@@ -98,7 +98,15 @@ The exception is that of \code{shared}, which is not a valid \code{i} as it is i
 \examples{
 clusterRows(iris[,1:4], NNGraphParam())
 clusterRows(iris[,1:4], NNGraphParam(k=5))
+
+# Note: cluster_louvain is randomized as of igraph 1.3.0.
+set.seed(100)
 clusterRows(iris[,1:4], NNGraphParam(cluster.fun="louvain"))
+
+# On the plus side, we can finally pass a resolution parameter.
+set.seed(100)
+clusterRows(iris[,1:4], NNGraphParam(cluster.fun="louvain", 
+    cluster.args=list(resolution=0.5)))
 
 }
 \seealso{

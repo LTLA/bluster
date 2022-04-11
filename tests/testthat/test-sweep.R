@@ -3,7 +3,7 @@
 
 test_that("clusterSweep works correctly in simple cases", {
     x <- matrix(rnorm(1000), ncol=5)
-    out <- clusterSweep(x, NNGraphParam(), k=c(5L, 10L, 20L), cluster.fun=c("louvain", "walktrap"))
+    out <- clusterSweep(x, NNGraphParam(), k=c(5L, 10L, 20L), cluster.fun=c("fast_greedy", "walktrap"))
     for (choice in seq_len(nrow(out$parameters))) {
         curk <- out$parameters$k[[choice]]
         curf <- out$parameters$cluster.fun[[choice]]
@@ -14,7 +14,7 @@ test_that("clusterSweep works correctly in simple cases", {
 
     # Respects existing parameters.
     x <- matrix(rnorm(1000), ncol=5)
-    out <- clusterSweep(x, NNGraphParam(k=12), cluster.fun=c("louvain", "walktrap"))
+    out <- clusterSweep(x, NNGraphParam(k=12), cluster.fun=c("fast_greedy", "walktrap"))
     for (choice in 1:2) {
         curf <- out$parameters$cluster.fun[[choice]]
         param <- NNGraphParam(k=12, cluster.fun=curf)
@@ -26,8 +26,8 @@ test_that("clusterSweep works correctly in simple cases", {
 test_that("clusterSweep reports full objects correctly", {
     x <- matrix(rnorm(1000), ncol=5)
 
-    out <- clusterSweep(x, NNGraphParam(), cluster.fun=c("louvain", "walktrap"), full=TRUE)
-    ref <- clusterSweep(x, NNGraphParam(), cluster.fun=c("louvain", "walktrap"))
+    out <- clusterSweep(x, NNGraphParam(), cluster.fun=c("fast_greedy", "walktrap"), full=TRUE)
+    ref <- clusterSweep(x, NNGraphParam(), cluster.fun=c("fast_greedy", "walktrap"))
     expect_identical(out[1:2], ref)
 
     counter <- clusterRows(x, NNGraphParam(cluster.fun="walktrap"), full=TRUE)

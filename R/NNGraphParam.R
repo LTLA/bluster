@@ -26,7 +26,7 @@
 #' To modify an existing NNGraphParam object \code{x},
 #' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 #' The exception is that of \code{shared}, which is not a valid \code{i} as it is implicit in the identity of the class.
-#' 
+#'
 #' @return 
 #' The constructors will return a \linkS4class{NNGraphParam} object with the specified parameters.
 #' If \code{shared=TRUE}, this is a SNNGraphParam object; otherwise it is a KNNGraphParam object.
@@ -38,7 +38,15 @@
 #' @examples
 #' clusterRows(iris[,1:4], NNGraphParam())
 #' clusterRows(iris[,1:4], NNGraphParam(k=5))
+#'
+#' # Note: cluster_louvain is randomized as of igraph 1.3.0.
+#' set.seed(100)
 #' clusterRows(iris[,1:4], NNGraphParam(cluster.fun="louvain"))
+#'
+#' # On the plus side, we can finally pass a resolution parameter.
+#' set.seed(100)
+#' clusterRows(iris[,1:4], NNGraphParam(cluster.fun="louvain", 
+#'     cluster.args=list(resolution=0.5)))
 #'
 #' @seealso
 #' \code{\link{makeSNNGraph}} and related functions, to build the graph.

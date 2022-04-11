@@ -36,11 +36,13 @@ test_that("clusterRows works correctly", {
     expect_identical(length(out2), nrow(m))
     expect_false(identical(out, out2))
 
+    set.seed(1000)
     out3 <- clusterRows(m, NNGraphParam(cluster.fun="louvain"))
     expect_true(is.factor(out3))
     expect_identical(length(out3), nrow(m))
     expect_false(identical(out, out3))
 
+    set.seed(1000)
     out4 <- clusterRows(m, NNGraphParam(cluster.fun=igraph::cluster_louvain))
     expect_identical(out3, out4)
 
