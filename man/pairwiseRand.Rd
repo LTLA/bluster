@@ -55,8 +55,8 @@ This process provides more information about the specific similarities or differ
 rather than coalescing all the values into a single statistic. 
 For example, it is now possible to see which specific clusters from \code{ref} are not reproducible in \code{alt},
 or which specific partitions between pairs of clusters are not reproducible.
-In the default output, such events can be diagnosed by looking for low entries in the ratio matrix;
-on the other hand, values close to 1 indicate that \code{ref} is almost perfectly recapitulated by \code{alt}.
+Such events can be diagnosed by looking for small (i.e., near-zero or negative) entries in the ratio matrix;
+on the other hand, large values (i.e., close to 1) indicate that \code{ref} is almost perfectly recapitulated by \code{alt}.
 
 If \code{adjusted=TRUE}, we adjust all counts by subtracting their expected values under a model of random permutations.
 This accounts for differences in the number and sizes of clusters within and between \code{ref} and \code{alt},

@@ -60,10 +60,7 @@ test_that("pairwiseRand computes the adjusted Rand index", {
     ari <- pairwiseRand(clust1, clust2, mode="index", adjusted=TRUE)
     expect_equal(ari, ref)
 
-    # Not entirely sure why this is true... but whatever!
-    paired <- pairwiseRand(clust1, clust2, mode="pairs", adjusted=TRUE)
-    expect_equal(ari, sum(paired$correct, na.rm=TRUE)/sum(paired$total, na.rm=TRUE))
-
+    # Expected result for equal clustering:
     ari <- pairwiseRand(clust1, clust1, mode="index", adjusted=TRUE)
     expect_equal(ari, 1)
 })

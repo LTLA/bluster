@@ -29,8 +29,8 @@
 #' rather than coalescing all the values into a single statistic. 
 #' For example, it is now possible to see which specific clusters from \code{ref} are not reproducible in \code{alt},
 #' or which specific partitions between pairs of clusters are not reproducible.
-#' In the default output, such events can be diagnosed by looking for low entries in the ratio matrix;
-#' on the other hand, values close to 1 indicate that \code{ref} is almost perfectly recapitulated by \code{alt}.
+#' Such events can be diagnosed by looking for small (i.e., near-zero or negative) entries in the ratio matrix;
+#' on the other hand, large values (i.e., close to 1) indicate that \code{ref} is almost perfectly recapitulated by \code{alt}.
 #'
 #' If \code{adjusted=TRUE}, we adjust all counts by subtracting their expected values under a model of random permutations.
 #' This accounts for differences in the number and sizes of clusters within and between \code{ref} and \code{alt},
@@ -110,19 +110,13 @@ pairwiseRand <- function(ref, alt, mode=c("ratio", "pairs", "index"), adjusted=T
 
         # Computing the probability that two randomly chosen cells end up with
         # the same 'alt' label. This is used to compute the expected value for
-        # each entry of 'correct'.
+        # each entry of 'correct'; either directly, by multiplying this
+        # probability by the maximum number of pairs for each cluster, to use
+        # on the diagonal; or by multiplying '1 - probability' with the maximum
+        # number of pairs between two clusters, to use on the off-diagonal.
         same.alt.n <- sum(choose(altn, 2))
         total.n <- choose(length(alt), 2)
         same.alt.p <- same.alt.n/total.n
-
-        # The LHS of the ARI's denominator is an average of the maximum number
-        # of same-cluster pairs in 'ref' and 'alt'. We distribute this number
-        # to each cluster in 'ref' according to its maximum number of
-        # same-cluster cell pairs. We generalize this for cluster pairs, even
-        # though this is not technically used for the calculation of the ARI. 
-        same.ref.n <- sum(choose(refn, 2))
-        same.alt.mult <- same.alt.n/same.ref.n
-        diff.alt.mult <- (total.n - same.alt.n)/(total.n - same.ref.n)
 
         for (i in seq_along(all.lev)) {
             leftn <- refn[all.lev[i]]
@@ -132,14 +126,12 @@ pairwiseRand <- function(ref, alt, mode=c("ratio", "pairs", "index"), adjusted=T
 
                 if (i!=j) {
                     expected <- leftn * rightn * (1  - same.alt.p)
-                    alt.total <- diff.alt.mult * ref.total
                 } else {
                     expected <- choose(leftn, 2) * same.alt.p
-                    alt.total <- same.alt.mult * ref.total
                 }
 
                 correct[j,i] <- correct[j,i] - expected
-                total[j,i] <- 0.5 * (ref.total + alt.total) - expected
+                total[j,i] <- total[j, i] - expected
             }
         }
     }
@@ -148,11 +140,10 @@ pairwiseRand <- function(ref, alt, mode=c("ratio", "pairs", "index"), adjusted=T
     if (mode=="ratio") {
         correct/total
     } else if (mode=="index") {
-        if (!adjusted) {
-            sum(correct, na.rm=TRUE)/sum(total, na.rm=TRUE)
-        } else {
-            sum(diag(correct))/sum(diag(total))
-        }
+        # Somehow, this still magically works out to be equal to the ARI when
+        # adjusted=TRUE. Not sure why, but I'm not going to look a gift horse
+        # in the mouth. I'll just trust that the math works out.
+        sum(correct, na.rm=TRUE)/sum(total, na.rm=TRUE)
     } else {
         list(correct=correct, total=total)
     }

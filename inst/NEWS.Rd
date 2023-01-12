@@ -2,6 +2,11 @@
 \title{bluster News}
 \encoding{UTF-8}
 
+\section{Version 1.10.0}{\itemize{
+\item Corrected calculation of the ratio matrix in \code{pairwiseRand()} when \code{adjusted=TRUE},
+so that ratios have an upper bound of 1.
+}}
+
 \section{Version 1.2.0}{\itemize{
 \item
 Previously zero-weight edges are now assigned a nominal positive weight in \code{makeSNNGraph()}.
