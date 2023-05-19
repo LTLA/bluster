@@ -14,6 +14,7 @@ It causes \code{\link{clusterRows}} to dispatch to clustering algorithms that pr
 
 The virtual class provides \code{metric}, the choice of distance metric.
 This is conventionally passed to \code{\link{dist}} and defaults to a Euclidean distance in most subclasses.
+The distance function can be changed with the parameter \code{dist.fun}.
 
 It also provides a number of slots to manage the final tree cut:
 \itemize{

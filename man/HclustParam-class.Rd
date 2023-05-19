@@ -13,6 +13,7 @@
 \usage{
 HclustParam(
   metric = NULL,
+  dist.fun = NULL,
   method = NULL,
   cut.fun = NULL,
   cut.dynamic = FALSE,
@@ -26,6 +27,8 @@ HclustParam(
 }
 \arguments{
 \item{metric}{String specifying the distance metric to use in \code{\link{dist}}.}
+
+\item{dist.fun}{Function specifying the function to use to compute the distance matrix.}
 
 \item{method}{String specifying the agglomeration method to use in \code{\link{hclust}}.}
 
