@@ -61,6 +61,7 @@ Collate:
     clusterRMSD.R
     clusterSweep.R
     compareClusterings.R
+    DMMParam.R
     FixedNumberParam.R
     HclustParam.R
     HierarchicalParam.R
