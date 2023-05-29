@@ -61,17 +61,16 @@ test_that("clusterRows works with the dynamic tree cut", {
     expect_identical(length(out), nrow(m))
 })
 
-# The following test is only ran when vegan is available
-if (require(vegan)) {
-    test_that("dist.fun parameter works correctly", {
-        m <- matrix(runif(1000), ncol=10)
-        dist_result <- clusterRows(m, HclustParam(metric = "euclidean"))
-        vegdist_result <- clusterRows(m, HclustParam(metric = "euclidean", dist.fun = vegan::vegdist))
-        expect_identical(dist_result, vegdist_result)
-        
-        vegdist_result2 <- clusterRows(m, HclustParam(metric = "canberra", dist.fun = vegan::vegdist), full = TRUE)
-        res_dist_matrix <- vegdist_result2$objects$dist
-        original_dist_matrix <- vegan::vegdist(m, "canberra")
-        expect_setequal(res_dist_matrix, original_dist_matrix)
-    })
-}
+# Vegan-dependant test
+test_that("dist.fun parameter works correctly", {
+    m <- matrix(runif(1000), ncol=10)
+    dist_result <- clusterRows(m, HclustParam(metric = "euclidean"))
+    vegdist_result <- clusterRows(m, HclustParam(metric = "euclidean", dist.fun = vegan::vegdist))
+    expect_identical(dist_result, vegdist_result)
+    
+    vegdist_result2 <- clusterRows(m, HclustParam(metric = "canberra", dist.fun = vegan::vegdist), full = TRUE)
+    res_dist_matrix <- vegdist_result2$objects$dist
+    original_dist_matrix <- vegan::vegdist(m, "canberra")
+    expect_setequal(res_dist_matrix, original_dist_matrix)
+})
+

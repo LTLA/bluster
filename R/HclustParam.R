@@ -36,6 +36,7 @@
 #' @examples
 #' clusterRows(iris[,1:4], HclustParam())
 #' clusterRows(iris[,1:4], HclustParam(method="ward.D2"))
+#' clusterRows(iris[,1:4], HclustParam(metric = "canberra", dist.fun = vegan::vegdist))
 #'
 #' @seealso
 #' \code{\link{dist}}, \code{\link{hclust}} and \code{\link{cutree}}, which actually do all the heavy lifting.
