@@ -5,14 +5,13 @@
 #' @export
 setClass("DMMParam", contains="BlusterParam", slots=c(variable="factor", 
                                                       k="integer_OR_NULL", 
-                                                      krange="integer_OR_NULL", 
                                                       type="character",
                                                       transposed="logical",
                                                       seed = "integer_OR_NULL")) # Put type of type character_OR_NULL if possible
 
 #' @export
 #' @rdname DMMParam-class
-DMMParam <- function(variable, k=NULL, krange=NULL, type=NULL, transposed=FALSE, seed=NULL) {
+DMMParam <- function(variable, k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
     if (!is.null(k)) {
         k <- as.integer(k)
     }
@@ -20,7 +19,7 @@ DMMParam <- function(variable, k=NULL, krange=NULL, type=NULL, transposed=FALSE,
         seed <- as.integer(seed)
     }
     # Filling in missing values with the defaults.
-    current <- list(krange=krange, type=type, seed=seed)
+    current <- list(k=k, type=type, seed=seed)
     notpresent <- vapply(current, is.null, FALSE)
     if (any(notpresent)) {
         defaults <- .get_dmm_defaults()
@@ -29,12 +28,12 @@ DMMParam <- function(variable, k=NULL, krange=NULL, type=NULL, transposed=FALSE,
     if (!is.factor(variable) && is.character(variable)){
         variable <- factor(variable, unique(variable))
     }
-    new("DMMParam", variable=variable, k=k,
-        krange=current$krange, type=current$type, transposed=transposed, seed=current$seed)
+    new("DMMParam", variable=variable, k=current$k,
+        type=current$type, transposed=transposed, seed=current$seed)
 }
 
 .get_dmm_defaults <- function() {
-    out <-list(krange=1:3, 
+    out <-list(k=as.integer(1:2), 
                type="laplace", 
                seed=as.integer(runif(1, 0, .Machine$integer.max)))
     out
@@ -45,8 +44,8 @@ setMethod("show", "DMMParam", function(object) {
     callNextMethod()
     cat(sprintf("variable: %s\n", object@variable))
     cat(sprintf("k: %s\n", object@k))
-    cat(sprintf("krange: %s\n", object@krange))
     cat(sprintf("type: %s\n", object@type))
+    cat(sprintf("seed: %s\n", object@seed))
 })
 
 setValidity2("DMMParam", function(object) {
@@ -56,15 +55,8 @@ setValidity2("DMMParam", function(object) {
         msg <- c(msg, "'variable' must be a factor or a character value.")
     }
     if (!is.integer(object@k) ||
-        length(object@k) != 1) {
+        length(object@k) < 1) {
         msg <- c(msg, "'variable' must be an integer.")
-    }
-    if (!is.integer(object@krange) ||
-       length(object@krange) == 0 ||
-       anyNA(object@krange) ||
-       any(object@krange <= 0) ||
-       any(object@krange != as.integer(object@krange))){
-        msg <- c(msg,"'k' must be an integer vector with positive values only.")
     }
     if (length(object@type) > 1) {
         msg <- c(msg("'type' must be a string"))
@@ -84,7 +76,6 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
                                                         full=FALSE) {
     seed <- BLUSPARAM[["seed"]]
     transposed <- BLUSPARAM[["transposed"]]
-    krange <- BLUSPARAM[["krange"]]
     k <- BLUSPARAM[["k"]]
     type <- BLUSPARAM[["type"]]
     variable <- BLUSPARAM[["variable"]]
@@ -92,17 +83,22 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
         x <- t(x)
     }
     
-    dmm <- .get_dmm(x, k=krange, seed = seed)
-    if (is.null(k)) {
+    dmm <- .get_dmm(x, k=k, seed = seed)
+    if (length(k) > 1) {
         fit_FUN <- .get_dmm_fit_FUN(type)
         k <- .get_best_nb_clusters(dmm, fit_FUN)
     }
-    show(k)
     dmm_group <- .calculate_dmm_group(x, 
                                       variable = variable,
                                       k = k,
                                       seed = .Machine$integer.max)
-    prob <- DirichletMultinomial::mixture(dmm[[k]])
+    
+    # Get the index corresponding to k in dmm list
+    i <- which(sapply(dmm, 
+                      function(x, k) ncol(DirichletMultinomial::mixture(x)) == k, 
+                      k=k))[1]
+    prob <- DirichletMultinomial::mixture(dmm[[i]])
+    show(prob)
     colnames(prob) <- 1:k
     clusters <- colnames(prob)[max.col(prob, ties.method = "first")]
     clusters <- factor(clusters)
