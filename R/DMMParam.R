@@ -12,12 +12,6 @@ setClass("DMMParam", contains="BlusterParam", slots=c(variable="factor",
 #' @export
 #' @rdname DMMParam-class
 DMMParam <- function(variable, k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
-    if (!is.null(k)) {
-        k <- as.integer(k)
-    }
-    if (!is.null(seed)) {
-        seed <- as.integer(seed)
-    }
     # Filling in missing values with the defaults.
     current <- list(k=k, type=type, seed=seed)
     notpresent <- vapply(current, is.null, FALSE)
@@ -25,17 +19,33 @@ DMMParam <- function(variable, k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
         defaults <- .get_dmm_defaults()
         current[notpresent] <- defaults[notpresent]
     }
+    
+    # Formatting data
+    formatted_data <- .format_dmm_params(variable, current$k, current$seed)
+    
+    new("DMMParam", variable=formatted_data$variable, k=formatted_data$k,
+        type=current$type, transposed=transposed, seed=formatted_data$seed)
+}
+
+.format_dmm_params <- function(variable, k=NULL, seed=NULL) {
     if (!is.factor(variable) && is.character(variable)){
         variable <- factor(variable, unique(variable))
     }
-    new("DMMParam", variable=variable, k=current$k,
-        type=current$type, transposed=transposed, seed=current$seed)
+    if (!is.null(k)) {
+        k <- as.integer(k)
+    }
+    if (!is.null(seed)) {
+        seed <- as.integer(seed)
+    }
+    res <- list(variable=variable,
+                k=k,
+                seed=seed)
 }
 
 .get_dmm_defaults <- function() {
-    out <-list(k=as.integer(1:2), 
+    out <-list(k=1:3, 
                type="laplace", 
-               seed=as.integer(runif(1, 0, .Machine$integer.max)))
+               seed=runif(1, 0, .Machine$integer.max))
     out
 }
 
@@ -79,30 +89,32 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     k <- BLUSPARAM[["k"]]
     type <- BLUSPARAM[["type"]]
     variable <- BLUSPARAM[["variable"]]
+    
     if (!transposed) {
         x <- t(x)
     }
     
     dmm <- .get_dmm(x, k=k, seed = seed)
+    
+    # Finding optimal number of clusters if necessary
     if (length(k) > 1) {
         fit_FUN <- .get_dmm_fit_FUN(type)
         k <- .get_best_nb_clusters(dmm, fit_FUN)
-    }
-    dmm_group <- .calculate_dmm_group(x, 
-                                      variable = variable,
-                                      k = k,
-                                      seed = .Machine$integer.max)
+    } 
     
     # Get the index corresponding to k in dmm list
     i <- which(sapply(dmm, 
                       function(x, k) ncol(DirichletMultinomial::mixture(x)) == k, 
                       k=k))[1]
+
     prob <- DirichletMultinomial::mixture(dmm[[i]])
-    show(prob)
+    
+    # Formatting the result
     colnames(prob) <- 1:k
     clusters <- colnames(prob)[max.col(prob, ties.method = "first")]
     clusters <- factor(clusters)
     names(clusters) <- rownames(x)
+    
     if (full) {
         list(clusters=clusters, 
              objects=list(dmm=dmm, k=k, prob=prob, seed=seed))
@@ -143,13 +155,3 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     fit <- vapply(dmm, fit_FUN, numeric(1))
     which.min(fit)
 }
-
-#' @importFrom DirichletMultinomial dmngroup
-#' @importFrom stats runif
-.calculate_dmm_group <- function(x, variable, k = 1,
-                                seed = runif(1, 0, .Machine$integer.max), 
-                                ...) {
-    variable <- droplevels(variable)
-    DirichletMultinomial::dmngroup(x, variable, k = k, seed = seed, ...)
-}
-
