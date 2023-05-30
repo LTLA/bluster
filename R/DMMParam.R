@@ -1,17 +1,53 @@
 #' DMM clustering
+#' z
+#' Run the \code{DMM} function on a distance matrix within \code{\link{clusterRows}}.
 #' 
-
+#' @param k An integer indicating the number of clusters, or a list of integers defining the possible number of clusters to choose from.
+#' @param type A string specifying the fit function to use to find the optimal number of clusters. Use in combination with k being a list of integers
+#' @param type A boolean specifying 
+#' @param seed An integer specifying the seed to use when doing the DMM algorithm. Will be random if not set.
+#' 
+#' @inheritParams clusterRows
+#' @param BLUSPARAM A \linkS4class{KmeansParam} object.
+#' @param full Logical scalar indicating whether the clustering statistics from both steps should be returned.
+#' 
+#' @author Basil Courbayre
+#'
+#' @details
+#' To modify an existing DMMParam object \code{x},
+#' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
+#'
+#' If \code{k=NULL}, the cluster search range will be 1:3.
+#' The default for the fit function is \code{laplace}.
+#' 
+#' @return 
+#' The \code{DMMParam} constructor will return a \linkS4class{DMMParam} object with the specified parameters.
+#'
+#' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
+#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} 
+#' (a list containing \code{dist}, the distance matrix; and \code{hclust}, the output of \code{\link{hclust}}).
+#'
+#' @examples
+#' clusterRows(iris[,1:4], DMMParam())
+#' clusterRows(iris[,1:4], DMMParam(k=2))
+#' clusterRows(iris[,1:4], DMMParam(k=1:3, type="laplace"))
+#'
+#' @name DMMParam-class
+#' @docType class
+#' @aliases 
+#' .defaultScalarArguments,DMMParam-method
+#' show,DMMParam-method
+NULL
 
 #' @export
-setClass("DMMParam", contains="BlusterParam", slots=c(variable="factor", 
-                                                      k="integer_OR_NULL", 
+setClass("DMMParam", contains="BlusterParam", slots=c(k="integer_OR_NULL", 
                                                       type="character",
                                                       transposed="logical",
                                                       seed = "integer_OR_NULL")) # Put type of type character_OR_NULL if possible
 
 #' @export
 #' @rdname DMMParam-class
-DMMParam <- function(variable, k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
+DMMParam <- function(k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
     # Filling in missing values with the defaults.
     current <- list(k=k, type=type, seed=seed)
     notpresent <- vapply(current, is.null, FALSE)
@@ -21,24 +57,20 @@ DMMParam <- function(variable, k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
     }
     
     # Formatting data
-    formatted_data <- .format_dmm_params(variable, current$k, current$seed)
+    formatted_data <- .format_dmm_params(current$k, current$seed)
     
-    new("DMMParam", variable=formatted_data$variable, k=formatted_data$k,
-        type=current$type, transposed=transposed, seed=formatted_data$seed)
+    new("DMMParam", k=formatted_data$k, type=current$type, 
+        transposed=transposed, seed=formatted_data$seed)
 }
 
-.format_dmm_params <- function(variable, k=NULL, seed=NULL) {
-    if (!is.factor(variable) && is.character(variable)){
-        variable <- factor(variable, unique(variable))
-    }
+.format_dmm_params <- function(k=NULL, seed=NULL) {
     if (!is.null(k)) {
         k <- as.integer(k)
     }
     if (!is.null(seed)) {
         seed <- as.integer(seed)
     }
-    res <- list(variable=variable,
-                k=k,
+    res <- list(k=k,
                 seed=seed)
 }
 
@@ -52,7 +84,6 @@ DMMParam <- function(variable, k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
 #' @export
 setMethod("show", "DMMParam", function(object) {
     callNextMethod()
-    cat(sprintf("variable: %s\n", object@variable))
     cat(sprintf("k: %s\n", object@k))
     cat(sprintf("type: %s\n", object@type))
     cat(sprintf("seed: %s\n", object@seed))
@@ -61,12 +92,9 @@ setMethod("show", "DMMParam", function(object) {
 setValidity2("DMMParam", function(object) {
     msg <- character(0)
     
-    if (!is.factor(object@variable)) {
-        msg <- c(msg, "'variable' must be a factor or a character value.")
-    }
     if (!is.integer(object@k) ||
         length(object@k) < 1) {
-        msg <- c(msg, "'variable' must be an integer.")
+        msg <- c(msg, "'k' must be an integer.")
     }
     if (length(object@type) > 1) {
         msg <- c(msg("'type' must be a string"))
@@ -88,8 +116,7 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     transposed <- BLUSPARAM[["transposed"]]
     k <- BLUSPARAM[["k"]]
     type <- BLUSPARAM[["type"]]
-    variable <- BLUSPARAM[["variable"]]
-    
+
     if (!transposed) {
         x <- t(x)
     }
