@@ -25,7 +25,8 @@
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 #' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} 
-#' (a list containing \code{dist}, the distance matrix; and \code{hclust}, the output of \code{\link{hclust}}).
+#' (a list containing \code{dmm}, the dmm object; \code{k}, the number of clusters; 
+#' \code{prob}, the array of probabilities; and \code{seed} the seed for the dmm).
 #'
 #' @examples
 #' clusterRows(iris[,1:4], DMMParam())
@@ -43,7 +44,7 @@ NULL
 setClass("DMMParam", contains="BlusterParam", slots=c(k="integer_OR_NULL", 
                                                       type="character",
                                                       transposed="logical",
-                                                      seed = "integer_OR_NULL")) # Put type of type character_OR_NULL if possible
+                                                      seed = "integer_OR_NULL"))
 
 #' @export
 #' @rdname DMMParam-class
@@ -70,8 +71,7 @@ DMMParam <- function(k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
     if (!is.null(seed)) {
         seed <- as.integer(seed)
     }
-    res <- list(k=k,
-                seed=seed)
+    res <- list(k=k, seed=seed)
 }
 
 .get_dmm_defaults <- function() {
@@ -86,6 +86,7 @@ setMethod("show", "DMMParam", function(object) {
     callNextMethod()
     cat(sprintf("k: %s\n", object@k))
     cat(sprintf("type: %s\n", object@type))
+    cat(sprintf("transposed: %s\n", object@transposed))
     cat(sprintf("seed: %s\n", object@seed))
 })
 
@@ -112,10 +113,10 @@ setValidity2("DMMParam", function(object) {
 setMethod("clusterRows", c("ANY", "DMMParam"), function(x, 
                                                         BLUSPARAM, 
                                                         full=FALSE) {
-    seed <- BLUSPARAM[["seed"]]
-    transposed <- BLUSPARAM[["transposed"]]
     k <- BLUSPARAM[["k"]]
     type <- BLUSPARAM[["type"]]
+    transposed <- BLUSPARAM[["transposed"]]
+    seed <- BLUSPARAM[["seed"]]
 
     if (!transposed) {
         x <- t(x)
@@ -125,8 +126,7 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     
     # Finding optimal number of clusters if necessary
     if (length(k) > 1) {
-        fit_FUN <- .get_dmm_fit_FUN(type)
-        k <- .get_best_nb_clusters(dmm, fit_FUN)
+        k <- .get_best_nb_clusters(dmm, type)
     } 
     
     # Get the index corresponding to k in dmm list
@@ -178,7 +178,8 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     fit_FUN
 }
 
-.get_best_nb_clusters <- function(dmm, fit_FUN){
+.get_best_nb_clusters <- function(dmm, type){
+    fit_FUN <- .get_dmm_fit_FUN(type)
     fit <- vapply(dmm, fit_FUN, numeric(1))
     which.min(fit)
 }
