@@ -32,42 +32,47 @@ test_that("DMMParam validity works correctly", {
 })
 
 test_that("clusterRows works correctly", {
-    m <- matrix(runif(10000), ncol = 10, nrow = 1000)
+    m <- matrix(runif(1000), ncol = 100, nrow = 10)
     m <- ceiling(m * 10)
+    rownames(m) <- paste0("A",1:10)
+    colnames(m) <- 1:100
     
     out <- clusterRows(m, DMMParam(), full = TRUE)
-    expect_true(is.factor(out))
-    expect_identical(length(out), ncol(m))
+    expect_true(is.factor(out$clusters))
+    expect_identical(length(out$clusters), ncol(m))
     
     # Consistent with reference values.
     k=out$objects$k
-    dmm <- .get_dmm(t(m), k=k)
+    tm <- t(m)
+    dmm <- .get_dmm(tm, k=k)
     prob <- DirichletMultinomial::mixture(dmm[[1]])
     colnames(prob) <- 1:k
     clusters <- colnames(prob)[max.col(prob, ties.method = "first")]
     clusters <- factor(clusters)
-    names(clusters) <- rownames(x)
-    expect_identical(out, clusters)
+    names(clusters) <- rownames(tm)
+    expect_identical(out$clusters, clusters)
     
     # Trying with different parameters.
     set.seed(10)
     out <- clusterRows(m, DMMParam(k=4))
     expect_true(is.factor(out))
-    expect_identical(length(out), nrow(m))
+    expect_identical(length(out), nrow(tm))
     
     set.seed(10)
-    dmm <- .get_dmm(t(m), k=4)
+    dmm <- .get_dmm(tm, k=4)
     prob <- DirichletMultinomial::mixture(dmm[[1]])
     colnames(prob) <- 1:4
     clusters <- colnames(prob)[max.col(prob, ties.method = "first")]
     clusters <- factor(clusters)
-    names(clusters) <- rownames(x)
+    names(clusters) <- rownames(tm)
     expect_identical(out, clusters)
 })
 
 test_that("clusterRows responds to full=TRUE", {
     m <- matrix(runif(1000), ncol = 100, nrow = 10)
     m <- ceiling(m * 10)
+    rownames(m) <- paste0("A",1:10)
+    colnames(m) <- 1:100
     out <- clusterRows(m, DMMParam())
     
     full <- clusterRows(m, DMMParam(), full=TRUE)
