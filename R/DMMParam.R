@@ -1,5 +1,5 @@
 #' DMM clustering
-#' z
+#' 
 #' Run the \code{DMM} function on a distance matrix within \code{\link{clusterRows}}.
 #' 
 #' @param k An integer indicating the number of clusters, or a list of integers defining the possible number of clusters to choose from.
@@ -41,6 +41,7 @@
 NULL
 
 #' @export
+#' @rdname DMMParam-class
 setClass("DMMParam", contains="BlusterParam", slots=c(k="integer_OR_NULL", 
                                                       type="character",
                                                       transposed="logical",
@@ -53,32 +54,22 @@ DMMParam <- function(k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
     current <- list(k=k, type=type, seed=seed)
     notpresent <- vapply(current, is.null, FALSE)
     if (any(notpresent)) {
-        defaults <- .get_dmm_defaults()
+        defaults <- list(k=1:3, 
+                         type="laplace", 
+                         seed=runif(1, 0, .Machine$integer.max))
         current[notpresent] <- defaults[notpresent]
     }
     
     # Formatting data
-    formatted_data <- .format_dmm_params(current$k, current$seed)
-    
-    new("DMMParam", k=formatted_data$k, type=current$type, 
-        transposed=transposed, seed=formatted_data$seed)
-}
-
-.format_dmm_params <- function(k=NULL, seed=NULL) {
-    if (!is.null(k)) {
-        k <- as.integer(k)
+    if (!is.null(current$k)) {
+        current$k <- as.integer(current$k)
     }
-    if (!is.null(seed)) {
-        seed <- as.integer(seed)
+    if (!is.null(current$seed)) {
+        current$seed <- as.integer(current$seed)
     }
-    res <- list(k=k, seed=seed)
-}
 
-.get_dmm_defaults <- function() {
-    out <-list(k=1:3, 
-               type="laplace", 
-               seed=runif(1, 0, .Machine$integer.max))
-    out
+    new("DMMParam", k=current$k, type=current$type, 
+        transposed=transposed, seed=current$seed)
 }
 
 #' @export
@@ -101,7 +92,7 @@ setValidity2("DMMParam", function(object) {
         msg <- c(msg("'type' must be a string"))
     }
     
-    if (length(msg)) {
+    if (length(msg) > 0) {
         msg
     }
     TRUE
@@ -126,7 +117,7 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     
     # Finding optimal number of clusters if necessary
     if (length(k) > 1) {
-        k <- .get_best_nb_clusters(dmm, type)
+        k <- bestDMMFit(dmm, type)
     } 
     
     # Get the index corresponding to k in dmm list
@@ -154,7 +145,7 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
 #' @importFrom stats runif
 #' @importFrom BiocParallel bplapply
 .get_dmm <- function(x, k = 1, BPPARAM = SerialParam(),
-                           seed = runif(1, 0, .Machine$integer.max), ...){
+                     seed = runif(1, 0, .Machine$integer.max), ...){
     old <- DelayedArray::getAutoBPPARAM()
     DelayedArray::setAutoBPPARAM(BPPARAM)
     on.exit(DelayedArray::setAutoBPPARAM(old))
@@ -178,7 +169,9 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     fit_FUN
 }
 
-.get_best_nb_clusters <- function(dmm, type){
+#' @export
+#' @rdname DMMParam-class
+bestDMMFit <- function(dmm, type){
     fit_FUN <- .get_dmm_fit_FUN(type)
     fit <- vapply(dmm, fit_FUN, numeric(1))
     which.min(fit)
