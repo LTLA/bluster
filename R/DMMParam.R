@@ -75,7 +75,11 @@ DMMParam <- function(k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
 #' @export
 setMethod("show", "DMMParam", function(object) {
     callNextMethod()
-    cat(sprintf("k: %s\n", object@k))
+    if (length(object@k) > 1) {
+        cat(sprintf("k: %s\n", paste(range(object@k), collapse = ":")))
+    } else {
+        cat(sprintf("k: %s\n", object@k))
+    }
     cat(sprintf("type: %s\n", object@type))
     cat(sprintf("transposed: %s\n", object@transposed))
     cat(sprintf("seed: %s\n", object@seed))
@@ -83,19 +87,22 @@ setMethod("show", "DMMParam", function(object) {
 
 setValidity2("DMMParam", function(object) {
     msg <- character(0)
-    
     if (!is.integer(object@k) ||
-        length(object@k) < 1) {
-        msg <- c(msg, "'k' must be an integer.")
+        length(object@k) < 1 ||
+        any(object@k <= 0)) {
+        msg <- c(msg, "'k' must be a strictly positive integer vector.")
     }
     if (length(object@type) > 1) {
-        msg <- c(msg("'type' must be a string"))
+        msg <- c(msg, "'type' must be a string")
+    } else if (!(object@type %in% c("laplace","AIC","BIC"))) {
+        msg <- c(msg, "'type' must be equal to 'laplace', 'AIC', or 'BIC'")
     }
     
     if (length(msg) > 0) {
         msg
+    } else {
+        TRUE
     }
-    TRUE
 })
 
 #' @export
