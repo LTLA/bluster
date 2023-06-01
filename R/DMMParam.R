@@ -13,8 +13,14 @@
 #' 
 #' @author Basil Courbayre
 #'
+#' @references
+#' Dirichlet multinomial mixtures: generative models for microbial metagenomics.
+#' Ian Holmes, Keith Harris, Christopher Quince
+#' Department of Bioengineering, University of California, Berkeley, California, United States of America.
+#' \url{https://pubmed.ncbi.nlm.nih.gov/22319561/}
+#' 
 #' @details
-#' The DMM algorithm (see reference below) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data. 
+#' The DMM algorithm (see references tag and citation below) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data.
 #' Holmes I, Harris K, Quince C. Dirichlet multinomial mixtures: generative models for microbial metagenomics. PLoS One. 2012;7(2):e30126. doi: 10.1371/journal.pone.0030126. Epub 2012 Feb 3. PMID: 22319561; PMCID: PMC3272020.
 #' 
 #' Because of this specificity, the best data we can use for this algorithm is microbiota read counts (for example the Twins data set in the DMM package).
