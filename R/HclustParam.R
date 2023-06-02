@@ -3,7 +3,7 @@
 #' Run the base \code{\link{hclust}} function on a distance matrix within \code{\link{clusterRows}}.
 #'
 #' @param metric String specifying the distance metric to use in \code{\link{dist}}.
-#' @param dist.fun Function specifying the function to use to compute the distance matrix.
+#' @param dist.fun Function specifying the function to use to compute the distance matrix. Must be stats::dist-like function. i.e. takes a method as a parameter and returns a dissimilarity matrix.
 #' @param method String specifying the agglomeration method to use in \code{\link{hclust}}.
 #' @param cut.fun Function specifying the method to use to cut the dendrogram.
 #' The first argument of this function should be the output of \code{\link{hclust}},
@@ -26,7 +26,7 @@
 #' If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not have \code{h} or \code{k},
 #' \code{\link{clusterRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}. 
 #'
-#' @return 
+#' @return
 #' The \code{HclustParam} constructor will return a \linkS4class{HclustParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.

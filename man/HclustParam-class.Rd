@@ -28,7 +28,7 @@ HclustParam(
 \arguments{
 \item{metric}{String specifying the distance metric to use in \code{\link{dist}}.}
 
-\item{dist.fun}{Function specifying the function to use to compute the distance matrix.}
+\item{dist.fun}{Function specifying the function to use to compute the distance matrix. Must be stats::dist-like function. i.e. takes a method as a parameter and returns a dissimilarity matrix.}
 
 \item{method}{String specifying the agglomeration method to use in \code{\link{hclust}}.}
 

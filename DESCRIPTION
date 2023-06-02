@@ -9,7 +9,10 @@ Description:
 Authors@R: 
     c(
         person("Aaron", "Lun", role = c("aut", "cre"), email = "infinite.monkeys.with.keyboards@gmail.com"),
-        person("Stephanie", "Hicks", role="ctb")
+        person("Stephanie", "Hicks", role="ctb"),
+        person("Basil", "Courbayre", role="ctb"),
+        person("Tuomas", "Borman", role="ctb"),
+        person("Leo", "Lahti", role="ctb")
     )
 Imports: 
     stats, 
