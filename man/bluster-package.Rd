@@ -14,6 +14,9 @@ Wraps common clustering algorithms in an easily extended S4 framework. Backends 
 Other contributors:
 \itemize{
   \item Stephanie Hicks [contributor]
+  \item Basil Courbayre [contributor]
+  \item Tuomas Borman [contributor]
+  \item Leo Lahti [contributor]
 }
 
 }
