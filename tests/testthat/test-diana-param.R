@@ -61,3 +61,14 @@ test_that("clusterRows works with the dynamic tree cut", {
     expect_identical(length(out), nrow(m))
 })
 
+test_that("clusterRows works with custom distance functions", {
+    m <- matrix(runif(1000), ncol=10)
+
+    out <- clusterRows(m, DianaParam(metric="manhattan"), full=TRUE)
+    expect_equal(as.matrix(out$objects$dist), as.matrix(dist(m, method="manhattan")))
+
+    vegout <- clusterRows(m, DianaParam(metric = "canberra", dist.fun = vegan::vegdist), full=TRUE)
+    expected <- vegan::vegdist(m, "canberra")
+    expect_equal(as.matrix(vegout$objects$dist), as.matrix(expected))
+})
+
