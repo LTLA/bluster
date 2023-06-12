@@ -17,17 +17,23 @@ DMMParam(k = NULL, type = NULL, transposed = FALSE, seed = NULL)
 bestDMMFit(dmm, type)
 }
 \arguments{
-\item{k}{An integer indicating the number of clusters, or a list of integers defining the possible number of clusters to choose from.}
+\item{k}{An integer indicating the number of clusters, or a list of integers 
+defining the possible number of clusters to choose from.}
 
-\item{type}{A boolean specifying}
+\item{type}{A string specifying the fit function to use to find the optimal 
+number of clusters. Use in combination with k being a list of integers. 
+Must be equal to \code{laplace}, \code{AIC} or \code{BIC}.}
 
-\item{seed}{An integer specifying the seed to use when doing the DMM algorithm. Will be random if not set.}
+\item{transposed}{Logical scalar, is x transposed with samples in rows?}
+
+\item{seed}{An integer specifying the seed to use when doing the DMM 
+algorithm. Will be random if not set.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
 
-\item{BLUSPARAM}{A \linkS4class{KmeansParam} object.}
+\item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
 
-\item{full}{Logical scalar indicating whether the clustering statistics from both steps should be returned.}
+\item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 }
 \value{
 The \code{DMMParam} constructor will return a \linkS4class{DMMParam} object with the specified parameters.
@@ -38,10 +44,11 @@ If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as abo
 \code{prob}, the array of probabilities; and \code{seed} the seed for the dmm).
 }
 \description{
-Run the \code{DMM} function on a distance matrix within \code{\link{clusterRows}}.
+Run the \code{DMM} function on a distance matrix 
+within \code{\link{clusterRows}}.
 }
 \details{
-The DMM algorithm (see reference below) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data. 
+The DMM algorithm (see references tag and citation below) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data.
 Holmes I, Harris K, Quince C. Dirichlet multinomial mixtures: generative models for microbial metagenomics. PLoS One. 2012;7(2):e30126. doi: 10.1371/journal.pone.0030126. Epub 2012 Feb 3. PMID: 22319561; PMCID: PMC3272020.
 
 Because of this specificity, the best data we can use for this algorithm is microbiota read counts (for example the Twins data set in the DMM package).
@@ -54,13 +61,18 @@ The default for the fit function is \code{laplace}.
 \examples{
 clusterRows(iris[,1:4], DMMParam())
 clusterRows(iris[,1:4], DMMParam(k=2))
-clusterRows(iris[,1:4], DMMParam(k=1:3, type="laplace"))
 \dontrun{
 example(fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
         count <- t(as.matrix(read.csv(fl, row.names=1)))
         clusterRows(counts, DMMParam(k=1:3, type="laplace")))
 }
 
+}
+\references{
+Dirichlet multinomial mixtures: generative models for microbial metagenomics.
+Ian Holmes, Keith Harris, Christopher Quince
+Department of Bioengineering, University of California, Berkeley, California, United States of America.
+\url{https://pubmed.ncbi.nlm.nih.gov/22319561/}
 }
 \author{
 Basil Courbayre

@@ -1,29 +1,30 @@
 #' DMM clustering
 #' 
-#' Run the \code{DMM} function on a distance matrix within \code{\link{clusterRows}}.
+#' Run the \code{DMM} function on a distance matrix 
+#' within \code{\link{clusterRows}}.
 #' 
-#' @param k An integer indicating the number of clusters, or a list of integers defining the possible number of clusters to choose from.
-#' @param type A string specifying the fit function to use to find the optimal number of clusters. Use in combination with k being a list of integers
-#' @param type A boolean specifying 
-#' @param seed An integer specifying the seed to use when doing the DMM algorithm. Will be random if not set.
+#' @param k An integer indicating the number of clusters, or a list of integers 
+#'   defining the possible number of clusters to choose from.
+#' @param type A string specifying the fit function to use to find the optimal 
+#'   number of clusters. Use in combination with k being a list of integers. 
+#'   Must be equal to \code{laplace}, \code{AIC} or \code{BIC}.
+#' @param transposed Logical scalar, is x transposed with samples in rows?
+#' @param seed An integer specifying the seed to use when doing the DMM 
+#'   algorithm. Will be random if not set.
 #' 
 #' @inheritParams clusterRows
-#' @param BLUSPARAM A \linkS4class{KmeansParam} object.
-#' @param full Logical scalar indicating whether the clustering statistics from both steps should be returned.
 #' 
 #' @author Basil Courbayre
 #'
 #' @references
+#' Ian Holmes, Keith Harris, Christopher Quince (2012)
 #' Dirichlet multinomial mixtures: generative models for microbial metagenomics.
-#' Ian Holmes, Keith Harris, Christopher Quince
-#' Department of Bioengineering, University of California, Berkeley, California, United States of America.
 #' \url{https://pubmed.ncbi.nlm.nih.gov/22319561/}
 #' 
 #' @details
-#' The DMM algorithm (see references tag and citation below) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data.
-#' Holmes I, Harris K, Quince C. Dirichlet multinomial mixtures: generative models for microbial metagenomics. PLoS One. 2012;7(2):e30126. doi: 10.1371/journal.pone.0030126. Epub 2012 Feb 3. PMID: 22319561; PMCID: PMC3272020.
+#' The DMM algorithm (see Holmes et al. 2012) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data.
 #' 
-#' Because of this specificity, the best data we can use for this algorithm is microbiota read counts (for example the Twins data set in the DMM package).
+#' If we have microbiota data (for example the Twins data set in the DMM package), the suitable algorithm can be DMM.
 #' To modify an existing DMMParam object \code{x},
 #' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 #'
@@ -43,7 +44,7 @@
 #' clusterRows(iris[,1:4], DMMParam(k=2))
 #' \dontrun{
 #' example(fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
-#'         count <- t(as.matrix(read.csv(fl, row.names=1)))
+#'         counts <- t(as.matrix(read.csv(fl, row.names=1)))
 #'         clusterRows(counts, DMMParam(k=1:3, type="laplace")))
 #' }
 #'
@@ -142,9 +143,8 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     } 
     
     # Get the index corresponding to k in dmm list
-    i <- which(sapply(dmm, 
-                      function(x, k) ncol(DirichletMultinomial::mixture(x)) == k, 
-                      k=k))[1]
+    i <- which(
+        sapply(dmm, function(x) ncol(DirichletMultinomial::mixture(x)) == k))
 
     prob <- DirichletMultinomial::mixture(dmm[[i]])
     
