@@ -43,10 +43,15 @@
 #' clusterRows(iris[,1:4], DMMParam())
 #' clusterRows(iris[,1:4], DMMParam(k=2))
 #' \dontrun{
-#' example(fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
+#' fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
 #'         counts <- t(as.matrix(read.csv(fl, row.names=1)))
-#'         clusterRows(counts, DMMParam(k=1:3, type="laplace")))
+#'         clusterRows(counts, DMMParam(k=1:3, type="laplace"))
 #' }
+#' # Example using a SummarizedExperiment
+#' data("GlobalPatterns", package="mia")
+#' tse <-GlobalPatterns[1:1000, ]
+#' x <- assay(tsebis, "counts")
+#' dmm <- clusterRows(x, DMMParam(k=1:3))
 #'
 #' @name DMMParam-class
 #' @docType class

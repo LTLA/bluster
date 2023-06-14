@@ -48,10 +48,9 @@ Run the \code{DMM} function on a distance matrix
 within \code{\link{clusterRows}}.
 }
 \details{
-The DMM algorithm (see references tag and citation below) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data.
-Holmes I, Harris K, Quince C. Dirichlet multinomial mixtures: generative models for microbial metagenomics. PLoS One. 2012;7(2):e30126. doi: 10.1371/journal.pone.0030126. Epub 2012 Feb 3. PMID: 22319561; PMCID: PMC3272020.
+The DMM algorithm (see Holmes et al. 2012) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data.
 
-Because of this specificity, the best data we can use for this algorithm is microbiota read counts (for example the Twins data set in the DMM package).
+If we have microbiota data (for example the Twins data set in the DMM package), the suitable algorithm can be DMM.
 To modify an existing DMMParam object \code{x},
 users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 
@@ -62,16 +61,20 @@ The default for the fit function is \code{laplace}.
 clusterRows(iris[,1:4], DMMParam())
 clusterRows(iris[,1:4], DMMParam(k=2))
 \dontrun{
-example(fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
-        count <- t(as.matrix(read.csv(fl, row.names=1)))
-        clusterRows(counts, DMMParam(k=1:3, type="laplace")))
+fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
+        counts <- t(as.matrix(read.csv(fl, row.names=1)))
+        clusterRows(counts, DMMParam(k=1:3, type="laplace"))
 }
+# Example using a SummarizedExperiment
+data("GlobalPatterns", package="mia")
+tse <-GlobalPatterns[1:1000, ]
+x <- assay(tsebis, "counts")
+dmm <- clusterRows(x, DMMParam(k=1:3))
 
 }
 \references{
+Ian Holmes, Keith Harris, Christopher Quince (2012)
 Dirichlet multinomial mixtures: generative models for microbial metagenomics.
-Ian Holmes, Keith Harris, Christopher Quince
-Department of Bioengineering, University of California, Berkeley, California, United States of America.
 \url{https://pubmed.ncbi.nlm.nih.gov/22319561/}
 }
 \author{
