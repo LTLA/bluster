@@ -3,6 +3,7 @@
 #' Run the base \code{\link{hclust}} function on a distance matrix within \code{\link{clusterRows}}.
 #'
 #' @param metric String specifying the distance metric to use in \code{\link{dist}}.
+#' @param dist.fun Function specifying the function to use to compute the distance matrix. Must be stats::dist-like function. i.e. takes a method as a parameter and returns a dissimilarity matrix.
 #' @param method String specifying the agglomeration method to use in \code{\link{hclust}}.
 #' @param cut.fun Function specifying the method to use to cut the dendrogram.
 #' The first argument of this function should be the output of \code{\link{hclust}},
@@ -25,7 +26,7 @@
 #' If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not have \code{h} or \code{k},
 #' \code{\link{clusterRows}} will automatically set \code{h} to half the tree height when calling \code{\link{cutree}}. 
 #'
-#' @return 
+#' @return
 #' The \code{HclustParam} constructor will return a \linkS4class{HclustParam} object with the specified parameters.
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
@@ -35,6 +36,7 @@
 #' @examples
 #' clusterRows(iris[,1:4], HclustParam())
 #' clusterRows(iris[,1:4], HclustParam(method="ward.D2"))
+#' clusterRows(iris[,1:4], HclustParam(metric = "canberra", dist.fun = vegan::vegdist))
 #'
 #' @seealso
 #' \code{\link{dist}}, \code{\link{hclust}} and \code{\link{cutree}}, which actually do all the heavy lifting.
@@ -58,7 +60,7 @@ setMethod(".defaultScalarArguments", "HclustParam", function(x) c(callNextMethod
 
 #' @export
 #' @rdname HclustParam-class
-HclustParam <- function(metric=NULL, method=NULL, cut.fun=NULL, cut.dynamic=FALSE, cut.height=NULL, cut.number=NULL, cut.params=list(), ...) {
+HclustParam <- function(metric=NULL, dist.fun=NULL, method=NULL, cut.fun=NULL, cut.dynamic=FALSE, cut.height=NULL, cut.number=NULL, cut.params=list(), ...) {
     if (!is.null(cut.number)) {
         .Deprecated(old="cut.number=", new="cut.params=list(k=...)")
         cut.params$k <- cut.number
@@ -73,7 +75,7 @@ HclustParam <- function(metric=NULL, method=NULL, cut.fun=NULL, cut.dynamic=FALS
         cut.params <- c(cut.params, extra.args)
     }
 
-    new("HclustParam", metric=metric, method=method, cut.fun=cut.fun, cut.dynamic=cut.dynamic, cut.params=cut.params)
+    new("HclustParam", metric=metric, dist.fun=dist.fun, method=method, cut.fun=cut.fun, cut.dynamic=cut.dynamic, cut.params=cut.params)
 }
 
 #' @export
@@ -86,6 +88,12 @@ setMethod("[[", "HclustParam", function(x, i) {
 setMethod("show", "HclustParam", function(object) {
     object <- updateObject(object)
     callNextMethod()
+    fun <- object@dist.fun
+    if (!is.null(fun)) {
+        cat("dist.fun: custom\n")
+    } else {
+        cat("dist.fun: stats::dist\n")
+    }
 })
 
 #' @export
@@ -94,9 +102,14 @@ setMethod("show", "HclustParam", function(object) {
 setMethod("clusterRows", c("ANY", "HclustParam"), function(x, BLUSPARAM, full=FALSE) {
     dargs <- list(quote(as.matrix(x)))
     if (!is.null(BLUSPARAM@metric)) {
-        dargs$metric <- BLUSPARAM@metric
+        dargs$method <- BLUSPARAM@metric
     }
-    dst <- do.call(dist, dargs)
+    
+    if (!is.null(BLUSPARAM@dist.fun)) {
+        dst <- do.call(BLUSPARAM@dist.fun, dargs)
+    } else {
+        dst <- do.call(dist, dargs)
+    }
 
     hargs <- list(quote(dst))
     if (!is.null(BLUSPARAM@method)) {
