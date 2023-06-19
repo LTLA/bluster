@@ -13,6 +13,7 @@
 \usage{
 HclustParam(
   metric = NULL,
+  dist.fun = NULL,
   method = NULL,
   cut.fun = NULL,
   cut.dynamic = FALSE,
@@ -26,6 +27,8 @@ HclustParam(
 }
 \arguments{
 \item{metric}{String specifying the distance metric to use in \code{\link{dist}}.}
+
+\item{dist.fun}{Function specifying the function to use to compute the distance matrix. Must be stats::dist-like function. i.e. takes a method as a parameter and returns a dissimilarity matrix.}
 
 \item{method}{String specifying the agglomeration method to use in \code{\link{hclust}}.}
 
@@ -68,6 +71,7 @@ If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not 
 \examples{
 clusterRows(iris[,1:4], HclustParam())
 clusterRows(iris[,1:4], HclustParam(method="ward.D2"))
+clusterRows(iris[,1:4], HclustParam(metric = "canberra", dist.fun = vegan::vegdist))
 
 }
 \seealso{

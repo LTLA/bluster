@@ -73,6 +73,7 @@ setClass("FixedNumberParam", contains=c("BlusterParam", "VIRTUAL"), slots=c(cent
 #' @section Available slots:
 #' The virtual class provides \code{metric}, the choice of distance metric.
 #' This is conventionally passed to \code{\link{dist}} and defaults to a Euclidean distance in most subclasses.
+#' The distance function can be changed with the parameter \code{dist.fun}.
 #'
 #' It also provides a number of slots to manage the final tree cut:
 #' \itemize{
@@ -102,6 +103,7 @@ setClass("FixedNumberParam", contains=c("BlusterParam", "VIRTUAL"), slots=c(cent
 setClass("HierarchicalParam", contains=c("BlusterParam", "VIRTUAL"), 
     slots=c(
         metric="ANY",
+        dist.fun="function_OR_NULL", 
         cut.fun="function_OR_NULL", 
         cut.dynamic="logical", 
         cut.params="list"

@@ -1,6 +1,6 @@
 Package: bluster
 Version: 1.9.2
-Date: 2023-01-12
+Date: 2023-06-16
 Title: Clustering Algorithms for Bioconductor
 Description: 
     Wraps common clustering algorithms in an easily extended S4 framework.
@@ -9,7 +9,10 @@ Description:
 Authors@R: 
     c(
         person("Aaron", "Lun", role = c("aut", "cre"), email = "infinite.monkeys.with.keyboards@gmail.com"),
-        person("Stephanie", "Hicks", role="ctb")
+        person("Stephanie", "Hicks", role="ctb"),
+        person("Basil", "Courbayre", role="ctb"),
+        person("Tuomas", "Borman", role="ctb"),
+        person("Leo", "Lahti", role="ctb")
     )
 Imports: 
     stats, 
@@ -37,7 +40,8 @@ Suggests:
     mbkmeans,
     kohonen,
     apcluster,
-    DirichletMultinomial
+    DirichletMultinomial,
+    vegan
 biocViews: 
     ImmunoOncology, 
     Software, 
