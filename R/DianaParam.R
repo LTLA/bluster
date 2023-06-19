@@ -2,6 +2,9 @@
 #'
 #' Use the \code{\link{diana}} function to perform divisive analysis clustering.
 #'
+#' @param metric String specifying the distance metric to use in \code{\link{diana}}.
+#' If \code{NULL}, the default metric is used.
+#' If \code{dist.fun} is supplied, \code{metric} is passed to that function instead.
 #' @inheritParams HclustParam
 #' @param stand Further arguments to pass to \code{\link{diana}}.
 #'
@@ -46,8 +49,8 @@ setMethod(".defaultScalarArguments", "DianaParam", function(x) c(callNextMethod(
 
 #' @export
 #' @rdname DianaParam-class
-DianaParam <- function(metric=NULL, stand=NULL, cut.fun=NULL, cut.dynamic=FALSE, cut.params=list()) {
-    new("DianaParam", metric=metric, stand=stand, cut.fun=cut.fun, cut.dynamic=cut.dynamic, cut.params=cut.params)
+DianaParam <- function(metric=NULL, dist.fun=NULL, stand=NULL, cut.fun=NULL, cut.dynamic=FALSE, cut.params=list()) {
+    new("DianaParam", metric=metric, dist.fun=dist.fun, stand=stand, cut.fun=cut.fun, cut.dynamic=cut.dynamic, cut.params=cut.params)
 }
 
 #' @export
@@ -55,13 +58,24 @@ DianaParam <- function(metric=NULL, stand=NULL, cut.fun=NULL, cut.dynamic=FALSE,
 #' @importFrom cluster diana 
 #' @importFrom stats as.hclust
 setMethod("clusterRows", c("ANY", "DianaParam"), function(x, BLUSPARAM, full=FALSE) {
+    args <- .extractScalarArguments(BLUSPARAM)
+
+    if (!is.null(BLUSPARAM@dist.fun)) {
+        input <- BLUSPARAM@dist.fun(x, method=BLUSPARAM@metric)
+        stopifnot(is(input, "dist"))
+        args$metric <- NULL
+    } else {
+        input <- as.matrix(x)
+        stopifnot(!is(input, "dist"))
+    }
+
     args <- c(
         list(
-            quote(as.matrix(x)),
+            quote(input),
             keep.diss = TRUE,
             keep.data = FALSE
         ),
-        .extractScalarArguments(BLUSPARAM)
+        args
     )
 
     out <- do.call(diana, args)
