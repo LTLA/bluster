@@ -36,7 +36,8 @@ Suggests:
     viridis,
     mbkmeans,
     kohonen,
-    apcluster
+    apcluster,
+    DirichletMultinomial
 biocViews: 
     ImmunoOncology, 
     Software, 

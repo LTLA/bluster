@@ -167,7 +167,6 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     }
 })
 
-#' @importFrom DirichletMultinomial dmn
 #' @importFrom stats runif
 #' @importFrom BiocParallel bplapply
 .get_dmm <- function(x, k = 1, BPPARAM = SerialParam(),
