@@ -1,11 +1,11 @@
-# Tests the DMMParam class.
+# Tests the DmmParam class.
 # library(bluster); library(testthat); source('test-dmm-param.R')
 
 set.seed(1000)
-test_that("DMMParam constructor and utilities work correctly", {
-    X <- DMMParam()
-    expect_output(show(X), "DMMParam")
-    expect_output(show(X), "k: 1:3")
+test_that("DmmParam constructor and utilities work correctly", {
+    X <- DmmParam()
+    expect_output(show(X), "DmmParam")
+    expect_output(show(X), "k: 1, 2, 3")
     expect_output(show(X), "type: laplace")
     expect_output(show(X), "transposed: FALSE")
     
@@ -13,22 +13,22 @@ test_that("DMMParam constructor and utilities work correctly", {
     X[["k"]] <- as.integer(2:4)
     expect_identical(X[["k"]], 2:4)
     
-    X <- DMMParam(k=3)
+    X <- DmmParam(k=3)
     expect_equal(X[["k"]], 3)
     X[["k"]] <- as.integer(2)
     expect_equal(X[["k"]], 2)
     
-    X <- DMMParam(type="BIC")
+    X <- DmmParam(type="BIC")
     expect_identical(X[["type"]], "BIC")
     X[["type"]] <- "AIC"
     expect_identical(X[["type"]], "AIC")
 })
 
 
-test_that("DMMParam validity works correctly", {
-    expect_error(DMMParam(type="unknown"), "must be equal")
-    expect_error(DMMParam(k=-1), "strictly positive")
-    expect_error(DMMParam(k=0:3), "strictly positive")
+test_that("DmmParam validity works correctly", {
+    expect_error(DmmParam(type="unknown"), "should be one of")
+    expect_error(DmmParam(k=-1), "strictly positive")
+    expect_error(DmmParam(k=0:3), "strictly positive")
 })
 
 test_that("clusterRows works correctly", {
@@ -37,7 +37,7 @@ test_that("clusterRows works correctly", {
     rownames(m) <- paste0("A",1:10)
     colnames(m) <- 1:100
     
-    out <- clusterRows(m, DMMParam(), full = TRUE)
+    out <- clusterRows(m, DmmParam(), full = TRUE)
     expect_true(is.factor(out$clusters))
     expect_identical(length(out$clusters), ncol(m))
     
@@ -54,7 +54,7 @@ test_that("clusterRows works correctly", {
     
     # Trying with different parameters.
     set.seed(10)
-    out <- clusterRows(m, DMMParam(k=4))
+    out <- clusterRows(m, DmmParam(k=4))
     expect_true(is.factor(out))
     expect_identical(length(out), nrow(tm))
     
@@ -73,9 +73,9 @@ test_that("clusterRows responds to full=TRUE", {
     m <- ceiling(m * 10)
     rownames(m) <- paste0("A",1:10)
     colnames(m) <- 1:100
-    out <- clusterRows(m, DMMParam())
+    out <- clusterRows(m, DmmParam())
     
-    full <- clusterRows(m, DMMParam(), full=TRUE)
+    full <- clusterRows(m, DmmParam(), full=TRUE)
     expect_identical(out, full$clusters)
     expect_s4_class(full$objects$dmm[[1]], "DMN")
 })

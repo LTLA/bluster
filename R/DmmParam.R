@@ -1,13 +1,12 @@
-#' DMM clustering
+#' Dirichlet Multinomial Mixtures clustering
 #' 
-#' Run the \code{DMM} function on a distance matrix 
-#' within \code{\link{clusterRows}}.
+#' Use the DMM algorithm from the \code{DirichletMultinomial} package on a 
+#' distance matrix within \code{\link{clusterRows}}.
 #' 
-#' @param k An integer indicating the number of clusters, or a list of integers 
-#'   defining the possible number of clusters to choose from.
-#' @param type A string specifying the fit function to use to find the optimal 
-#'   number of clusters. Use in combination with k being a list of integers. 
-#'   Must be equal to \code{laplace}, \code{AIC} or \code{BIC}.
+#' @param k An integer vector indicating the number of clusters to choose from (or the possible number of clusters if the vector has multiple values)
+#' @param type A string specifying the fit function to use to find the optimal number of clusters. 
+#'   Use in combination with \code{k} being a list of integers. 
+#'   Must be equal to \code{"laplace"}, \code{"AIC"} or \code{"BIC"}.
 #' @param transposed Logical scalar, is x transposed with samples in rows?
 #' @param seed An integer specifying the seed to use when doing the DMM 
 #'   algorithm. Will be random if not set.
@@ -17,86 +16,83 @@
 #' @author Basil Courbayre
 #'
 #' @references
-#' Ian Holmes, Keith Harris, Christopher Quince (2012)
+#' Holmes I, Harris K and Quince C (2012).
 #' Dirichlet multinomial mixtures: generative models for microbial metagenomics.
-#' \url{https://pubmed.ncbi.nlm.nih.gov/22319561/}
+#' \emph{PLoS ONE, vol. 7(2)}, 1-15
 #' 
 #' @details
-#' The DMM algorithm (see Holmes et al. 2012) is commonly used in microbial ecology along with metagenomic & 16S rRNA count data.
+#' The DMM algorithm (see Holmes et al. 2012) is commonly used in microbial 
+#' ecology along with metagenomic and 16S rRNA count data.
 #' 
-#' If we have microbiota data (for example the Twins data set in the DMM package), the suitable algorithm can be DMM.
-#' To modify an existing DMMParam object \code{x},
-#' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
+#' To modify an existing DmmParam object \code{x},
+#' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} 
+#' is any argument used in the constructor.
 #'
-#' If \code{k=NULL}, the cluster search range will be 1:3.
-#' The default for the fit function is \code{laplace}.
+#' The default for \code{k} is \code{1:3}.
+#' 
+#' The default for \code{type} is \code{"laplace"}.
 #' 
 #' @return 
-#' The \code{DMMParam} constructor will return a \linkS4class{DMMParam} object with the specified parameters.
+#' The \code{DmmParam} constructor will return a \linkS4class{DmmParam} object 
+#' with the specified parameters.
 #'
-#' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
-#' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects} 
-#' (a list containing \code{dmm}, the dmm object; \code{k}, the number of clusters; 
-#' \code{prob}, the array of probabilities; and \code{seed} the seed for the dmm).
+#' The \code{clusterRows} method will return a factor of length equal to 
+#' \code{nrow(x)} containing the cluster assignments.
+#' If \code{full=TRUE}, a list is returned with \code{clusters} 
+#' (the factor, as above) and \code{objects} 
+#' (a list containing \code{dmm}, the output of 
+#' \code{\link[DirichletMultinomial]{dmn}} for each value contained in 
+#' \code{k}; \code{k}, the number of clusters; \code{prob}, the array of 
+#' probabilities; and \code{seed} the seed for the dmm).
 #'
 #' @examples
-#' clusterRows(iris[,1:4], DMMParam())
-#' clusterRows(iris[,1:4], DMMParam(k=2))
-#' \dontrun{
+#' clusterRows(iris[,1:4], DmmParam())
+#' clusterRows(iris[,1:4], DmmParam(k=2))
+#' 
 #' fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
 #'         counts <- t(as.matrix(read.csv(fl, row.names=1)))
-#'         clusterRows(counts, DMMParam(k=1:3, type="laplace"))
-#' }
+#'         clusterRows(counts, DmmParam(k=1:3, type="laplace"))
+#'         
 #' # Example using a SummarizedExperiment
 #' data("GlobalPatterns", package="mia")
 #' tse <-GlobalPatterns[1:1000, ]
 #' x <- assay(tsebis, "counts")
-#' dmm <- clusterRows(x, DMMParam(k=1:3))
+#' dmm <- clusterRows(x, DmmParam(k=1:3))
 #'
-#' @name DMMParam-class
+#' @name DmmParam-class
 #' @docType class
 #' @aliases 
-#' .defaultScalarArguments,DMMParam-method
-#' show,DMMParam-method
+#' show,DmmParam-method
 NULL
 
 #' @export
-#' @rdname DMMParam-class
-setClass("DMMParam", contains="BlusterParam", slots=c(k="integer_OR_NULL", 
+#' @rdname DmmParam-class
+setClass("DmmParam", contains="BlusterParam", slots=c(k="integer_OR_NULL", 
                                                       type="character",
                                                       transposed="logical",
                                                       seed = "integer_OR_NULL"))
 
 #' @export
-#' @rdname DMMParam-class
-DMMParam <- function(k=NULL, type=NULL, transposed=FALSE, seed=NULL) {
+#' @rdname DmmParam-class
+DmmParam <- function(k=1:3, type="laplace", transposed=FALSE, seed=NULL) {
     # Filling in missing values with the defaults.
-    current <- list(k=k, type=type, seed=seed)
-    notpresent <- vapply(current, is.null, FALSE)
-    if (any(notpresent)) {
-        defaults <- list(k=1:3, 
-                         type="laplace", 
-                         seed=runif(1, 0, .Machine$integer.max))
-        current[notpresent] <- defaults[notpresent]
+    if (is.null(seed)) {
+        seed=runif(1, 0, .Machine$integer.max)
     }
     
     # Formatting data
-    if (!is.null(current$k)) {
-        current$k <- as.integer(current$k)
-    }
-    if (!is.null(current$seed)) {
-        current$seed <- as.integer(current$seed)
-    }
+    k <- as.integer(k)
+    seed <- as.integer(seed)
 
-    new("DMMParam", k=current$k, type=current$type, 
-        transposed=transposed, seed=current$seed)
+    new("DmmParam", k=k, type=type, 
+        transposed=transposed, seed=seed)
 }
 
 #' @export
-setMethod("show", "DMMParam", function(object) {
+setMethod("show", "DmmParam", function(object) {
     callNextMethod()
     if (length(object@k) > 1) {
-        cat(sprintf("k: %s\n", paste(range(object@k), collapse = ":")))
+        cat(sprintf("k: %s\n", paste(object@k, collapse = ", ")))
     } else {
         cat(sprintf("k: %s\n", object@k))
     }
@@ -105,17 +101,17 @@ setMethod("show", "DMMParam", function(object) {
     cat(sprintf("seed: %s\n", object@seed))
 })
 
-setValidity2("DMMParam", function(object) {
+setValidity2("DmmParam", function(object) {
     msg <- character(0)
     if (!is.integer(object@k) ||
         length(object@k) < 1 ||
         any(object@k <= 0)) {
-        msg <- c(msg, "'k' must be a strictly positive integer vector.")
+        msg <- c(msg, "'k' must be a strictly positive integer vector")
     }
     if (length(object@type) > 1) {
         msg <- c(msg, "'type' must be a string")
-    } else if (!(object@type %in% c("laplace","AIC","BIC"))) {
-        msg <- c(msg, "'type' must be equal to 'laplace', 'AIC', or 'BIC'")
+    } else {
+        match.arg(object@type, c("laplace","AIC","BIC"))
     }
     
     if (length(msg) > 0) {
@@ -126,9 +122,8 @@ setValidity2("DMMParam", function(object) {
 })
 
 #' @export
-#' @rdname DMMParam-class
-#' @importFrom package function
-setMethod("clusterRows", c("ANY", "DMMParam"), function(x, 
+#' @rdname DmmParam-class
+setMethod("clusterRows", c("ANY", "DmmParam"), function(x, 
                                                         BLUSPARAM, 
                                                         full=FALSE) {
     k <- BLUSPARAM[["k"]]
@@ -144,12 +139,13 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     
     # Finding optimal number of clusters if necessary
     if (length(k) > 1) {
-        k <- bestDMMFit(dmm, type)
+        k <- .best_dmm_fit(dmm, type)
     } 
     
     # Get the index corresponding to k in dmm list
     i <- which(
-        sapply(dmm, function(x) ncol(DirichletMultinomial::mixture(x)) == k))
+        vapply(dmm, function(x) ncol(DirichletMultinomial::mixture(x)) == k,
+               logical(1)))
 
     prob <- DirichletMultinomial::mixture(dmm[[i]])
     
@@ -186,7 +182,6 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
 }
 
 .get_dmm_fit_FUN <- function(type){
-    type <- match.arg(type, c("laplace","AIC","BIC"))
     fit_FUN <- switch(type,
                       laplace = DirichletMultinomial::laplace,
                       AIC = DirichletMultinomial::AIC,
@@ -194,9 +189,7 @@ setMethod("clusterRows", c("ANY", "DMMParam"), function(x,
     fit_FUN
 }
 
-#' @export
-#' @rdname DMMParam-class
-bestDMMFit <- function(dmm, type){
+.best_dmm_fit <- function(dmm, type){
     fit_FUN <- .get_dmm_fit_FUN(type)
     fit <- vapply(dmm, fit_FUN, numeric(1))
     which.min(fit)
