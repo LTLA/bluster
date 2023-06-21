@@ -2,8 +2,11 @@
 #'
 #' Run the base \code{\link{hclust}} function on a distance matrix within \code{\link{clusterRows}}.
 #'
-#' @param metric String specifying the distance metric to use in \code{\link{dist}}.
-#' @param dist.fun Function specifying the function to use to compute the distance matrix. Must be stats::dist-like function. i.e. takes a method as a parameter and returns a dissimilarity matrix.
+#' @param metric String specifying the distance metric to use in \code{dist.fun}.
+#' If \code{NULL}, the default method of \code{dist.fun} is used.
+#' @param dist.fun Function specifying the function to use to compute the distance matrix. 
+#' The function should accept a data matrix and a \code{method=} string (used to accept \code{metric}) and return a dissimilarity matrix of type \link{dist}.
+#' If \code{NULL}, the \code{stats::\link{dist}} function is used by default.
 #' @param method String specifying the agglomeration method to use in \code{\link{hclust}}.
 #' @param cut.fun Function specifying the method to use to cut the dendrogram.
 #' The first argument of this function should be the output of \code{\link{hclust}},

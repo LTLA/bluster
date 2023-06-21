@@ -11,6 +11,7 @@
 \usage{
 DianaParam(
   metric = NULL,
+  dist.fun = NULL,
   stand = NULL,
   cut.fun = NULL,
   cut.dynamic = FALSE,
@@ -20,7 +21,13 @@ DianaParam(
 \S4method{clusterRows}{ANY,DianaParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
-\item{metric}{String specifying the distance metric to use in \code{\link{dist}}.}
+\item{metric}{String specifying the distance metric to use in \code{\link{diana}}.
+If \code{NULL}, the default metric is used.
+If \code{dist.fun} is supplied, \code{metric} is passed to that function instead.}
+
+\item{dist.fun}{Function specifying the function to use to compute the distance matrix. 
+The function should accept a data matrix and a \code{method=} string (used to accept \code{metric}) and return a dissimilarity matrix of type \link{dist}.
+If \code{NULL}, the \code{stats::\link{dist}} function is used by default.}
 
 \item{stand}{Further arguments to pass to \code{\link{diana}}.}
 
