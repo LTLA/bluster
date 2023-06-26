@@ -24,6 +24,9 @@
 #' The DMM algorithm (see Holmes et al. 2012) is commonly used in microbial 
 #' ecology along with metagenomic and 16S rRNA count data.
 #' 
+#' For example, this algorithm could be used on an assay coming from a 
+#' \code{SummarizedExperiment}.
+#' 
 #' To modify an existing DmmParam object \code{x},
 #' users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} 
 #' is any argument used in the constructor.
@@ -46,18 +49,12 @@
 #' probabilities; and \code{seed} the seed for the dmm).
 #'
 #' @examples
-#' clusterRows(iris[,1:4], DmmParam())
-#' clusterRows(iris[,1:4], DmmParam(k=2))
+#' clusterRows(t(iris[, 1:4]), DmmParam())
+#' clusterRows(t(iris[, 1:4]), DmmParam(k = 2))
 #' 
 #' fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
 #'         counts <- t(as.matrix(read.csv(fl, row.names=1)))
 #'         clusterRows(counts, DmmParam(k=1:3, type="laplace"))
-#'         
-#' # Example using a SummarizedExperiment
-#' data("GlobalPatterns", package="mia")
-#' tse <-GlobalPatterns[1:1000, ]
-#' x <- assay(tsebis, "counts")
-#' dmm <- clusterRows(x, DmmParam(k=1:3))
 #'
 #' @name DmmParam-class
 #' @docType class
