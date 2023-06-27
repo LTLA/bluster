@@ -33,6 +33,8 @@ If \code{NULL}, the default method of \code{dist.fun} is used.}
 The function should accept a data matrix and a \code{method=} string (used to accept \code{metric}) and return a dissimilarity matrix of type \link{dist}.
 If \code{NULL}, the \code{stats::\link{dist}} function is used by default.}
 
+\item{dist.fun}{Function specifying the function to use to compute the distance matrix. Must be stats::dist-like function. i.e. takes a method as a parameter and returns a dissimilarity matrix.}
+
 \item{method}{String specifying the agglomeration method to use in \code{\link{hclust}}.}
 
 \item{cut.fun}{Function specifying the method to use to cut the dendrogram.
