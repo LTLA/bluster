@@ -6,75 +6,69 @@
 \alias{show,DmmParam-method}
 \alias{DmmParam}
 \alias{clusterRows,ANY,DmmParam-method}
-\title{Dirichlet Multinomial Mixtures clustering}
+\title{Dirichlet multinomial mixture clustering}
 \usage{
-DmmParam(k = 1:3, type = "laplace", transposed = FALSE, seed = NULL)
+DmmParam(k = 1:3, type = "laplace", seed = NULL, BPPARAM = SerialParam())
 
 \S4method{clusterRows}{ANY,DmmParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
-\item{k}{An integer vector indicating the number of clusters to choose from (or the possible number of clusters if the vector has multiple values)}
+\item{k}{An integer vector indicating the number of clusters to create with the DMM algorithm.
+A vector containing two or more values will instruct \code{\link{clusterRows}} to perform clustering on each number,
+and choose the optimal number of clusters based on \code{type}.}
 
-\item{type}{A string specifying the fit function to use to find the optimal number of clusters. 
-Use in combination with \code{k} being a list of integers. 
-Must be equal to \code{"laplace"}, \code{"AIC"} or \code{"BIC"}.}
+\item{type}{A string specifying the method to use to find the optimal number of clusters. 
+Must be equal to \code{"laplace"}, \code{"AIC"} or \code{"BIC"}.
+Only used when \code{k} contains multiple values.}
 
-\item{transposed}{Logical scalar, is x transposed with samples in rows?}
+\item{seed}{Integer scalar specifying the seed to use.
+If \code{NULL}, a random value is used on each invocation of \code{\link{clusterRows}}.}
 
-\item{seed}{An integer specifying the seed to use when doing the DMM 
-algorithm. Will be random if not set.}
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating how multiple clusterings should be parallelized.
+Only relevant if \code{k} contains multiple values.}
 
-\item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
+\item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.
+Values are expected to be counts.}
 
 \item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
 
 \item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 }
 \value{
-The \code{DmmParam} constructor will return a \linkS4class{DmmParam} object 
-with the specified parameters.
+The \code{DmmParam} constructor will return a \linkS4class{DmmParam} object with the specified parameters.
 
-The \code{clusterRows} method will return a factor of length equal to 
-\code{nrow(x)} containing the cluster assignments.
-If \code{full=TRUE}, a list is returned with \code{clusters} 
-(the factor, as above) and \code{objects} 
-(a list containing \code{dmm}, the output of 
-\code{\link[DirichletMultinomial]{dmn}} for each value contained in 
-\code{k}; \code{k}, the number of clusters; \code{prob}, the array of 
-probabilities; and \code{seed} the seed for the dmm).
+The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
+If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects};
+the latter is a list containing:
+\itemize{
+\item \code{dmm}, a list containing the output of \code{\link[DirichletMultinomial]{dmn}} for each value of \code{k}.
+\item \code{best}, an integer scalar specifying the best choice of \code{k} according to the method of \code{type}.
+\item \code{prob}, a matrix array of probabilities where each row is an observation and each column is a cluster.
+The number of columns is set to the best number of clusters in \code{best}.
+\item \code{seed}, an integer scalar specifying the seed used for clustering.
+}
 }
 \description{
-Use the DMM algorithm from the \code{DirichletMultinomial} package on a 
-distance matrix within \code{\link{clusterRows}}.
+Apply the Dirichlet multinomial mixture (DMM) algorithm from the \pkg{DirichletMultinomial} package.
+This is commonly used in microbial ecology and in analyses of metagenomic and 16S rRNA count data.
 }
 \details{
-The DMM algorithm (see Holmes et al. 2012) is commonly used in microbial 
-ecology along with metagenomic and 16S rRNA count data.
-
-For example, this algorithm could be used on an assay coming from a 
-\code{SummarizedExperiment}.
-
 To modify an existing DmmParam object \code{x},
-users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} 
-is any argument used in the constructor.
-
-The default for \code{k} is \code{1:3}.
-
-The default for \code{type} is \code{"laplace"}.
+users can simply call \code{x[[i]]} or \code{x[[i]] <- value} where \code{i} is any argument used in the constructor.
 }
 \examples{
-clusterRows(t(iris[, 1:4]), DmmParam())
-clusterRows(t(iris[, 1:4]), DmmParam(k = 2))
-
-fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
-        counts <- t(as.matrix(read.csv(fl, row.names=1)))
-        clusterRows(counts, DmmParam(k=1:3, type="laplace"))
+# Mocking up a small example.
+nfeatures <- 50
+out1 <- matrix(rpois(20 * nfeatures, lambda = rgamma(nfeatures, 5)), ncol=nfeatures, byrow=TRUE)
+out2 <- matrix(rpois(20 * nfeatures, lambda = rgamma(nfeatures, 5)), ncol=nfeatures, byrow=TRUE)
+out <- rbind(out1, out2)
+clusterRows(out, DmmParam())
 
 }
 \references{
 Holmes I, Harris K and Quince C (2012).
 Dirichlet multinomial mixtures: generative models for microbial metagenomics.
-\emph{PLoS ONE, vol. 7(2)}, 1-15
+\emph{PLoS ONE}, 7(2), 1-15
 }
 \author{
 Basil Courbayre

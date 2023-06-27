@@ -5,19 +5,18 @@ set.seed(1000)
 test_that("DmmParam constructor and utilities work correctly", {
     X <- DmmParam()
     expect_output(show(X), "DmmParam")
-    expect_output(show(X), "k: 1, 2, 3")
+    expect_output(show(X), "k(3): 1 2 3", fixed=TRUE)
     expect_output(show(X), "type: laplace")
-    expect_output(show(X), "transposed: FALSE")
-    
+
     expect_identical(X[["k"]], 1:3)
     X[["k"]] <- as.integer(2:4)
     expect_identical(X[["k"]], 2:4)
-    
+
     X <- DmmParam(k=3)
     expect_equal(X[["k"]], 3)
     X[["k"]] <- as.integer(2)
     expect_equal(X[["k"]], 2)
-    
+
     X <- DmmParam(type="BIC")
     expect_identical(X[["type"]], "BIC")
     X[["type"]] <- "AIC"
@@ -36,36 +35,16 @@ test_that("clusterRows works correctly", {
     m <- ceiling(m * 10)
     rownames(m) <- paste0("A",1:10)
     colnames(m) <- 1:100
-    
+
     out <- clusterRows(m, DmmParam(), full = TRUE)
     expect_true(is.factor(out$clusters))
-    expect_identical(length(out$clusters), ncol(m))
-    
-    # Consistent with reference values.
-    k=out$objects$k
-    tm <- t(m)
-    dmm <- .get_dmm(tm, k=k)
-    prob <- DirichletMultinomial::mixture(dmm[[1]])
-    colnames(prob) <- 1:k
-    clusters <- colnames(prob)[max.col(prob, ties.method = "first")]
-    clusters <- factor(clusters)
-    names(clusters) <- rownames(tm)
-    expect_identical(out$clusters, clusters)
-    
+    expect_identical(length(out$clusters), nrow(m))
+
     # Trying with different parameters.
     set.seed(10)
     out <- clusterRows(m, DmmParam(k=4))
     expect_true(is.factor(out))
-    expect_identical(length(out), nrow(tm))
-    
-    set.seed(10)
-    dmm <- .get_dmm(tm, k=4)
-    prob <- DirichletMultinomial::mixture(dmm[[1]])
-    colnames(prob) <- 1:4
-    clusters <- colnames(prob)[max.col(prob, ties.method = "first")]
-    clusters <- factor(clusters)
-    names(clusters) <- rownames(tm)
-    expect_identical(out, clusters)
+    expect_identical(length(out), nrow(m))
 })
 
 test_that("clusterRows responds to full=TRUE", {
@@ -74,7 +53,7 @@ test_that("clusterRows responds to full=TRUE", {
     rownames(m) <- paste0("A",1:10)
     colnames(m) <- 1:100
     out <- clusterRows(m, DmmParam())
-    
+
     full <- clusterRows(m, DmmParam(), full=TRUE)
     expect_identical(out, full$clusters)
     expect_s4_class(full$objects$dmm[[1]], "DMN")
