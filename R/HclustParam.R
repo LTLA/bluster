@@ -43,8 +43,10 @@
 #' clusterRows(iris[,1:4], HclustParam())
 #' clusterRows(iris[,1:4], HclustParam(method="ward.D2"))
 #' clusterRows(iris[,1:4], HclustParam(metric = "canberra", dist.fun = vegan::vegdist))
+#' \dontrun{
 #' clusterRows(iris[,1:4], HclustParam(clust.fun=fastcluster::hclust)
-#'
+#' }
+#' 
 #' @seealso
 #' \code{\link{dist}}, \code{\link{hclust}} and \code{\link{cutree}}, which actually do all the heavy lifting.
 #'
@@ -130,7 +132,6 @@ setMethod("clusterRows", c("ANY", "HclustParam"), function(x, BLUSPARAM, full=FA
     } else {
         clust.fun <- hclust
     }
-
 
     hargs <- list(quote(dst))
     if (!is.null(BLUSPARAM@method)) {
