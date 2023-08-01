@@ -80,7 +80,7 @@ If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not 
 clusterRows(iris[,1:4], HclustParam())
 clusterRows(iris[,1:4], HclustParam(method="ward.D2"))
 clusterRows(iris[,1:4], HclustParam(metric = "canberra", dist.fun = vegan::vegdist))
-clusterRows(iris[,1:4], HclustParam(clust.fun=fastcluster::hclust)
+clusterRows(iris[,1:4], HclustParam(clust.fun=fastcluster::hclust))
 
 }
 \seealso{
