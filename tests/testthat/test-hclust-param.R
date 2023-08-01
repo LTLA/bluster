@@ -18,6 +18,7 @@ test_that("HclustParam constructor and utilities work correctly", {
     expect_output(show(HclustParam(method="average")), "average")
     expect_output(show(HclustParam(cut.dynamic=TRUE)), "cutreeDynamic")
     expect_output(show(HclustParam(cut.fun=identity)), "custom")
+    expect_output(show(HclustParam()), "hclust")
 })
 
 test_that("HclustParam validity works correctly", {

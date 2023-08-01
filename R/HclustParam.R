@@ -2,6 +2,9 @@
 #'
 #' Run the base \code{\link{hclust}} function on a distance matrix within \code{\link{clusterRows}}.
 #'
+#' @param clust.fun Function specifying the function to use to do the clustering.
+#' The function should apply a hierarchical clustering algorithm and take a data matrix as input.
+#' If \code{NULL}, the \code{stats::\link{hclust}} function is used by default.
 #' @param metric String specifying the distance metric to use in \code{dist.fun}.
 #' If \code{NULL}, the default method of \code{dist.fun} is used.
 #' @param dist.fun Function specifying the function to use to compute the distance matrix. 
@@ -40,7 +43,8 @@
 #' clusterRows(iris[,1:4], HclustParam())
 #' clusterRows(iris[,1:4], HclustParam(method="ward.D2"))
 #' clusterRows(iris[,1:4], HclustParam(metric = "canberra", dist.fun = vegan::vegdist))
-#'
+#' clusterRows(iris[,1:4], HclustParam(clust.fun=fastcluster::hclust))
+#' 
 #' @seealso
 #' \code{\link{dist}}, \code{\link{hclust}} and \code{\link{cutree}}, which actually do all the heavy lifting.
 #'
@@ -63,7 +67,7 @@ setMethod(".defaultScalarArguments", "HclustParam", function(x) c(callNextMethod
 
 #' @export
 #' @rdname HclustParam-class
-HclustParam <- function(metric=NULL, dist.fun=NULL, method=NULL, cut.fun=NULL, cut.dynamic=FALSE, cut.height=NULL, cut.number=NULL, cut.params=list(), ...) {
+HclustParam <- function(clust.fun=NULL, metric=NULL, dist.fun=NULL, method=NULL, cut.fun=NULL, cut.dynamic=FALSE, cut.height=NULL, cut.number=NULL, cut.params=list(), ...) {
     if (!is.null(cut.number)) {
         .Deprecated(old="cut.number=", new="cut.params=list(k=...)")
         cut.params$k <- cut.number
@@ -78,7 +82,7 @@ HclustParam <- function(metric=NULL, dist.fun=NULL, method=NULL, cut.fun=NULL, c
         cut.params <- c(cut.params, extra.args)
     }
 
-    new("HclustParam", metric=metric, dist.fun=dist.fun, method=method, cut.fun=cut.fun, cut.dynamic=cut.dynamic, cut.params=cut.params)
+    new("HclustParam", clust.fun=clust.fun, metric=metric, dist.fun=dist.fun, method=method, cut.fun=cut.fun, cut.dynamic=cut.dynamic, cut.params=cut.params)
 }
 
 #' @export
@@ -91,11 +95,18 @@ setMethod("[[", "HclustParam", function(x, i) {
 setMethod("show", "HclustParam", function(object) {
     object <- updateObject(object)
     callNextMethod()
-    fun <- object@dist.fun
-    if (!is.null(fun)) {
+    dist.fun <- object@dist.fun
+    if (!is.null(dist.fun)) {
         cat("dist.fun: custom\n")
     } else {
         cat("dist.fun: stats::dist\n")
+    }
+
+    clust.fun <- object@clust.fun
+    if (!is.null(clust.fun)) {
+        cat("clust.fun: custom\n")
+    } else {
+        cat("clust.fun: stats::hclust\n")
     }
 })
 
@@ -114,11 +125,17 @@ setMethod("clusterRows", c("ANY", "HclustParam"), function(x, BLUSPARAM, full=FA
         dst <- do.call(dist, dargs)
     }
 
+    if (!is.null(BLUSPARAM@clust.fun)) {
+        clust.fun <- BLUSPARAM@clust.fun
+    } else {
+        clust.fun <- hclust
+    }
+
     hargs <- list(quote(dst))
     if (!is.null(BLUSPARAM@method)) {
         hargs$method <- BLUSPARAM@method
     }
-    hcl <- do.call(hclust, hargs)
+    hcl <- do.call(clust.fun, hargs)
 
     # Moving arguments to their new homes.
     BLUSPARAM <- updateObject(BLUSPARAM)

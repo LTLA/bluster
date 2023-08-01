@@ -12,6 +12,7 @@
 \title{Hierarchical clustering}
 \usage{
 HclustParam(
+  clust.fun = NULL,
   metric = NULL,
   dist.fun = NULL,
   method = NULL,
@@ -26,14 +27,16 @@ HclustParam(
 \S4method{clusterRows}{ANY,HclustParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
+\item{clust.fun}{Function specifying the function to use to do the clustering.
+The function should apply a hierarchical clustering algorithm and take a data matrix as input.
+If \code{NULL}, the \code{stats::\link{hclust}} function is used by default.}
+
 \item{metric}{String specifying the distance metric to use in \code{dist.fun}.
 If \code{NULL}, the default method of \code{dist.fun} is used.}
 
 \item{dist.fun}{Function specifying the function to use to compute the distance matrix. 
 The function should accept a data matrix and a \code{method=} string (used to accept \code{metric}) and return a dissimilarity matrix of type \link{dist}.
 If \code{NULL}, the \code{stats::\link{dist}} function is used by default.}
-
-\item{dist.fun}{Function specifying the function to use to compute the distance matrix. Must be stats::dist-like function. i.e. takes a method as a parameter and returns a dissimilarity matrix.}
 
 \item{method}{String specifying the agglomeration method to use in \code{\link{hclust}}.}
 
@@ -77,6 +80,7 @@ If \code{cut.fun=NULL}, \code{cut.dynamic=FALSE} and \code{cut.params} does not 
 clusterRows(iris[,1:4], HclustParam())
 clusterRows(iris[,1:4], HclustParam(method="ward.D2"))
 clusterRows(iris[,1:4], HclustParam(metric = "canberra", dist.fun = vegan::vegdist))
+clusterRows(iris[,1:4], HclustParam(clust.fun=fastcluster::hclust)
 
 }
 \seealso{
