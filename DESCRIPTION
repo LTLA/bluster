@@ -41,7 +41,8 @@ Suggests:
     kohonen,
     apcluster,
     DirichletMultinomial,
-    vegan
+    vegan,
+    fastcluster
 biocViews: 
     ImmunoOncology, 
     Software, 
