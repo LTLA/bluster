@@ -51,7 +51,8 @@ biocViews:
     SingleCell, 
     Clustering
 LinkingTo: 
-    Rcpp 
+    Rcpp,
+    assorthead
 Collate:
     AllClasses.R
     AllGenerics.R
@@ -89,5 +90,5 @@ Collate:
 License: GPL-3
 NeedsCompilation: yes
 VignetteBuilder: knitr
-SystemRequirements: C++11
+SystemRequirements: C++17
 RoxygenNote: 7.2.3

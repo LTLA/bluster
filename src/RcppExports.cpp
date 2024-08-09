@@ -10,23 +10,14 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// build_snn_rank
-Rcpp::List build_snn_rank(Rcpp::IntegerMatrix neighbors);
-RcppExport SEXP _bluster_build_snn_rank(SEXP neighborsSEXP) {
+// build_snn_graph
+Rcpp::List build_snn_graph(Rcpp::IntegerMatrix neighbors, std::string scheme);
+RcppExport SEXP _bluster_build_snn_graph(SEXP neighborsSEXP, SEXP schemeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type neighbors(neighborsSEXP);
-    rcpp_result_gen = Rcpp::wrap(build_snn_rank(neighbors));
-    return rcpp_result_gen;
-END_RCPP
-}
-// build_snn_number
-Rcpp::List build_snn_number(Rcpp::IntegerMatrix neighbors);
-RcppExport SEXP _bluster_build_snn_number(SEXP neighborsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type neighbors(neighborsSEXP);
-    rcpp_result_gen = Rcpp::wrap(build_snn_number(neighbors));
+    Rcpp::traits::input_parameter< std::string >::type scheme(schemeSEXP);
+    rcpp_result_gen = Rcpp::wrap(build_snn_graph(neighbors, scheme));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -45,8 +36,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_bluster_build_snn_rank", (DL_FUNC) &_bluster_build_snn_rank, 1},
-    {"_bluster_build_snn_number", (DL_FUNC) &_bluster_build_snn_number, 1},
+    {"_bluster_build_snn_graph", (DL_FUNC) &_bluster_build_snn_graph, 2},
     {"_bluster_sum_neighbor_weights", (DL_FUNC) &_bluster_sum_neighbor_weights, 4},
     {NULL, NULL, 0}
 };
