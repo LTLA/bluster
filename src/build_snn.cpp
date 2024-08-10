@@ -9,7 +9,7 @@ Rcpp::List build_snn_graph(Rcpp::IntegerMatrix neighbors, std::string scheme) {
     scran_graph_cluster::BuildSnnGraphResults<int, double> output;
 
     scran_graph_cluster::BuildSnnGraphOptions opt;
-    if (scheme == "ranked") {
+    if (scheme == "rank") {
         opt.weighting_scheme = scran_graph_cluster::SnnWeightScheme::RANKED;
     } else if (scheme == "number") {
         opt.weighting_scheme = scran_graph_cluster::SnnWeightScheme::NUMBER;
@@ -40,7 +40,7 @@ Rcpp::List build_snn_graph(Rcpp::IntegerMatrix neighbors, std::string scheme) {
     }
 
     return Rcpp::List::create(
-        Rcpp::Named("vertices") = Rcpp::IntegerVector::create(ncells),
+        Rcpp::Named("edges") = edges,
         Rcpp::Named("weights") = Rcpp::NumericVector(output.weights.begin(), output.weights.end())
     );
 }

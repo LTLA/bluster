@@ -125,18 +125,9 @@ makeKNNGraph <- function(x, k=10, directed=FALSE, BNPARAM=KmknnParam(), BPPARAM=
 #' @importFrom igraph make_graph E "E<-"
 neighborsToSNNGraph <- function(indices, type=c("rank", "number", "jaccard")) {
     type <- match.arg(type)
-    if (type=="rank") {
-        g.out <- build_snn_rank(indices)
-    } else {
-        g.out <- build_snn_number(indices)
-    }
-
+    g.out <- build_snn_graph(t(indices), type)
     edges <- g.out[[1]] 
     weights <- g.out[[2]]
-    if (type=="jaccard") {
-        weights <- weights / (2 * (ncol(indices) + 1) - weights)
-    }
-
     g <- make_graph(edges, directed=FALSE)
     E(g)$weight <- weights
     g
