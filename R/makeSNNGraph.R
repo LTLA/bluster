@@ -7,7 +7,8 @@
 #' @param type A string specifying the type of weighting scheme to use for shared neighbors.
 #' @param directed A logical scalar indicating whether the output of \code{buildKNNGraph} should be a directed graph.
 #' @param BNPARAM A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object to use for parallel processing.
+#' @param BPPARAM Deprecated, use \code{num.threads} instead.
+#' @param num.threads Integer scalar specifying the number of threads to use for neighbor searches.
 #' @param indices An integer matrix where each row corresponds to an observation
 #' and contains the indices of the \code{k} nearest neighbors (by increasing distance and excluding self) from that observation.
 #' 
@@ -106,8 +107,9 @@ NULL
 #' @rdname makeSNNGraph
 #' @importFrom BiocNeighbors KmknnParam findKNN
 #' @importFrom BiocParallel SerialParam 
-makeSNNGraph <- function(x, k=10, type=c("rank", "number", "jaccard"), BNPARAM=KmknnParam(), BPPARAM=SerialParam()) { 
-    nn.out <- findKNN(x, k=k, BNPARAM=BNPARAM, BPPARAM=BPPARAM, get.distance=FALSE)
+makeSNNGraph <- function(x, k=10, type=c("rank", "number", "jaccard"), BNPARAM=KmknnParam(), num.threads=1, BPPARAM=SerialParam()) { 
+    x <- as.matrix(x)
+    nn.out <- findKNN(x, k=k, BNPARAM=BNPARAM, num.thread=num.threads, BPPARAM=BPPARAM, get.distance=FALSE)
     neighborsToSNNGraph(nn.out$index, type=match.arg(type))
 }
 
@@ -115,8 +117,9 @@ makeSNNGraph <- function(x, k=10, type=c("rank", "number", "jaccard"), BNPARAM=K
 #' @rdname makeSNNGraph
 #' @importFrom BiocParallel SerialParam
 #' @importFrom BiocNeighbors KmknnParam findKNN
-makeKNNGraph <- function(x, k=10, directed=FALSE, BNPARAM=KmknnParam(), BPPARAM=SerialParam()) { 
-    nn.out <- findKNN(x, k=k, BNPARAM=BNPARAM, BPPARAM=BPPARAM, get.distance=FALSE)
+makeKNNGraph <- function(x, k=10, directed=FALSE, BNPARAM=KmknnParam(), num.threads=1, BPPARAM=SerialParam()) { 
+    x <- as.matrix(x)
+    nn.out <- findKNN(x, k=k, BNPARAM=BNPARAM, num.threads=num.threads, BPPARAM=BPPARAM, get.distance=FALSE)
     neighborsToKNNGraph(nn.out$index, directed=directed)
 }
 
