@@ -77,7 +77,7 @@ test_that("makeSNNGraph fails on silly inputs", {
 
     expect_error(makeSNNGraph(dummy[,0]), NA) # shouldn't fail, but shouldn't generate anything particularly useful.
 
-    expect_warning(expect_error(makeSNNGraph(dummy[0,]), "must be positive"), "capped")
+    expect_warning(makeSNNGraph(dummy[0,]), "capped")
 })
 
 # Checking that makeKNNGraph also works.

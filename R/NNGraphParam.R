@@ -120,7 +120,7 @@ KNNGraphParam <- function(k=10, directed=FALSE, BNPARAM=KmknnParam(), num.thread
         k=as.integer(k),
         directed=directed,
         BNPARAM=BNPARAM,
-        num.threads=as.tinteger(num.threads),
+        num.threads=as.integer(num.threads),
         cluster.fun=cluster.fun,
         cluster.args=cluster.args
     )
