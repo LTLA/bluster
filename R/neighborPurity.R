@@ -100,8 +100,8 @@ neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(
     stopifnot(all(!is.na(m)))
     aggregated <- sum_neighbor_weights(length(uclust), nout, m - 1L, w)
 
-    targets <- t(aggregated[[1]])
-    totals <- aggregated[[2]]
+    targets <- t(aggregated)
+    totals <- rowSums(targets)
 
     DataFrame( 
         purity=targets[cbind(seq_along(m), m)]/totals,
