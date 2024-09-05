@@ -57,7 +57,7 @@ KNNGraphParam(
 
 \item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.}
 
-\item{num.threads}{Integer scalar specifying the number of threads to use for neighbor searches.}
+\item{num.threads}{Integer scalar specifying the number of threads to use.}
 
 \item{BPPARAM}{Deprecated, use \code{num.threads} instead.}
 

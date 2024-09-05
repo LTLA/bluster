@@ -3,12 +3,13 @@
 #include "tatami/tatami.hpp"
 
 // [[Rcpp::export(rng=false)]]
-Rcpp::List build_snn_graph(Rcpp::IntegerMatrix neighbors, std::string scheme) {
+Rcpp::List build_snn_graph(Rcpp::IntegerMatrix neighbors, std::string scheme, int num_threads) {
     const int* nptr = neighbors.begin();
     size_t nrow = neighbors.rows();
     scran_graph_cluster::BuildSnnGraphResults<int, double> output;
 
     scran_graph_cluster::BuildSnnGraphOptions opt;
+    opt.num_threads = num_threads;
     if (scheme == "rank") {
         opt.weighting_scheme = scran_graph_cluster::SnnWeightScheme::RANKED;
     } else if (scheme == "number") {

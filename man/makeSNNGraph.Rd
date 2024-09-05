@@ -25,7 +25,11 @@ makeKNNGraph(
   BPPARAM = SerialParam()
 )
 
-neighborsToSNNGraph(indices, type = c("rank", "number", "jaccard"))
+neighborsToSNNGraph(
+  indices,
+  type = c("rank", "number", "jaccard"),
+  num.threads = 1
+)
 
 neighborsToKNNGraph(indices, directed = FALSE)
 }
@@ -38,7 +42,7 @@ neighborsToKNNGraph(indices, directed = FALSE)
 
 \item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.}
 
-\item{num.threads}{Integer scalar specifying the number of threads to use for neighbor searches.}
+\item{num.threads}{Integer scalar specifying the number of threads to use.}
 
 \item{BPPARAM}{Deprecated, use \code{num.threads} instead.}
 

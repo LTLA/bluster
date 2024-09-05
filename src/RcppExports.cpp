@@ -11,13 +11,14 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // build_snn_graph
-Rcpp::List build_snn_graph(Rcpp::IntegerMatrix neighbors, std::string scheme);
-RcppExport SEXP _bluster_build_snn_graph(SEXP neighborsSEXP, SEXP schemeSEXP) {
+Rcpp::List build_snn_graph(Rcpp::IntegerMatrix neighbors, std::string scheme, int num_threads);
+RcppExport SEXP _bluster_build_snn_graph(SEXP neighborsSEXP, SEXP schemeSEXP, SEXP num_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type neighbors(neighborsSEXP);
     Rcpp::traits::input_parameter< std::string >::type scheme(schemeSEXP);
-    rcpp_result_gen = Rcpp::wrap(build_snn_graph(neighbors, scheme));
+    Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(build_snn_graph(neighbors, scheme, num_threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -36,7 +37,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_bluster_build_snn_graph", (DL_FUNC) &_bluster_build_snn_graph, 2},
+    {"_bluster_build_snn_graph", (DL_FUNC) &_bluster_build_snn_graph, 3},
     {"_bluster_sum_neighbor_weights", (DL_FUNC) &_bluster_sum_neighbor_weights, 4},
     {NULL, NULL, 0}
 };
