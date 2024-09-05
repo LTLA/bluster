@@ -2,6 +2,12 @@
 \title{bluster News}
 \encoding{UTF-8}
 
+\section{Version 1.16.0}{\itemize{
+\item Add \code{num.threads=} to all neighbor-based methods, to be passed to \pkg{BiocNeighbors}.
+
+\item Parallelize the SNN graph construction in \code{makeSNNGraph()}.
+}}
+
 \section{Version 1.10.0}{\itemize{
 \item Corrected calculation of the ratio matrix in \code{pairwiseRand()} when \code{adjusted=TRUE},
 so that ratios have an upper bound of 1.
