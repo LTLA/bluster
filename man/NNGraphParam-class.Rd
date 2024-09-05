@@ -18,7 +18,8 @@ NNGraphParam(
   k = 10,
   ...,
   BNPARAM = KmknnParam(),
-  BPPARAM = SerialParam(),
+  num.threads = 1,
+  BPPARAM = NULL,
   cluster.fun = "walktrap",
   cluster.args = list()
 )
@@ -27,7 +28,8 @@ SNNGraphParam(
   k = 10,
   type = "rank",
   BNPARAM = KmknnParam(),
-  BPPARAM = SerialParam(),
+  num.threads = 1,
+  BPPARAM = NULL,
   cluster.fun = "walktrap",
   cluster.args = list()
 )
@@ -36,7 +38,8 @@ KNNGraphParam(
   k = 10,
   directed = FALSE,
   BNPARAM = KmknnParam(),
-  BPPARAM = SerialParam(),
+  num.threads = 1,
+  BPPARAM = NULL,
   cluster.fun = "walktrap",
   cluster.args = list()
 )
@@ -54,7 +57,9 @@ KNNGraphParam(
 
 \item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object to use for parallel processing.}
+\item{num.threads}{Integer scalar specifying the number of threads to use.}
+
+\item{BPPARAM}{Deprecated, use \code{num.threads} instead.}
 
 \item{cluster.fun}{Function specifying the method to use to detect communities in the NN graph.
 The first argument of this function should be the NN graph and the return value should be a \link{communities} object.

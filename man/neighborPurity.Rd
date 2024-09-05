@@ -10,7 +10,8 @@ neighborPurity(
   k = 50,
   weighted = TRUE,
   BNPARAM = KmknnParam(),
-  BPPARAM = SerialParam()
+  num.threads = 1,
+  BPPARAM = NULL
 )
 }
 \arguments{
@@ -26,7 +27,9 @@ Alternatively, a numeric vector of length equal to \code{clusters} containing th
 \item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.
 This should be an algorithm supported by \code{\link{findNeighbors}}.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating whether and how parallelization should be performed across genes.}
+\item{num.threads}{Integer scalar specifying the number of threads to use for the neighbor search.}
+
+\item{BPPARAM}{Deprecated and ignored, use \code{num.threads} instead.}
 }
 \value{
 A \linkS4class{DataFrame} with one row per observation in \code{x} and the columns:

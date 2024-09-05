@@ -61,9 +61,17 @@ NULL
 
 #' @export
 #' @rdname NNGraphParam-class
-setClass("NNGraphParam", contains=c("BlusterParam", "VIRTUAL"),
-    slots=c(k="integer", cluster.fun="character_OR_function", cluster.args="list",
-        BNPARAM="BiocNeighborParam", BPPARAM="BiocParallelParam"))
+setClass(
+    "NNGraphParam",
+    contains=c("BlusterParam", "VIRTUAL"),
+    slots=c(
+        k="integer",
+        cluster.fun="character_OR_function",
+        cluster.args="list",
+        BNPARAM="BiocNeighborParam",
+        num.threads="integer"
+    )
+)
 
 #' @export
 #' @rdname NNGraphParam-class
@@ -75,30 +83,47 @@ setClass("KNNGraphParam", contains="NNGraphParam", slot=c(directed="logical"))
 
 #' @export
 #' @rdname NNGraphParam-class
-#' @importFrom BiocParallel SerialParam
 #' @importFrom BiocNeighbors KmknnParam
-NNGraphParam <- function(shared=TRUE, k=10, ..., BNPARAM=KmknnParam(), BPPARAM=SerialParam(), cluster.fun="walktrap", cluster.args=list()) {
+NNGraphParam <- function(shared=TRUE, k=10, ..., BNPARAM=KmknnParam(), num.threads=1, BPPARAM=NULL, cluster.fun="walktrap", cluster.args=list()) {
     if (shared) {
-        SNNGraphParam(k=k, ..., BNPARAM=BNPARAM, BPPARAM=BPPARAM, cluster.fun=cluster.fun, cluster.args=cluster.args)
+        SNNGraphParam(k=k, ..., BNPARAM=BNPARAM, num.threads=num.threads, BPPARAM=BPPARAM, cluster.fun=cluster.fun, cluster.args=cluster.args)
     } else {
-        KNNGraphParam(k=k, ..., BNPARAM=BNPARAM, BPPARAM=BPPARAM, cluster.fun=cluster.fun, cluster.args=cluster.args)
+        KNNGraphParam(k=k, ..., BNPARAM=BNPARAM, num.threads=num.threads, BPPARAM=BPPARAM, cluster.fun=cluster.fun, cluster.args=cluster.args)
     }
 }
 
 #' @export
 #' @rdname NNGraphParam-class
-#' @importFrom BiocParallel SerialParam
 #' @importFrom BiocNeighbors KmknnParam
-SNNGraphParam <- function(k=10, type="rank", BNPARAM=KmknnParam(), BPPARAM=SerialParam(), cluster.fun="walktrap", cluster.args=list()) {
-    new("SNNGraphParam", k=as.integer(k), type=type, BNPARAM=BNPARAM, BPPARAM=BPPARAM, cluster.fun=cluster.fun, cluster.args=cluster.args)
+SNNGraphParam <- function(k=10, type="rank", BNPARAM=KmknnParam(), num.threads=1, BPPARAM=NULL, cluster.fun="walktrap", cluster.args=list()) {
+    if (!is.null(BPPARAM)) {
+        num.threads <- BiocParallel::bpnworkers(BPPARAM)
+    }
+    new("SNNGraphParam",
+        k=as.integer(k),
+        type=type,
+        BNPARAM=BNPARAM,
+        num.threads=as.integer(num.threads),
+        cluster.fun=cluster.fun,
+        cluster.args=cluster.args
+    )
 }
 
 #' @export
 #' @rdname NNGraphParam-class
-#' @importFrom BiocParallel SerialParam
 #' @importFrom BiocNeighbors KmknnParam
-KNNGraphParam <- function(k=10, directed=FALSE, BNPARAM=KmknnParam(), BPPARAM=SerialParam(), cluster.fun="walktrap", cluster.args=list()) {
-    new("KNNGraphParam", k=as.integer(k), directed=directed, BNPARAM=BNPARAM, BPPARAM=BPPARAM, cluster.fun=cluster.fun, cluster.args=cluster.args)
+KNNGraphParam <- function(k=10, directed=FALSE, BNPARAM=KmknnParam(), num.threads=1, BPPARAM=NULL, cluster.fun="walktrap", cluster.args=list()) {
+    if (!is.null(BPPARAM)) {
+        num.threads <- BiocParallel::bpnworkers(BPPARAM)
+    }
+    new("KNNGraphParam",
+        k=as.integer(k),
+        directed=directed,
+        BNPARAM=BNPARAM,
+        num.threads=as.integer(num.threads),
+        cluster.fun=cluster.fun,
+        cluster.args=cluster.args
+    )
 }
 
 #' @importFrom S4Vectors setValidity2
@@ -149,7 +174,7 @@ setMethod("show", "NNGraphParam", function(object) {
     cat(sprintf("k: %s\n", object@k))
     sub_graph_show(object)
     cat(sprintf("BNPARAM: %s\n", class(object@BNPARAM)[1]))
-    cat(sprintf("BPPARAM: %s\n", class(object@BPPARAM)[1]))
+    cat(sprintf("num.threads: %s\n", object@num.threads))
     cat(sprintf("cluster.fun: %s\n", if (is.function(object@cluster.fun)) "custom" else object@cluster.fun))
     coolcat("cluster.args(%i): %s", names(object@cluster.args))
 })
@@ -170,16 +195,25 @@ setMethod("sub_graph_show", "KNNGraphParam", function(object) {
 #' @export
 #' @rdname NNGraphParam-class
 setMethod("clusterRows", c("ANY", "SNNGraphParam"), function(x, BLUSPARAM, full=FALSE) {
-    g <- makeSNNGraph(x, k=BLUSPARAM[["k"]], type=BLUSPARAM[["type"]],
-        BNPARAM=BLUSPARAM[["BNPARAM"]], BPPARAM=BLUSPARAM[["BPPARAM"]]) 
+    g <- makeSNNGraph(x,
+        k=BLUSPARAM[["k"]],
+        type=BLUSPARAM[["type"]],
+        BNPARAM=BLUSPARAM[["BNPARAM"]],
+        num.threads=BLUSPARAM[["num.threads"]]
+    ) 
     .cluster_igraph(g, BLUSPARAM, full=full)
 })
 
 #' @export
 #' @rdname NNGraphParam-class
 setMethod("clusterRows", c("ANY", "KNNGraphParam"), function(x, BLUSPARAM, full=FALSE) {
-    g <- makeKNNGraph(x, k=BLUSPARAM[["k"]], directed=BLUSPARAM[["directed"]],
-        BNPARAM=BLUSPARAM[["BNPARAM"]], BPPARAM=BLUSPARAM[["BPPARAM"]]) 
+    g <- makeKNNGraph(
+        x,
+        k=BLUSPARAM[["k"]],
+        directed=BLUSPARAM[["directed"]],
+        BNPARAM=BLUSPARAM[["BNPARAM"]],
+        num.threads=BLUSPARAM[["num.threads"]]
+    ) 
     .cluster_igraph(g, BLUSPARAM, full=full)
 })
 

@@ -27,15 +27,16 @@ m <- m + rnorm(length(m), sd=0.1)
 REF <- function(m, eps, min.pts) {
     # Identifying the core points.
     neighbors <- BiocNeighbors::findNeighbors(m, threshold=eps, get.distance=FALSE)$index
-    is.core <- lengths(neighbors) > min.pts # >, not >=, as self is included in range.
+    is.core <- lengths(neighbors) >= min.pts
     core.id <- which(is.core)
     core.neighbors <- neighbors[is.core]
 
     # Constructing the core components.
     from <- rep(core.id, lengths(core.neighbors))
     to <- unlist(core.neighbors)
-    keep <- to %in% from
-    g <- igraph::make_graph(rbind(as.character(from[keep]), as.character(to[keep])), directed=FALSE)
+    keep <- to %in% core.id
+    edges <- rbind(as.character(from[keep]), as.character(to[keep]))
+    g <- igraph::make_graph(edges, isolates=setdiff(core.id, edges), directed=FALSE)
 
     comp <- igraph::components(g)$membership
     clusters <- integer(nrow(m))

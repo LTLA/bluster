@@ -12,9 +12,10 @@ DbscanParam(
   eps = NULL,
   min.pts = 5,
   core.prop = 0.5,
-  chunk.size = 1000,
+  chunk.size = NULL,
   BNPARAM = KmknnParam(),
-  BPPARAM = SerialParam()
+  num.threads = 1,
+  BPPARAM = NULL
 )
 
 \S4method{clusterRows}{ANY,DbscanParam}(x, BLUSPARAM, full = FALSE)
@@ -28,12 +29,14 @@ If \code{NULL}, this is determined from \code{min.pts} and \code{core.prop}.}
 \item{core.prop}{Numeric scalar specifying the proportion of observations to treat as core points.
 This is only used when \code{eps=NULL}, see Details.}
 
-\item{chunk.size}{Integer scalar specifying the number of points to process per chunk.}
+\item{chunk.size}{Deprecated and ignored.}
 
 \item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the algorithm to use for the neighbor searches.
 This should be able to support both nearest-neighbor and range queries.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object specifying the parallelization to use for the neighbor searches.}
+\item{num.threads}{Integer scalar specifying the number of threads to use.}
+
+\item{BPPARAM}{Deprecated and ignored, use \code{num.threads} instead.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
 
@@ -54,7 +57,7 @@ Perform density-based clustering with a fast re-implementation of the DBSCAN alg
 }
 \details{
 DBSCAN operates by identifying core points, i.e., observations with at least \code{min.pts} neighbors within a distance of \code{eps}.
-It then identifies which core points are neighbors of each other, forming components of connected core points.
+It identifies which core points are neighbors of each other, forming components of connected core points.
 All non-core points are then connected to the closest core point within \code{eps}.
 All groups of points that are connected in this manner are considered to be part of the same cluster.
 Any unconnected non-core points are treated as noise and reported as \code{NA}.

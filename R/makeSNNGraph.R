@@ -7,7 +7,8 @@
 #' @param type A string specifying the type of weighting scheme to use for shared neighbors.
 #' @param directed A logical scalar indicating whether the output of \code{buildKNNGraph} should be a directed graph.
 #' @param BNPARAM A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object to use for parallel processing.
+#' @param BPPARAM Deprecated, use \code{num.threads} instead.
+#' @param num.threads Integer scalar specifying the number of threads to use. 
 #' @param indices An integer matrix where each row corresponds to an observation
 #' and contains the indices of the \code{k} nearest neighbors (by increasing distance and excluding self) from that observation.
 #' 
@@ -106,37 +107,30 @@ NULL
 #' @rdname makeSNNGraph
 #' @importFrom BiocNeighbors KmknnParam findKNN
 #' @importFrom BiocParallel SerialParam 
-makeSNNGraph <- function(x, k=10, type=c("rank", "number", "jaccard"), BNPARAM=KmknnParam(), BPPARAM=SerialParam()) { 
-    nn.out <- findKNN(x, k=k, BNPARAM=BNPARAM, BPPARAM=BPPARAM, get.distance=FALSE)
-    neighborsToSNNGraph(nn.out$index, type=match.arg(type))
+makeSNNGraph <- function(x, k=10, type=c("rank", "number", "jaccard"), BNPARAM=KmknnParam(), num.threads=1, BPPARAM=SerialParam()) { 
+    x <- as.matrix(x)
+    nn.out <- findKNN(x, k=k, BNPARAM=BNPARAM, num.threads=num.threads, BPPARAM=BPPARAM, get.distance=FALSE)
+    neighborsToSNNGraph(nn.out$index, type=match.arg(type), num.threads=max(num.threads, BiocParallel::bpnworkers(BPPARAM)))
 }
 
 #' @export
 #' @rdname makeSNNGraph
 #' @importFrom BiocParallel SerialParam
 #' @importFrom BiocNeighbors KmknnParam findKNN
-makeKNNGraph <- function(x, k=10, directed=FALSE, BNPARAM=KmknnParam(), BPPARAM=SerialParam()) { 
-    nn.out <- findKNN(x, k=k, BNPARAM=BNPARAM, BPPARAM=BPPARAM, get.distance=FALSE)
+makeKNNGraph <- function(x, k=10, directed=FALSE, BNPARAM=KmknnParam(), num.threads=1, BPPARAM=SerialParam()) { 
+    x <- as.matrix(x)
+    nn.out <- findKNN(x, k=k, BNPARAM=BNPARAM, num.threads=num.threads, BPPARAM=BPPARAM, get.distance=FALSE)
     neighborsToKNNGraph(nn.out$index, directed=directed)
 }
 
 #' @export
 #' @rdname makeSNNGraph
 #' @importFrom igraph make_graph E "E<-"
-neighborsToSNNGraph <- function(indices, type=c("rank", "number", "jaccard")) {
+neighborsToSNNGraph <- function(indices, type=c("rank", "number", "jaccard"), num.threads=1) {
     type <- match.arg(type)
-    if (type=="rank") {
-        g.out <- build_snn_rank(indices)
-    } else {
-        g.out <- build_snn_number(indices)
-    }
-
+    g.out <- build_snn_graph(t(indices), type, num_threads=num.threads)
     edges <- g.out[[1]] 
     weights <- g.out[[2]]
-    if (type=="jaccard") {
-        weights <- weights / (2 * (ncol(indices) + 1) - weights)
-    }
-
     g <- make_graph(edges, directed=FALSE)
     E(g)$weight <- weights
     g

@@ -12,6 +12,7 @@ makeSNNGraph(
   k = 10,
   type = c("rank", "number", "jaccard"),
   BNPARAM = KmknnParam(),
+  num.threads = 1,
   BPPARAM = SerialParam()
 )
 
@@ -20,10 +21,15 @@ makeKNNGraph(
   k = 10,
   directed = FALSE,
   BNPARAM = KmknnParam(),
+  num.threads = 1,
   BPPARAM = SerialParam()
 )
 
-neighborsToSNNGraph(indices, type = c("rank", "number", "jaccard"))
+neighborsToSNNGraph(
+  indices,
+  type = c("rank", "number", "jaccard"),
+  num.threads = 1
+)
 
 neighborsToKNNGraph(indices, directed = FALSE)
 }
@@ -36,7 +42,9 @@ neighborsToKNNGraph(indices, directed = FALSE)
 
 \item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object to use for parallel processing.}
+\item{num.threads}{Integer scalar specifying the number of threads to use.}
+
+\item{BPPARAM}{Deprecated, use \code{num.threads} instead.}
 
 \item{directed}{A logical scalar indicating whether the output of \code{buildKNNGraph} should be a directed graph.}
 

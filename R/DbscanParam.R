@@ -8,15 +8,16 @@
 #' @param min.pts Integer scalar specifying the minimum number of neighboring observations required for an observation to be a core point.
 #' @param core.prop Numeric scalar specifying the proportion of observations to treat as core points.
 #' This is only used when \code{eps=NULL}, see Details.
-#' @param chunk.size Integer scalar specifying the number of points to process per chunk.
+#' @param chunk.size Deprecated and ignored.
 #' @param BNPARAM A \linkS4class{BiocNeighborParam} object specifying the algorithm to use for the neighbor searches.
 #' This should be able to support both nearest-neighbor and range queries.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying the parallelization to use for the neighbor searches.
+#' @param num.threads Integer scalar specifying the number of threads to use.
+#' @param BPPARAM Deprecated and ignored, use \code{num.threads} instead.
 #' @param full Logical scalar indicating whether additional statistics should be returned.
 #'
 #' @details
 #' DBSCAN operates by identifying core points, i.e., observations with at least \code{min.pts} neighbors within a distance of \code{eps}.
-#' It then identifies which core points are neighbors of each other, forming components of connected core points.
+#' It identifies which core points are neighbors of each other, forming components of connected core points.
 #' All non-core points are then connected to the closest core point within \code{eps}.
 #' All groups of points that are connected in this manner are considered to be part of the same cluster.
 #' Any unconnected non-core points are treated as noise and reported as \code{NA}.
@@ -58,25 +59,41 @@
 NULL
 
 #' @export
-setClass("DbscanParam", contains="BlusterParam", slots=c(eps="numeric_OR_NULL", min.pts="integer", core.prop="numeric", 
-    chunk.size="integer", BNPARAM="BiocNeighborParam", BPPARAM="BiocParallelParam"))
+setClass(
+    "DbscanParam", 
+    contains="BlusterParam",
+    slots=c(
+        eps="numeric_OR_NULL",
+        min.pts="integer",
+        core.prop="numeric", 
+        BNPARAM="BiocNeighborParam",
+        num.threads="integer"
+    )
+)
 
 #' @export
 #' @rdname DbscanParam-class
-DbscanParam <- function(eps=NULL, min.pts=5, core.prop=0.5, chunk.size=1000, BNPARAM=KmknnParam(), BPPARAM=SerialParam()) {
-    new("DbscanParam", eps=eps, min.pts=as.integer(min.pts), 
-        core.prop=core.prop, chunk.size=as.integer(chunk.size),
-        BNPARAM=BNPARAM, BPPARAM=BPPARAM)
+DbscanParam <- function(eps=NULL, min.pts=5, core.prop=0.5, chunk.size=NULL, BNPARAM=KmknnParam(), num.threads=1, BPPARAM=NULL) {
+    if (!is.null(BPPARAM)) {
+        num.threads <- BiocParallel::bpnworkers(BPPARAM)
+    }
+    new("DbscanParam",
+        eps=eps,
+        min.pts=as.integer(min.pts), 
+        core.prop=core.prop, 
+        num.threads=as.integer(num.threads),
+        BNPARAM=BNPARAM
+    )
 }
 
 #' @export
 setMethod("show", "DbscanParam", function(object) {
     callNextMethod()
     cat(sprintf("eps: %s\n", if (is.null(object[["eps"]])) "default" else object[["eps"]]))
-    for (i in c("min.pts", "core.prop", "chunk.size")) {
+    for (i in c("min.pts", "core.prop", "num.threads")) {
         cat(sprintf("%s: %s\n", i, object[[i]]))
     }
-    for (i in c("BNPARAM", "BPPARAM")) {
+    for (i in c("BNPARAM")) {
         cat(sprintf("%s: %s\n", i, class(object[[i]])[1]))
     }
 })
@@ -88,7 +105,7 @@ setValidity2("DbscanParam", function(object) {
         msg <- c(msg, .check_positive_slots(object, "eps"))
     }
 
-    msg <- c(msg, .check_positive_slots(object, c("min.pts", "core.prop", "chunk.size")))
+    msg <- c(msg, .check_positive_slots(object, c("min.pts", "core.prop", "num.threads")))
 
     if (object[["core.prop"]] > 1) {
         msg <- c(msg, "'core.prop' should not be greater than 1")
@@ -107,9 +124,8 @@ setMethod("clusterRows", c("ANY", "DbscanParam"), function(x, BLUSPARAM, full=FA
         eps=BLUSPARAM[["eps"]],
         min.pts=BLUSPARAM[["min.pts"]],
         core.prop=BLUSPARAM[["core.prop"]],
-        chunk.size=BLUSPARAM[["chunk.size"]],
         BNPARAM=BLUSPARAM[["BNPARAM"]],
-        BPPARAM=BLUSPARAM[["BPPARAM"]]
+        num.threads=BLUSPARAM[["num.threads"]]
     )
 
     clusters <- out$clusters
@@ -124,38 +140,25 @@ setMethod("clusterRows", c("ANY", "DbscanParam"), function(x, BLUSPARAM, full=FA
     }
 })
 
-#' @importFrom BiocNeighbors buildIndex findNeighbors findKNN KmknnParam queryKNN
-#' @importFrom BiocParallel SerialParam bpstart bpstop bpisup
+#' @importFrom BiocNeighbors buildIndex findNeighbors queryKNN findDistance
 #' @importFrom stats quantile
 #' @importFrom igraph make_graph components
 #' @importFrom utils head
-.DBSCAN <- function(x, eps=NULL, min.pts=5, core.prop=0.5, chunk.size=1000, BNPARAM=KmknnParam(), BPPARAM=SerialParam()) {
-    if (!bpisup(BPPARAM) && !is(BPPARAM, "MulticoreParam")) {
-        bpstart(BPPARAM)
-        on.exit(bpstop(BPPARAM))
-    }
+.DBSCAN <- function(x, eps=NULL, min.pts=5, core.prop=0.5, BNPARAM=KmknnParam(), num.threads=1) {
+    x <- as.matrix(x)
 
     # Finding all core points, using a quick NN algorithm.
-    all.dist <- findKNN(X=x, k=min.pts, last=1, get.index=FALSE, BNPARAM=BNPARAM, BPPARAM=BPPARAM)$distance
+    all.dist <- findDistance(x, k=min.pts, BNPARAM=BNPARAM, num.threads=num.threads)
     if (is.null(eps)) {
         eps <- quantile(all.dist, core.prop)
     } 
     is.core <- all.dist <= eps
 
-    # Looping through and finding core-core neighbors in chunks to keep memory usage low.
+    # Identifying core-core components.
     n.core <- sum(is.core)
     core.idx <- buildIndex(x[is.core,,drop=FALSE], BNPARAM=BNPARAM)
-    remaining <- seq_len(n.core)
-    to <- vector("list", n.core)
+    to <- findNeighbors(core.idx, threshold=eps, get.distance=FALSE, num.threads=num.threads)$index
 
-    while (length(remaining)) {
-        chosen <- head(remaining, chunk.size)
-        neighbors <- findNeighbors(BNINDEX=core.idx, subset=chosen, threshold=eps, get.distance=FALSE, BPPARAM=BPPARAM)$index
-        to[chosen] <- neighbors
-        remaining <- setdiff(remaining, unlist(neighbors)) 
-    }
-
-    # Identifying core-core components.
     from <- rep(seq_along(to), lengths(to))
     to <- unlist(to)
     g <- make_graph(rbind(from, to), n=n.core, directed=FALSE)
@@ -166,7 +169,7 @@ setMethod("clusterRows", c("ANY", "DbscanParam"), function(x, BLUSPARAM, full=FA
     clusters[is.core] <- core.clusters
 
     if (n.core) {
-        closest.core <- queryKNN(BNINDEX=core.idx, query=x[!is.core,,drop=FALSE], BPPARAM=BPPARAM, k=1)
+        closest.core <- queryKNN(core.idx, query=x[!is.core,,drop=FALSE], num.threads=num.threads, k=1)
         in.range <- closest.core$distance <= eps
         clusters[which(!is.core)[in.range]] <- core.clusters[closest.core$index[in.range]]
     }

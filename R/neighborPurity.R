@@ -7,7 +7,8 @@
 #' @param k Integer scalar specifying the number of nearest neighbors to use to determine the radius of the hyperspheres.
 #' @param BNPARAM A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.
 #' This should be an algorithm supported by \code{\link{findNeighbors}}.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating whether and how parallelization should be performed across genes.
+#' @param num.threads Integer scalar specifying the number of threads to use for the neighbor search.
+#' @param BPPARAM Deprecated and ignored, use \code{num.threads} instead.
 #' @param weighted A logical scalar indicating whether to weight each observation in inverse proportion to the size of its cluster.
 #' Alternatively, a numeric vector of length equal to \code{clusters} containing the weight to use for each observation.
 #'
@@ -68,22 +69,18 @@
 #' boxplot(split(out2$purity, clusters))
 #'
 #' @export
-#' @importFrom BiocNeighbors KmknnParam buildIndex findKNN findNeighbors
-#' @importFrom BiocParallel SerialParam bpstart bpstop bpisup
+#' @importFrom BiocNeighbors buildIndex findDistance findNeighbors
 #' @importFrom stats median
 #' @importFrom S4Vectors DataFrame
-neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(), BPPARAM=SerialParam()) {
+neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(), num.threads=1, BPPARAM=NULL) {
     x <- as.matrix(x)
     idx <- buildIndex(x, BNPARAM=BNPARAM)
 
-    if (!bpisup(BPPARAM) && !is(BPPARAM, "MulticoreParam")) {
-        bpstart(BPPARAM)
-        on.exit(bpstop(BPPARAM))
+    if (!is.null(BPPARAM)) {
+        num.threads <- BiocParallel::bpnworkers(BPPARAM)
     }
-
-    dist <- median(findKNN(BNINDEX=idx, k=k, BNPARAM=BNPARAM, BPPARAM=BPPARAM, 
-        last=1, warn.ties=FALSE, get.index=FALSE)$distance)
-    nout <- findNeighbors(BNINDEX=idx, threshold=dist, BNPARAM=BNPARAM, get.distance=FALSE)$index
+    dist <- median(findDistance(idx, k=k, num.threads=num.threads, BNPARAM=BNPARAM)) 
+    nout <- findNeighbors(idx, threshold=dist, BNPARAM=BNPARAM, num.threads=num.threads, get.distance=FALSE)$index
 
     # Constructing weights.
     if (isFALSE(weighted)) {
@@ -103,8 +100,8 @@ neighborPurity <- function(x, clusters, k=50, weighted=TRUE, BNPARAM=KmknnParam(
     stopifnot(all(!is.na(m)))
     aggregated <- sum_neighbor_weights(length(uclust), nout, m - 1L, w)
 
-    targets <- t(aggregated[[1]])
-    totals <- aggregated[[2]]
+    targets <- t(aggregated)
+    totals <- rowSums(targets)
 
     DataFrame( 
         purity=targets[cbind(seq_along(m), m)]/totals,
