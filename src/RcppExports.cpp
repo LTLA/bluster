@@ -22,7 +22,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // sum_neighbor_weights
-Rcpp::List sum_neighbor_weights(int nclusters, Rcpp::List neighbors, Rcpp::IntegerVector clusters, Rcpp::NumericVector weights);
+Rcpp::NumericMatrix sum_neighbor_weights(int nclusters, Rcpp::List neighbors, Rcpp::IntegerVector clusters, Rcpp::NumericVector weights);
 RcppExport SEXP _bluster_sum_neighbor_weights(SEXP nclustersSEXP, SEXP neighborsSEXP, SEXP clustersSEXP, SEXP weightsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

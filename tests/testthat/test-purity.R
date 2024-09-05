@@ -1,5 +1,5 @@
 # Tests the neighborPurity() function.
-library(testthat); library(bluster); #source('test-purity.R')
+# library(testthat); library(bluster); source('test-purity.R')
 
 set.seed(70000)
 test_that('neighborPurity yields correct output for pure clusters', {
