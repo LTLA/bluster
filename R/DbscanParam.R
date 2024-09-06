@@ -8,7 +8,7 @@
 #' @param min.pts Integer scalar specifying the minimum number of neighboring observations required for an observation to be a core point.
 #' @param core.prop Numeric scalar specifying the proportion of observations to treat as core points.
 #' This is only used when \code{eps=NULL}, see Details.
-#' @param chunk.size Deprecated and ignored.
+#' @param chunk.size Integer scalar specifying the number of points to process per chunk.
 #' @param BNPARAM A \linkS4class{BiocNeighborParam} object specifying the algorithm to use for the neighbor searches.
 #' This should be able to support both nearest-neighbor and range queries.
 #' @param num.threads Integer scalar specifying the number of threads to use.
@@ -17,7 +17,7 @@
 #'
 #' @details
 #' DBSCAN operates by identifying core points, i.e., observations with at least \code{min.pts} neighbors within a distance of \code{eps}.
-#' It identifies which core points are neighbors of each other, forming components of connected core points.
+#' It identifies which core points are neighbors of each other, one \code{chunk.size} at a time, forming components of connected core points.
 #' All non-core points are then connected to the closest core point within \code{eps}.
 #' All groups of points that are connected in this manner are considered to be part of the same cluster.
 #' Any unconnected non-core points are treated as noise and reported as \code{NA}.
@@ -66,6 +66,7 @@ setClass(
         eps="numeric_OR_NULL",
         min.pts="integer",
         core.prop="numeric", 
+        chunk.size="integer",
         BNPARAM="BiocNeighborParam",
         num.threads="integer"
     )
@@ -73,14 +74,15 @@ setClass(
 
 #' @export
 #' @rdname DbscanParam-class
-DbscanParam <- function(eps=NULL, min.pts=5, core.prop=0.5, chunk.size=NULL, BNPARAM=KmknnParam(), num.threads=1, BPPARAM=NULL) {
+DbscanParam <- function(eps=NULL, min.pts=5, core.prop=0.5, chunk.size=1000, BNPARAM=KmknnParam(), num.threads=1, BPPARAM=NULL) {
     if (!is.null(BPPARAM)) {
         num.threads <- BiocParallel::bpnworkers(BPPARAM)
     }
     new("DbscanParam",
         eps=eps,
         min.pts=as.integer(min.pts), 
-        core.prop=core.prop, 
+        core.prop=as.double(core.prop), 
+        chunk.size=as.integer(chunk.size),
         num.threads=as.integer(num.threads),
         BNPARAM=BNPARAM
     )
@@ -124,6 +126,7 @@ setMethod("clusterRows", c("ANY", "DbscanParam"), function(x, BLUSPARAM, full=FA
         eps=BLUSPARAM[["eps"]],
         min.pts=BLUSPARAM[["min.pts"]],
         core.prop=BLUSPARAM[["core.prop"]],
+        chunk.size=BLUSPARAM[["chunk.size"]],
         BNPARAM=BLUSPARAM[["BNPARAM"]],
         num.threads=BLUSPARAM[["num.threads"]]
     )
@@ -143,8 +146,8 @@ setMethod("clusterRows", c("ANY", "DbscanParam"), function(x, BLUSPARAM, full=FA
 #' @importFrom BiocNeighbors buildIndex findNeighbors queryKNN findDistance
 #' @importFrom stats quantile
 #' @importFrom igraph make_graph components
-#' @importFrom utils head
-.DBSCAN <- function(x, eps=NULL, min.pts=5, core.prop=0.5, BNPARAM=KmknnParam(), num.threads=1) {
+#' @importFrom utils head tail
+.DBSCAN <- function(x, eps=NULL, min.pts=5, core.prop=0.5, chunk.size=1000, BNPARAM=KmknnParam(), num.threads=1) {
     x <- as.matrix(x)
 
     # Finding all core points, using a quick NN algorithm.
@@ -157,7 +160,15 @@ setMethod("clusterRows", c("ANY", "DbscanParam"), function(x, BLUSPARAM, full=FA
     # Identifying core-core components.
     n.core <- sum(is.core)
     core.idx <- buildIndex(x[is.core,,drop=FALSE], BNPARAM=BNPARAM)
-    to <- findNeighbors(core.idx, threshold=eps, get.distance=FALSE, num.threads=num.threads)$index
+    remaining <- seq_len(n.core)
+    to <- vector("list", n.core)
+
+    while (length(remaining)) {
+        chosen <- head(remaining, chunk.size)
+        neighbors <- findNeighbors(BNINDEX=core.idx, subset=chosen, threshold=eps, get.distance=FALSE, num.threads=num.threads)$index
+        to[chosen] <- neighbors
+        remaining <- setdiff(tail(remaining, -chunk.size), unlist(neighbors)) 
+    }
 
     from <- rep(seq_along(to), lengths(to))
     to <- unlist(to)
