@@ -147,7 +147,9 @@ pairwiseModularity <- function(graph, clusters, get.weights=FALSE, as.ratio=FALS
     if (get.weights) {
         list(observed=mod.mat, expected=expected.mat)
     } else if (as.ratio) {
-        mod.mat/expected.mat
+        ratio <- mod.mat/expected.mat
+        ratio[lower.tri(ratio)] <- 0 # for compatibility with igraph 2.2.0, which doesn't like NAs.
+        ratio
     } else {
         1/total.weight * (mod.mat - expected.mat)
     }

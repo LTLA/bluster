@@ -59,7 +59,7 @@ test_that("pairwiseModularity handles directed graphs correctly", {
 
     random <- sample(5, nrow(exprs), replace=TRUE)
     out <- pairwiseModularity(g, random)
-    ref <- pairwiseModularity(igraph::as.undirected(g, mode="each"), random) 
+    ref <- pairwiseModularity(igraph::as_undirected(g, mode="each"), random)
     expect_identical(out, ref)
 })
 

@@ -42,7 +42,7 @@ aris <- compareClusterings(clusters)
 
 # Visualizing the relationships between clusterings.
 # Here, k-means is forced to be least similar to the others.
-ari.as.graph <- igraph::graph.adjacency(aris, mode="undirected", weighted=TRUE)
+ari.as.graph <- igraph::graph_from_adjacency_matrix(aris, mode="undirected", weighted=TRUE)
 plot(ari.as.graph)
 
 # Obtain an ordering of clusterings, using the eigenvector 

@@ -100,11 +100,11 @@ KMAKE <- function(dummy, k, directed=FALSE) {
 test_that("makeKNNGraph works correctly", {
     dummy <- matrix(rnorm(ndim*nobs), nrow=nobs)
     g <- makeKNNGraph(dummy, k=10)
-    expect_false(is.directed(g))
+    expect_false(is_directed(g))
     expect_equal(g[], KMAKE(dummy, k=10))
 
     g <- makeKNNGraph(dummy, k=10, directed=TRUE)
-    expect_true(is.directed(g))
+    expect_true(is_directed(g))
     expect_equal(g[], KMAKE(dummy, k=10, directed=TRUE))
 
     g <- makeKNNGraph(dummy, k=20)

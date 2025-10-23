@@ -1,6 +1,6 @@
 Package: bluster
-Version: 1.19.0
-Date: 2024-09-05
+Version: 1.19.1
+Date: 2025-10-22
 Title: Clustering Algorithms for Bioconductor
 Description: 
     Wraps common clustering algorithms in an easily extended S4 framework.
@@ -91,5 +91,5 @@ License: GPL-3
 NeedsCompilation: yes
 VignetteBuilder: knitr
 SystemRequirements: C++17
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Encoding: UTF-8
