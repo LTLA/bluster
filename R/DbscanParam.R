@@ -165,7 +165,7 @@ setMethod("clusterRows", c("ANY", "DbscanParam"), function(x, BLUSPARAM, full=FA
 
     while (length(remaining)) {
         chosen <- head(remaining, chunk.size)
-        neighbors <- findNeighbors(BNINDEX=core.idx, subset=chosen, threshold=eps, get.distance=FALSE, num.threads=num.threads)$index
+        neighbors <- findNeighbors(core.idx, subset=chosen, threshold=eps, get.distance=FALSE, num.threads=num.threads)$index
         to[chosen] <- neighbors
         remaining <- setdiff(tail(remaining, -chunk.size), unlist(neighbors)) 
     }
