@@ -37,9 +37,8 @@
 #' \linkS4class{MbkmeansParam}, for a faster but more approximate version of the k-means algorithm.
 #' @name KmeansParam-class
 #' @docType class
-#' @aliases 
-#' show,KmeansParam-method
-#' updateObject,KmeansParam-method
+#' @aliases show,KmeansParam-method
+#' @aliases updateObject,KmeansParam-method
 NULL
 
 #' @export

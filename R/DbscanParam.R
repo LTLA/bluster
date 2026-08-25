@@ -9,7 +9,7 @@
 #' @param core.prop Numeric scalar specifying the proportion of observations to treat as core points.
 #' This is only used when \code{eps=NULL}, see Details.
 #' @param chunk.size Integer scalar specifying the number of points to process per chunk.
-#' @param BNPARAM A \linkS4class{BiocNeighborParam} object specifying the algorithm to use for the neighbor searches.
+#' @param BNPARAM A \link[BiocNeighbors]{BiocNeighborParam} object specifying the algorithm to use for the neighbor searches.
 #' This should be able to support both nearest-neighbor and range queries.
 #' @param num.threads Integer scalar specifying the number of threads to use.
 #' @param BPPARAM Deprecated and ignored, use \code{num.threads} instead.

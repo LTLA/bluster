@@ -21,7 +21,7 @@
 #' %   After which we can just take the square root.
 #' 
 #' @return
-#' A \linkS4class{DataFrame} with one row per observation in \code{x} and the columns:
+#' A \link[S4Vectors]{DataFrame} with one row per observation in \code{x} and the columns:
 #' \itemize{
 #' \item \code{cluster}, the assigned cluster for each observation in \code{x}.
 #' \item \code{other}, the closest cluster other than the one to which the current observation is assigned.

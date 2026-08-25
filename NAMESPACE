@@ -64,51 +64,67 @@ exportMethods(clusterRows)
 exportMethods(show)
 exportMethods(updateObject)
 import(methods)
-importFrom(BiocNeighbors,KmknnParam)
-importFrom(BiocNeighbors,buildIndex)
-importFrom(BiocNeighbors,findDistance)
-importFrom(BiocNeighbors,findKNN)
-importFrom(BiocNeighbors,findNeighbors)
-importFrom(BiocNeighbors,queryKNN)
-importFrom(BiocParallel,SerialParam)
-importFrom(BiocParallel,bpisup)
-importFrom(BiocParallel,bplapply)
-importFrom(BiocParallel,bpstart)
-importFrom(BiocParallel,bpstop)
-importFrom(Matrix,"diag<-")
-importFrom(Matrix,diag)
+importFrom(BiocNeighbors,
+  KmknnParam,
+  buildIndex,
+  findDistance,
+  findKNN,
+  findNeighbors,
+  queryKNN
+)
+importFrom(BiocParallel,
+  SerialParam,
+  bpisup,
+  bplapply,
+  bpstart,
+  bpstop
+)
+importFrom(Matrix,
+  "diag<-",
+  diag
+)
 importFrom(Rcpp,sourceCpp)
-importFrom(S4Vectors,DataFrame)
-importFrom(S4Vectors,I)
-importFrom(S4Vectors,List)
-importFrom(S4Vectors,coolcat)
-importFrom(S4Vectors,setValidity2)
-importFrom(S4Vectors,updateObject)
-importFrom(cluster,agnes)
-importFrom(cluster,clara)
-importFrom(cluster,diana)
-importFrom(cluster,pam)
-importFrom(igraph,"E<-")
-importFrom(igraph,E)
-importFrom(igraph,cluster_walktrap)
-importFrom(igraph,components)
-importFrom(igraph,graph_from_adjacency_matrix)
-importFrom(igraph,is.directed)
-importFrom(igraph,make_graph)
-importFrom(igraph,membership)
-importFrom(igraph,modularity)
-importFrom(igraph,simplify)
-importFrom(stats,as.hclust)
-importFrom(stats,cutree)
-importFrom(stats,dist)
-importFrom(stats,hclust)
-importFrom(stats,kmeans)
-importFrom(stats,median)
-importFrom(stats,quantile)
-importFrom(stats,runif)
-importFrom(stats,var)
-importFrom(utils,capture.output)
-importFrom(utils,getFromNamespace)
-importFrom(utils,head)
-importFrom(utils,tail)
+importFrom(S4Vectors,
+  DataFrame,
+  I,
+  List,
+  coolcat,
+  setValidity2,
+  updateObject
+)
+importFrom(cluster,
+  agnes,
+  clara,
+  diana,
+  pam
+)
+importFrom(igraph,
+  "E<-",
+  E,
+  cluster_walktrap,
+  components,
+  graph_from_adjacency_matrix,
+  is.directed,
+  make_graph,
+  membership,
+  modularity,
+  simplify
+)
+importFrom(stats,
+  as.hclust,
+  cutree,
+  dist,
+  hclust,
+  kmeans,
+  median,
+  quantile,
+  runif,
+  var
+)
+importFrom(utils,
+  capture.output,
+  getFromNamespace,
+  head,
+  tail
+)
 useDynLib(bluster)

@@ -40,7 +40,7 @@ neighborsToKNNGraph(indices, directed = FALSE)
 
 \item{type}{A string specifying the type of weighting scheme to use for shared neighbors.}
 
-\item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.}
+\item{BNPARAM}{A \link[BiocNeighbors]{BiocNeighborParam} object specifying the nearest neighbor algorithm.}
 
 \item{num.threads}{Integer scalar specifying the number of threads to use.}
 
@@ -52,7 +52,7 @@ neighborsToKNNGraph(indices, directed = FALSE)
 and contains the indices of the \code{k} nearest neighbors (by increasing distance and excluding self) from that observation.}
 }
 \value{
-A \link{graph} where nodes are cells and edges represent connections between nearest neighbors.
+A \link[igraph]{graph} where nodes are cells and edges represent connections between nearest neighbors.
 For \code{buildSNNGraph}, these edges are weighted by the number of shared nearest neighbors.
 For \code{buildKNNGraph}, edges are not weighted but may be directed if \code{directed=TRUE}.
 }
@@ -61,7 +61,7 @@ Build a shared or k-nearest-neighbors graph of observations for downstream commu
 }
 \details{
 The \code{makeSNNGraph} function builds a shared nearest-neighbour graph using observations as nodes.
-For each observation, its \code{k} nearest neighbours are identified using the \code{\link{findKNN}} function,
+For each observation, its \code{k} nearest neighbours are identified using the \code{\link[BiocNeighbors]{findKNN}} function,
 based on distances between their expression profiles (Euclidean by default).
 An edge is drawn between all pairs of observations that share at least one neighbour,
 weighted by the characteristics of the shared nearest neighbors - see \dQuote{Weighting Schemes} below.
@@ -84,7 +84,7 @@ In theory, these graphs are directed as nearest neighour relationships may not b
 However, by default, \code{directed=FALSE} such that an undirected graph is returned.
 
 The \code{neighborsToSNNGraph} and \code{neighborsToKNNGraph} functions operate directly on a matrix of nearest neighbor indices,
-obtained using functions like \code{\link{findKNN}}.
+obtained using functions like \code{\link[BiocNeighbors]{findKNN}}.
 This may be useful for constructing a graph from precomputed nearest-neighbor search results.
 Note that the user is responsible for ensuring that the indices are valid, i.e., \code{range(indices)} is positive and no greater than \code{max(indices)}.
 }
@@ -136,11 +136,11 @@ Identification of cell types from single-cell transcriptomes using a novel clust
 \emph{Bioinformatics} 31:1974-80
 }
 \seealso{
-See \code{\link{make_graph}} for details on the graph output object.
+See \code{\link[igraph]{make_graph}} for details on the graph output object.
 
-See \code{\link{cluster_walktrap}}, \code{\link{cluster_louvain}} and related functions in \pkg{igraph} for clustering based on the produced graph.
+See \code{\link[igraph]{cluster_walktrap}}, \code{\link[igraph]{cluster_louvain}} and related functions in \pkg{igraph} for clustering based on the produced graph.
 
-Also see \code{\link{findKNN}} for specifics of the nearest-neighbor search.
+Also see \code{\link[BiocNeighbors]{findKNN}} for specifics of the nearest-neighbor search.
 }
 \author{
 Aaron Lun, with KNN code contributed by Jonathan Griffiths.

@@ -4,14 +4,14 @@
 #'
 #' @inheritParams clusterRows
 #' @param ... Named vectors or lists specifying the parameters to sweep over.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} specifying how the sweep should be parallelized.
+#' @param BPPARAM A \link[BiocParallel]{BiocParallelParam} specifying how the sweep should be parallelized.
 #' @param args A named list of additional arguments to use with \code{...}.
 #' This is provided in case there is a name conflict with the existing arguments in this function signature.
 #' 
 #' @return
-#' A \linkS4class{List} containing:
+#' A \link[S4Vectors]{List} containing:
 #' \itemize{
-#' \item \code{clusters}, a \linkS4class{DataFrame} with number of rows equal to that of \code{x},
+#' \item \code{clusters}, a \link[S4Vectors]{DataFrame} with number of rows equal to that of \code{x},
 #' where each column corresponds to (and is named after) a specific combination of clustering parameters.
 #' \item \code{parameters}, another DataFrame with number of rows equal to the number of columns in the previous \code{clusters} DataFrame.
 #' Each row contains the specific parameter combination for each column of \code{clusters}.

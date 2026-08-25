@@ -3,7 +3,8 @@
 #' Map an alternative clustering to a reference clustering,
 #' where the latter is expected to be nested within the former.
 #'
-#' @inheritParams pairwiseRand
+#' @param ref A character vector or factor containing one clustering, considered to be the reference.
+#' @param alt A character vector or factor containing another clustering, to be compared to \code{alt}.
 #'
 #' @return
 #' A list containing:
@@ -11,7 +12,7 @@
 #' \item \code{proportions}, a matrix where each row corresponds to one of the \code{alt} clusters and each column corresponds to one of the \code{ref} clusters.
 #' Each matrix entry represents the proportion of cells in \code{alt} that are assigned to each cluster in \code{ref}.
 #' (That is, the proportions across all \code{ref} clusters should sum to unity for each \code{alt} cluster.)
-#' \item \code{alt.mapping}, a \linkS4class{DataFrame} with one row per cluster in \code{alt}.
+#' \item \code{alt.mapping}, a \link[S4Vectors]{DataFrame} with one row per cluster in \code{alt}.
 #' This contains the columns \code{max}, a numeric vector specifying the maximum value of \code{statistic} for that \code{alt} cluster;
 #' and \code{which}, a character vector specifying the \code{ref} cluster in which the maximum value occurs.
 #' \item \code{ref.score}, a numeric vector of length equal to the number of \code{ref} clusters.

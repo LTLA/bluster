@@ -24,7 +24,7 @@ Only used when \code{k} contains multiple values.}
 \item{seed}{Integer scalar specifying the seed to use.
 If \code{NULL}, a random value is used on each invocation of \code{\link{clusterRows}}.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating how multiple clusterings should be parallelized.
+\item{BPPARAM}{A \link[BiocParallel]{BiocParallelParam} object indicating how multiple clusterings should be parallelized.
 Only relevant if \code{k} contains multiple values.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.

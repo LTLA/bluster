@@ -51,11 +51,10 @@
 #' \code{\link[dynamicTreeCut]{cutreeDynamic}}, for an alternative tree cutting method to use in \code{cut.fun}.
 #' @name HclustParam-class
 #' @docType class
-#' @aliases 
-#' .defaultScalarArguments,HclustParam-method
-#' updateObject,HclustParam-method
-#' show,HclustParam-method
-#' [[,HclustParam-method
+#' @aliases .defaultScalarArguments,HclustParam-method
+#' @aliases updateObject,HclustParam-method
+#' @aliases show,HclustParam-method
+#' @aliases [[,HclustParam-method
 NULL
 
 #' @export

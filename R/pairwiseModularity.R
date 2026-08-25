@@ -2,7 +2,7 @@
 #' 
 #' Calculate the modularity of each pair of clusters from a graph, based on a null model of random connections between nodes.
 #' 
-#' @param graph A \link{graph} object from \pkg{igraph}, usually where each node represents an observation.
+#' @param graph A \link[igraph]{graph} object from \pkg{igraph}, usually where each node represents an observation.
 #' @param clusters Factor specifying the cluster identity for each node.
 #' @param get.weights Logical scalar indicating whether the observed and expected edge weights should be returned, rather than the modularity.
 #' @param as.ratio Logical scalar indicating whether the log-ratio of observed to expected weights should be returned.
@@ -19,13 +19,13 @@
 #' while the \code{expected} matrix contains the expected sum of edge weights under the random model.
 #' 
 #' @details
-#' This function computes a modularity score in the same manner as that from \code{\link{modularity}}.
+#' This function computes a modularity score in the same manner as that from \code{\link[igraph]{modularity}}.
 #' The modularity is defined as the (scaled) difference between the observed and expected number of edges between nodes in the same cluster.
 #' The expected number of edges is defined by a null model where edges are randomly distributed among nodes.
 #' The same logic applies for weighted graphs, replacing the number of edges with the summed weight of edges.
 #' 
-#' Whereas \code{\link{modularity}} returns a modularity score for the entire graph, \code{pairwiseModularity} provides scores for the individual clusters.
-#' The sum of the diagonal elements of the output matrix should be equal to the output of \code{\link{modularity}} 
+#' Whereas \code{\link[igraph]{modularity}} returns a modularity score for the entire graph, \code{pairwiseModularity} provides scores for the individual clusters.
+#' The sum of the diagonal elements of the output matrix should be equal to the output of \code{\link[igraph]{modularity}} 
 #' (after supplying weights to the latter, if necessary).
 #' A well-separated cluster should have mostly intra-cluster edges and a high modularity score on the corresponding diagonal entry,
 #' while two closely related clusters that are weakly separated will have many inter-cluster edges and a high off-diagonal score.
@@ -35,7 +35,7 @@
 #' An alternative approach is to set \code{as.ratio=TRUE}, which returns the ratio of the observed to expected weights for each entry of the matrix.
 #' This adjusts for differences in cluster size and improves resolution of differences between clusters.
 #'
-#' Directed graphs are treated as undirected inputs with \code{mode="each"} in \code{\link{as.undirected}}.
+#' Directed graphs are treated as undirected inputs with \code{mode="each"} in \code{\link[igraph]{as.undirected}}.
 #' In the rare case that self-loops are present, these will also be handled correctly.
 #' @author
 #' Aaron Lun
@@ -43,7 +43,7 @@
 #' @seealso
 #' \code{\link{makeSNNGraph}}, for one method to construct \code{graph}.
 #'
-#' \code{\link{modularity}}, for the calculation of the entire graph modularity.
+#' \code{\link[igraph]{modularity}}, for the calculation of the entire graph modularity.
 #'
 #' \code{\link{pairwiseRand}}, which applies a similar breakdown to the Rand index.
 #' 

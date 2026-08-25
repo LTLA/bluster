@@ -14,7 +14,7 @@
 #' Only used when \code{k} contains multiple values.
 #' @param seed Integer scalar specifying the seed to use.
 #' If \code{NULL}, a random value is used on each invocation of \code{\link{clusterRows}}.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating how multiple clusterings should be parallelized.
+#' @param BPPARAM A \link[BiocParallel]{BiocParallelParam} object indicating how multiple clusterings should be parallelized.
 #' Only relevant if \code{k} contains multiple values.
 #' 
 #' @author Basil Courbayre

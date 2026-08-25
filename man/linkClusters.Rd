@@ -22,7 +22,7 @@ If \code{clusters} is not named, numeric prefixes are used instead.}
 \item{x, y}{Factor or vector specifying a clustering of the same cells.}
 }
 \value{
-For \code{linkClusters}, a \link{graph} object where each node is a cluster level in one of the clusterings in \code{clusters}.
+For \code{linkClusters}, a \link[igraph]{graph} object where each node is a cluster level in one of the clusterings in \code{clusters}.
 Edges are weighted by the strength of the correspondence between two clusters in different clusterings.
 
 For \code{linkClustersMatrix}, a matrix is returned where each row and column corresponds to a cluster in \code{x} and \code{y}, respectively.

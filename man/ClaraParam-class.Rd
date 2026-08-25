@@ -23,7 +23,7 @@ ClaraParam(
 \item{centers}{An integer scalar specifying the number of centers.
 Alternatively, a function that takes the number of observations and returns the number of centers.}
 
-\item{metric, stand, samples, sampsize}{Further arguments to pass to \code{\link{clara}}.
+\item{metric, stand, samples, sampsize}{Further arguments to pass to \code{\link[cluster]{clara}}.
 Set to the function defaults if not supplied.}
 
 \item{x}{A numeric matrix-like object where rows represent observations and columns represent variables.}
@@ -37,7 +37,7 @@ The \code{ClaraParam} constructor will return a \linkS4class{ClaraParam} object 
 
 The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
-(a list containing \code{clara}, the direct output of \code{\link{clara}}).
+(a list containing \code{clara}, the direct output of \code{\link[cluster]{clara}}).
 }
 \description{
 Run the CLARA algorithm, an extension of the PAM method for large datasets.
@@ -59,7 +59,7 @@ clusterRows(iris[,1:4], ClaraParam(centers=4, sampsize=50))
 clusterRows(iris[,1:4], ClaraParam(centers=sqrt))
 }
 \seealso{
-\code{\link{clara}}, which actually does all the heavy lifting.
+\code{\link[cluster]{clara}}, which actually does all the heavy lifting.
 
 \linkS4class{PamParam}, for the original PAM algorithm.
 }

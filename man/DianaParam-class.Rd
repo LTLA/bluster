@@ -21,7 +21,7 @@ DianaParam(
 \S4method{clusterRows}{ANY,DianaParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
-\item{metric}{String specifying the distance metric to use in \code{\link{diana}}.
+\item{metric}{String specifying the distance metric to use in \code{\link[cluster]{diana}}.
 If \code{NULL}, the default metric is used.
 If \code{dist.fun} is supplied, \code{metric} is passed to that function instead.}
 
@@ -29,7 +29,7 @@ If \code{dist.fun} is supplied, \code{metric} is passed to that function instead
 The function should accept a data matrix and a \code{method=} string (used to accept \code{metric}) and return a dissimilarity matrix of type \link{dist}.
 If \code{NULL}, the \code{stats::\link{dist}} function is used by default.}
 
-\item{stand}{Further arguments to pass to \code{\link{diana}}.}
+\item{stand}{Further arguments to pass to \code{\link[cluster]{diana}}.}
 
 \item{cut.fun}{Function specifying the method to use to cut the dendrogram.
 The first argument of this function should be the output of \code{\link{hclust}},
@@ -54,7 +54,7 @@ If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as abo
 (a list containing \code{diana}, the function output; \code{dist}, the dissimilarity matrix; and \code{hclust}, a \link{hclust} object created from \code{diana}).
 }
 \description{
-Use the \code{\link{diana}} function to perform divisive analysis clustering.
+Use the \code{\link[cluster]{diana}} function to perform divisive analysis clustering.
 }
 \details{
 To modify an existing DianaParam object \code{x},
@@ -69,7 +69,7 @@ clusterRows(iris[,1:4], DianaParam(metric="manhattan"))
 
 }
 \seealso{
-\code{\link{diana}}, which actually does all the heavy lifting.
+\code{\link[cluster]{diana}}, which actually does all the heavy lifting.
 
 \linkS4class{HclustParam}, for the more commonly used implementation of hierarchical clustering.
 }

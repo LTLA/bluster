@@ -4,7 +4,7 @@
 #'
 #' @param centers An integer scalar specifying the number of centers.
 #' Alternatively, a function that takes the number of observations and returns the number of centers.
-#' @param metric,stand,samples,sampsize Further arguments to pass to \code{\link{clara}}.
+#' @param metric,stand,samples,sampsize Further arguments to pass to \code{\link[cluster]{clara}}.
 #' Set to the function defaults if not supplied.
 #' @inheritParams clusterRows
 #' @param BLUSPARAM A \linkS4class{ClaraParam} object.
@@ -28,22 +28,21 @@
 #'
 #' The \code{clusterRows} method will return a factor of length equal to \code{nrow(x)} containing the cluster assignments.
 #' If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as above) and \code{objects}
-#' (a list containing \code{clara}, the direct output of \code{\link{clara}}).
+#' (a list containing \code{clara}, the direct output of \code{\link[cluster]{clara}}).
 #'
 #' @examples
 #' clusterRows(iris[,1:4], ClaraParam(centers=4))
 #' clusterRows(iris[,1:4], ClaraParam(centers=4, sampsize=50))
 #' clusterRows(iris[,1:4], ClaraParam(centers=sqrt))
 #' @seealso
-#' \code{\link{clara}}, which actually does all the heavy lifting.
+#' \code{\link[cluster]{clara}}, which actually does all the heavy lifting.
 #'
 #' \linkS4class{PamParam}, for the original PAM algorithm.
 #'
 #' @name ClaraParam-class
 #' @docType class
-#' @aliases
-#' show,ClaraParam-method
-#' .defaultScalarArguments,ClaraParam-method
+#' @aliases show,ClaraParam-method
+#' @aliases .defaultScalarArguments,ClaraParam-method
 NULL
 
 #' @export

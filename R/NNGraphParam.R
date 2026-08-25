@@ -6,11 +6,11 @@
 #' @param ... Further arguments to pass to \code{\link{SNNGraphParam}} (if \code{shared=TRUE}) or \code{\link{KNNGraphParam}}.
 #' @inheritParams makeSNNGraph
 #' @param cluster.fun Function specifying the method to use to detect communities in the NN graph.
-#' The first argument of this function should be the NN graph and the return value should be a \link{communities} object.
+#' The first argument of this function should be the NN graph and the return value should be a \link[igraph]{communities} object.
 #'
 #' Alternatively, this may be a string containing the suffix of any \pkg{igraph} community detection algorithm.
-#' For example, \code{cluster.fun="louvain"} will instruct \code{\link{clusterRows}} to use \code{\link{cluster_louvain}}.
-#' Defaults to \code{\link{cluster_walktrap}}.
+#' For example, \code{cluster.fun="louvain"} will instruct \code{\link{clusterRows}} to use \code{\link[igraph]{cluster_louvain}}.
+#' Defaults to \code{\link[igraph]{cluster_walktrap}}.
 #' @param cluster.args Further arguments to pass to the chosen \code{cluster.fun}.
 #' @inheritParams clusterRows
 #' @param BLUSPARAM A \linkS4class{NNGraphParam} object.
@@ -51,7 +51,7 @@
 #' @seealso
 #' \code{\link{makeSNNGraph}} and related functions, to build the graph.
 #'
-#' \code{\link{cluster_walktrap}} and related functions, to perform community detection.
+#' \code{\link[igraph]{cluster_walktrap}} and related functions, to perform community detection.
 #'
 #' @name NNGraphParam-class
 #' @docType class

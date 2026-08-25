@@ -24,15 +24,15 @@ neighborPurity(
 \item{weighted}{A logical scalar indicating whether to weight each observation in inverse proportion to the size of its cluster.
 Alternatively, a numeric vector of length equal to \code{clusters} containing the weight to use for each observation.}
 
-\item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the nearest neighbor algorithm.
-This should be an algorithm supported by \code{\link{findNeighbors}}.}
+\item{BNPARAM}{A \link[BiocNeighbors]{BiocNeighborParam} object specifying the nearest neighbor algorithm.
+This should be an algorithm supported by \code{\link[BiocNeighbors]{findNeighbors}}.}
 
 \item{num.threads}{Integer scalar specifying the number of threads to use for the neighbor search.}
 
 \item{BPPARAM}{Deprecated and ignored, use \code{num.threads} instead.}
 }
 \value{
-A \linkS4class{DataFrame} with one row per observation in \code{x} and the columns:
+A \link[S4Vectors]{DataFrame} with one row per observation in \code{x} and the columns:
 \itemize{
 \item \code{purity}, a numeric field containing the purity value for the current observation.
 \item \code{maximum}, the cluster with the highest proportion of observations neighboring the current observation.

@@ -31,7 +31,7 @@ This is only used when \code{eps=NULL}, see Details.}
 
 \item{chunk.size}{Integer scalar specifying the number of points to process per chunk.}
 
-\item{BNPARAM}{A \linkS4class{BiocNeighborParam} object specifying the algorithm to use for the neighbor searches.
+\item{BNPARAM}{A \link[BiocNeighbors]{BiocNeighborParam} object specifying the algorithm to use for the neighbor searches.
 This should be able to support both nearest-neighbor and range queries.}
 
 \item{num.threads}{Integer scalar specifying the number of threads to use.}

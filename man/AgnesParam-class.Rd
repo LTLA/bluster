@@ -22,7 +22,7 @@ AgnesParam(
 \S4method{clusterRows}{ANY,AgnesParam}(x, BLUSPARAM, full = FALSE)
 }
 \arguments{
-\item{metric, stand, method, par.method}{Further arguments to pass to \code{\link{agnes}}.}
+\item{metric, stand, method, par.method}{Further arguments to pass to \code{\link[cluster]{agnes}}.}
 
 \item{cut.fun}{Function specifying the method to use to cut the dendrogram.
 The first argument of this function should be the output of \code{\link{hclust}},
@@ -47,7 +47,7 @@ If \code{full=TRUE}, a list is returned with \code{clusters} (the factor, as abo
 (a list containing \code{agnes}, the function output; \code{dist}, the dissimilarity matrix; and \code{hclust}, a \link{hclust} object created from \code{agnes}).
 }
 \description{
-Run the \code{\link{agnes}} function on a distance matrix within \code{\link{clusterRows}}.
+Run the \code{\link[cluster]{agnes}} function on a distance matrix within \code{\link{clusterRows}}.
 }
 \details{
 To modify an existing AgnesParam object \code{x},
@@ -62,7 +62,7 @@ clusterRows(iris[,1:4], AgnesParam(method="ward"))
 
 }
 \seealso{
-\code{\link{agnes}}, which actually does all the heavy lifting.
+\code{\link[cluster]{agnes}}, which actually does all the heavy lifting.
 
 \linkS4class{HclustParam}, for the more commonly used implementation of hierarchical clustering.
 }

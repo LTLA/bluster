@@ -18,10 +18,9 @@
 #' \linkS4class{HclustParam}, \linkS4class{KmeansParam} and \linkS4class{NNGraphParam} 
 #' for some examples of concrete subclasses.
 #'
-#' @aliases
-#' [[,BlusterParam-method
-#' [[<-,BlusterParam-method
-#' show,BlusterParam-method
+#' @aliases [[,BlusterParam-method
+#' @aliases [[<-,BlusterParam-method
+#' @aliases show,BlusterParam-method
 #' @docType class
 #' @export
 setClass("BlusterParam", contains="VIRTUAL")
@@ -54,12 +53,11 @@ setClassUnion("character_OR_function", c("function", "character"))
 #' @seealso
 #' \linkS4class{KmeansParam}, for the archetypal example of a concrete subclass.
 #'
-#' @aliases
-#' centers
-#' centers,FixedNumberParam-method
-#' centers<-
-#' centers<-,FixedNumberParam-method
-#' show,FixedNumberParam-method
+#' @aliases centers
+#' @aliases centers,FixedNumberParam-method
+#' @aliases centers<-
+#' @aliases centers<-,FixedNumberParam-method
+#' @aliases show,FixedNumberParam-method
 #' 
 #' @docType class
 #' @export
@@ -96,9 +94,8 @@ setClass("FixedNumberParam", contains=c("BlusterParam", "VIRTUAL"), slots=c(cent
 #' \linkS4class{HclustParam}, for the archetypal example of a concrete subclass.
 #'
 #' @docType class
-#' @aliases
-#' .defaultScalarArguments,HierarchicalParam-method
-#' show,HierarchicalParam-method
+#' @aliases .defaultScalarArguments,HierarchicalParam-method
+#' @aliases show,HierarchicalParam-method
 #' @export
 setClass("HierarchicalParam", contains=c("BlusterParam", "VIRTUAL"), 
     slots=c(
