@@ -27,20 +27,14 @@ our aim is to cluster cells into cell populations based on their PC coordinates.
 library(scRNAseq)
 sce <- ZeiselBrainData()
 
-# Trusting the authors' quality control, and going straight to normalization.
-library(scuttle)
-sce <- logNormCounts(sce)
-
-# Feature selection based on highly variable genes.
-library(scran)
-dec <- modelGeneVar(sce)
-hvgs <- getTopHVGs(dec, n=1000)
-
-# Dimensionality reduction for work (PCA) and pleasure (t-SNE).
-set.seed(1000)
-library(scater)
-sce <- runPCA(sce, ncomponents=20, subset_row=hvgs)
-sce <- runUMAP(sce, dimred="PCA")
+# Performing all of the preprocessing to get to the PCA,
+# but skipping t-SNE and the internal clustering.
+library(scrapper)
+sce <- analyze.se(sce,
+    filter.cells=FALSE, # trust the author's QC.
+    more.tsne.args=NULL,
+    more.cluster.graph.args=NULL
+)$x
 
 mat <- reducedDim(sce, "PCA")
 dim(mat)
@@ -56,6 +50,7 @@ This automatically sets the cut height to half the dendrogram height.
 ```{r}
 library(bluster)
 hclust.out <- clusterRows(mat, HclustParam())
+library(scater)
 plotUMAP(sce, colour_by=I(hclust.out))
 ```
 
