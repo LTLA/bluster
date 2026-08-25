@@ -3,52 +3,53 @@
 #' Breaks down the Rand index calculation to report values for each cluster and pair of clusters
 #' in a reference clustering compared to an alternative clustering.
 #'
-#' @param ref A character vector or factor containing one set of groupings, considered to be the reference.
-#' @param alt A character vector or factor containing another set of groupings, to be compared to \code{alt}.
+#' @param ref A character vector or factor containing one clustering, considered to be the reference.
+#' @param alt A character vector or factor containing another clustering, to be compared to \code{alt}.
 #' @param mode String indicating whether to return the ratio, the number of pairs or the Rand index.
 #' @param adjusted Logical scalar indicating whether the adjusted Rand index should be returned.
 #'
 #' @details
-#' Recall that the Rand index calculation consists of four numbers:
+#' For the purposes of this function, the Rand index calculation consists of three numbers:
 #' \describe{
 #' \item{\eqn{a}}{The number of pairs of cells in the same cluster in \code{ref} and the same cluster in \code{alt}.}
 #' \item{\eqn{b}}{The number of pairs of cells in different clusters in \code{ref} and different clusters in \code{alt}.}
-#' \item{\eqn{c}}{The number of pairs of cells in the same cluster in \code{ref} and different clusters in \code{alt}.}
-#' \item{\eqn{d}}{The number of pairs of cells in different clusters in \code{ref} but the same cluster in \code{alt}.}
+#' \item{\eqn{t}}{The total number of pairs of cells, including the contribution of \eqn{a + b}.}
 #' }
-#' The Rand index is then computed as \eqn{a + b} divided by \eqn{a + b + c + d}, i.e., the total number of pairs.
+#' The Rand index is defined as \eqn{a + b} divided by \eqn{t}.
+#' This represents the proportion of pairs of cells whose relationships are faithfully recapitulated across clusterings.
 #'
 #' We can break these numbers down into values for each cluster or pair of clusters in \code{ref}.
-#' For each cluster, we compute its value of \eqn{a}, 
+#' For each cluster \eqn{i}, we compute its value of \eqn{a_i}, 
 #' i.e., the number of pairs of cells in \emph{that} cluster that are also in the same cluster in \code{alt}.
-#' Similarly, for each pair of clusters in \code{ref}, we compute its value of \eqn{b},
-#' i.e., the number of pairs of cells that have one cell in each of those clusters 
-#' and also belong in different clusters in \code{alt}.
+#' Similarly, for each pair of clusters \eqn{i} and \eqn{j} in \code{ref}, we compute its value of \eqn{b_{ij}},
+#' i.e., the number of pairs of cells that have one cell in each of those clusters and also belong in different clusters in \code{alt}.
+#' We can also compute \eqn{t_i} and \eqn{t_{ij}}, i.e., the total number of pairs in each cluster or pair of clusters.
 #'
-#' This process provides more information about the specific similarities or differences between \code{ref} and \code{alt},
+#' This breakdown provides more information about the specific similarities or differences between \code{ref} and \code{alt},
 #' rather than coalescing all the values into a single statistic. 
 #' For example, it is now possible to see which specific clusters from \code{ref} are not reproducible in \code{alt},
 #' or which specific partitions between pairs of clusters are not reproducible.
 #' Such events can be diagnosed by looking for small (i.e., near-zero or negative) entries in the ratio matrix;
 #' on the other hand, large values (i.e., close to 1) indicate that \code{ref} is almost perfectly recapitulated by \code{alt}.
 #'
-#' If \code{adjusted=TRUE}, we adjust all counts by subtracting their expected values under a model of random permutations.
+#' If \code{adjusted=TRUE}, we adjust all counts by subtracting their expected values under a model of random permutations à la the adjusted Rand index (ARI).
+#' Specifically, we compute the expected number of pairs within and between clusters before subtracting them from \eqn{a_i} and \eqn{b_{ij}}, respectively.
+#' (We also subtract the same expectations from the corresponding \eqn{t_i} and \eqn{t_{ij}} to recalibrate the maximum value after adjustment.)
 #' This accounts for differences in the number and sizes of clusters within and between \code{ref} and \code{alt},
-#' in a manner that mimics the calculation of adjusted Rand index (ARI).
-#' We subtract expectations on a per-cluster or per-cluster-pair basis for \eqn{a} and \eqn{b}, respectively;
-#' we also redefine the \dQuote{total} number of cell pairs for each cluster or cluster pair based on the denominator of the ARI. 
+#' such that users can more safely compare the adjusted values between clusters and clusterings.
+#' However, the adjusted values can also be negative and are no longer interpretable as proportions.
 #' 
 #' @return
 #' If \code{mode="ratio"}, a square numeric matrix is returned with number of rows equal to the number of unique levels in \code{ref}.
-#' Each diagonal entry is the ratio of the per-cluster \eqn{a} to the total number of pairs of cells in that cluster.
-#' Each off-diagonal entry is the ratio of the per-cluster-pair \eqn{b} to the total number of pairs of cells for that pair of clusters.
+#' Each diagonal entry is the ratio of the per-cluster \eqn{a_i} to the total number of pairs of cells in that cluster \eqn{t_i}.
+#' Each off-diagonal entry is the ratio of the per-cluster-pair \eqn{b_{ij}} to the total number of pairs of cells for that pair of clusters \eqn{t_{ij}}.
 #' Lower-triangular entries are set to \code{NA}.
 #' If \code{adjusted=TRUE}, counts and totals are both adjusted prior to computing the ratio.
 #'
 #' If \code{mode="pairs"}, a list is returned containing \code{correct} and \code{total},
 #' both of which are square numeric matrices of the same arrangement as described above.
-#' However, \code{correct} contains the actual numbers \eqn{a} (diagonal) and \eqn{b} (off-diagonal) rather than the ratios,
-#' while \code{total} contains the total number of cell pairs in each cluster or pair of clusters.
+#' However, \code{correct} contains the actual numbers \eqn{a_i} (diagonal) and \eqn{b_{ij}} (off-diagonal) rather than the ratios,
+#' while \code{total} contains the total number of cell pairs in each cluster (\eqn{t_i}) or pair of clusters (\eqn{t_{ij}}).
 #' If \code{adjusted=TRUE}, both matrices are adjusted by subtracting the random expectations from the counts.
 #'
 #' If \code{mode="index"}, a numeric scalar is returned containing the Rand index (or ARI, if \code{adjusted=TRUE}).
